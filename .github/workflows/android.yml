@@ -1,0 +1,63 @@
+# Builds Blood Katana for Android on every push and on demand.
+# A debug APK is always produced. If the signing secrets are set, a signed release APK and an AAB (for Google Play) are produced too.
+name: Android build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HAS_KEY: ${{ secrets.BK_KEYSTORE_B64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install and sync the web game into the Android project
+        run: |
+          npm ci
+          npx cap sync android
+
+      - name: Debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blood-katana-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+
+      - name: Signed release (only when the keystore secret exists)
+        if: env.HAS_KEY == 'true'
+        env:
+          KEYSTORE_B64: ${{ secrets.BK_KEYSTORE_B64 }}
+          BK_KEYSTORE_PASSWORD: ${{ secrets.BK_KEYSTORE_PASSWORD }}
+          BK_KEY_ALIAS: ${{ secrets.BK_KEY_ALIAS }}
+          BK_KEY_PASSWORD: ${{ secrets.BK_KEY_PASSWORD }}
+        working-directory: android
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > $RUNNER_TEMP/release.keystore
+          export BK_KEYSTORE=$RUNNER_TEMP/release.keystore
+          ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          name: blood-katana-release
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk

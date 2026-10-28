@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Blood Katana</string>
+    <string name="title_activity_main">Blood Katana</string>
+    <string name="package_name">com.weirdanimations.bloodkatana</string>
+    <string name="custom_url_scheme">com.weirdanimations.bloodkatana</string>
+    <!-- AdMob: Google's public TEST app id. Replace with your own AdMob app id before release. -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>
