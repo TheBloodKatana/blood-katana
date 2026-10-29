@@ -8,6 +8,9 @@ The game itself runs offline and keeps saves on the phone. It uses the internet 
 - Landscape only, full screen, screen stays awake, Android back button opens the pause menu.
 - Targets Android 16 (API 36), runs on Android 7.0 (API 24) and newer.
 
+## The game's source
+`game-src/src` holds the game split into modules; `game-src/build.py` joins them into one HTML file. `www/index.html` is that built file, and it is what the app runs.
+
 ## Updating the game inside the app
 Copy the newest `blood-katana.html` over `www/index.html`, then run `npx cap sync android` (or just push: the GitHub workflow syncs for you).
 
@@ -47,4 +50,5 @@ The next run also uploads **blood-katana-release** with the `.aab` (upload this 
 - Ads: the AdMob **test** app id is in `android/app/src/main/res/values/strings.xml` and the test rewarded unit is `ADMOB_REWARDED` in the game's `06e_shop.js`. Create your AdMob app, then replace both before release (ads on a real id before review can get your AdMob account limited, so keep the test ids while testing).
 - In-app products: create the product ids listed in `store/listing.md` in Play Console. Billing only works for builds installed from a Play test track, not sideloaded APKs. Until then the game shows a clearly labelled test purchase.
 - Data safety and the "Contains ads" declaration: see `store/listing.md`.
-- Content rating questionnaire: fantasy violence with blood; simulated gambling **yes** (a dice game for in-game coins, no real money); no user-generated content; no purchases.
+- Content rating questionnaire: fantasy violence with blood; simulated gambling **yes** (a dice game and a prize spin for in-game items, no real money); no user-generated content; in-app purchases **yes**.
+- **Turn the cheats off.** Test builds show a Cheats section in Settings (invincible, one-hit kills, endless money, unlock everything). Set `CHEATS_BUILD=false` near the top of `game-src/src/06d_app.js`, rebuild the game with `python3 game-src/build.py`, and copy the result to `www/index.html` before you build the release.
