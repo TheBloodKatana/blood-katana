@@ -335,10 +335,10 @@ canvas.nocur{cursor:none!important}
 .tbtn.ult{border-color:var(--blood);color:var(--ash)}
 .tbtn.dash{grid-area:dash;width:clamp(58px,15vmin,84px);background:conic-gradient(rgba(147,220,202,.38) calc(var(--cd,1)*360deg),rgba(25,21,26,.5) 0)}
 .tbtn.ticon{display:flex;align-items:center;justify-content:center;padding:0;position:relative}
-.tbtn .ti{width:58%;height:58%;image-rendering:pixelated;filter:drop-shadow(1px 1px 0 #000);pointer-events:none}
+.tbtn .ti{width:58%;height:58%;color:var(--bone);pointer-events:none}
 .tbtn.dash .ti{width:52%;height:52%}
 .tbtn .tcount{position:absolute;right:6%;bottom:6%;min-width:1.4em;padding:0 .25em;font-family:'Silkscreen',var(--f-mono);font-weight:400;font-size:clamp(8px,2vmin,10px);line-height:1.5;border-radius:3px;background:#0a0608;color:var(--bone);border:1px solid rgba(236,228,215,.35);pointer-events:none}
-.tbtn.use.ticon{flex-direction:column;gap:1px}.tbtn.use .ti{width:46%;height:46%;filter:none}.tbtn.use .tlbl{font-size:clamp(7px,1.8vmin,9px);line-height:1;pointer-events:none}
+.tbtn.use.ticon{flex-direction:column;gap:1px}.tbtn.use .ti{width:46%;height:46%;color:var(--ink)}.tbtn.use .tlbl{font-size:clamp(7px,1.8vmin,9px);line-height:1;pointer-events:none}
 .tbtn.ready{background:var(--blood);border-color:var(--blood-hi);color:var(--bone)}
 .tsmall{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:calc(8px + env(safe-area-inset-right,0px));width:38px;height:38px;border-radius:50%;border:1px solid rgba(236,228,215,.25);background:rgba(25,21,26,.55);color:var(--bone);font-size:12px;pointer-events:auto;touch-action:none;padding:0}
 .fsbtn{position:absolute;right:8px;bottom:8px;z-index:5;width:34px;height:34px;border:1px solid rgba(236,228,215,.25);background:rgba(25,21,26,.6);color:var(--bone);font-size:16px;cursor:pointer;padding:0;line-height:1}
@@ -7478,7 +7478,7 @@ function dCursor(x,y,press){const g=DM.g;g.save();g.translate(Math.round(x),Math
 function dMouse(x,y,btn){const g=DM.g;g.save();g.translate(Math.round(x),Math.round(y));g.scale(1.6,1.6);x=0;y=0;dr(x,y,11,15,'#000');dr(x+1,y+1,9,13,'#2a2028');dr(x+1,y+1,4,6,btn==='l'?'#ff4a5c':'#4a4250');dr(x+6,y+1,4,6,btn==='r'?'#ff4a5c':'#4a4250');dr(x+5,y+1,1,6,'#000');g.restore();}
 function dKey(x,y,label,down,w){w=w||11;dr(x,y+(down?1:2),w,11,'#000');dr(x,y+(down?1:0),w,10,down?'#ff4a5c':'#4a4250');dr(x+1,y+(down?2:1),w-2,8,down?'#c8203a':'#2a2028');dtext(label,x+w/2,y+(down?9:8),down?'#ffffff':'#ece4d7',8);}
 function dBtn(x,y,label,down,r){const g=DM.g;r=Math.max(r||9,10);g.beginPath();g.arc(x,y+(down?1:0),r,0,Math.PI*2);g.fillStyle=down?'#ff4a5c':'rgba(236,228,215,0.18)';g.fill();g.lineWidth=1;g.strokeStyle=down?'#ffffff':'rgba(236,228,215,0.6)';g.stroke();const ic={DASH:'dash',KUNAI:'kunai',HEAL:'heal',THIRST:'thirst'}[label];
-  if(ic){const Bm=BTN_ICONS[ic],ox=Math.round(x-6),oy=Math.round(y-6+(down?1:0));Bm.forEach((row,j)=>{for(let i=0;i<row.length;i++){const c=BTN_PAL[row[i]];if(c)dr(ox+i,oy+j,1,1,c);}});}
+  if(ic){const Bm=BTN_ICONS[ic],ox=Math.round(x-6),oy=Math.round(y-6+(down?1:0));Bm.forEach((row,j)=>{for(let i=0;i<row.length;i++)if(btnOn(ic,row[i]))dr(ox+i,oy+j,1,1,'#ece4d7');});}
   else dtext(label,x,y+3+(down?1:0),'#ffffff',label.length>3?6:8);}
 function dSpark(x,y,k,c){for(let i=0;i<8;i++){const a=i/8*Math.PI*2,r=3+k*7;dr(x+Math.cos(a)*r,y+Math.sin(a)*r,1,1,c||'#ffffff',1-k);}}
 function dStick(cx,cy,dx,dy,a){const g=DM.g;g.globalAlpha=a;g.beginPath();g.arc(cx,cy,10,0,Math.PI*2);g.strokeStyle='rgba(236,228,215,0.7)';g.stroke();g.beginPath();g.arc(cx+dx,cy+dy,5,0,Math.PI*2);g.fillStyle='rgba(236,228,215,0.5)';g.fill();g.globalAlpha=1;}
@@ -7554,9 +7554,13 @@ const BTN_ICONS={
   dash:['............','......kk....','......kwk...','.gg.kkkwwk..','....kwwwwwk.','ggg.kwwwwwwk','....kwwwwwk.','.gg.kkkwwk..','......kwk...','......kk....','............','............'],
   take:['............','...k.k.k....','..kwkwkwk...','..kwkwkwk.k.','..kwwwwwkkwk','..kwwwwwwkwk','..kwwwwwwwk.','..kwwwwwwwk.','...kwwwwwk..','....kwwwk...','....kkkkk...','............'],
 };
+// one colour, one shade: every drawn pixel is filled with the button's text colour; outlines drop out, and a few
+// highlight pixels are cut out as negative space (the cross in the blood drop)
+const BTN_HOLES={heal:'w'};
+const btnOn=(name,ch)=>ch!=='.'&&ch!=='k'&&!(BTN_HOLES[name]||'').includes(ch);
 function iconSvg(name){const B=BTN_ICONS[name];if(!B)return'';let r='';
-  B.forEach((row,y)=>{for(let x=0;x<row.length;x++){const c=BTN_PAL[row[x]];if(c)r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${c}"/>`;}});
-  return`<svg class="ti" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;}
+  B.forEach((row,y)=>{for(let x=0;x<row.length;x++)if(btnOn(name,row[x]))r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`;});
+  return`<svg class="ti" viewBox="0 0 12 12" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${r}</svg>`;}
 // each button keeps a spoken name (aria-label, translated like everything else) and shows an icon plus, for tools, a count
 function buildButtonIcons(){
   const set=(id,icon,label,count)=>{const b=$(id);if(!b)return;b.setAttribute('aria-label',label);b.title=label;b.innerHTML=iconSvg(icon)+(count?`<b class="tcount" id="${id}N">0</b>`:'');b.classList.add('ticon');};

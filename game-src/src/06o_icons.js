@@ -11,9 +11,13 @@ const BTN_ICONS={
   dash:['............','......kk....','......kwk...','.gg.kkkwwk..','....kwwwwwk.','ggg.kwwwwwwk','....kwwwwwk.','.gg.kkkwwk..','......kwk...','......kk....','............','............'],
   take:['............','...k.k.k....','..kwkwkwk...','..kwkwkwk.k.','..kwwwwwkkwk','..kwwwwwwkwk','..kwwwwwwwk.','..kwwwwwwwk.','...kwwwwwk..','....kwwwk...','....kkkkk...','............'],
 };
+// one colour, one shade: every drawn pixel is filled with the button's text colour; outlines drop out, and a few
+// highlight pixels are cut out as negative space (the cross in the blood drop)
+const BTN_HOLES={heal:'w'};
+const btnOn=(name,ch)=>ch!=='.'&&ch!=='k'&&!(BTN_HOLES[name]||'').includes(ch);
 function iconSvg(name){const B=BTN_ICONS[name];if(!B)return'';let r='';
-  B.forEach((row,y)=>{for(let x=0;x<row.length;x++){const c=BTN_PAL[row[x]];if(c)r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${c}"/>`;}});
-  return`<svg class="ti" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;}
+  B.forEach((row,y)=>{for(let x=0;x<row.length;x++)if(btnOn(name,row[x]))r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`;});
+  return`<svg class="ti" viewBox="0 0 12 12" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${r}</svg>`;}
 // each button keeps a spoken name (aria-label, translated like everything else) and shows an icon plus, for tools, a count
 function buildButtonIcons(){
   const set=(id,icon,label,count)=>{const b=$(id);if(!b)return;b.setAttribute('aria-label',label);b.title=label;b.innerHTML=iconSvg(icon)+(count?`<b class="tcount" id="${id}N">0</b>`:'');b.classList.add('ticon');};
