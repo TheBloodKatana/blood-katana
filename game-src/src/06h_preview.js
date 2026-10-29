@@ -33,7 +33,7 @@ const PX0=38,PY0=51,DX0=78;
 const PV_BEATS=[{t:0.55,k:'side'},{t:1.3,k:'down'},{t:2.1,k:'trace'},{t:2.62,k:'cast'}];
 function pvCut(cx,cy,r,a0,a1,w,set){PV.cuts.push({cx,cy,r,a0,a1,w,set,t:0,trav:0.09,ling:0.06,fade:0.2});}
 function pvBurst(x,y,n,cols,sp){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(sp||1)*(30+Math.random()*80);PV.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-20,life:0.3+Math.random()*0.45,max:0.75,col:cols[i%cols.length],size:Math.random()<0.3?2:1});}}
-const pvCutSet=()=>{const L=PV.look,T=L.thirst;return T?{core:T.core,edge:T.edge,burst:T.ac}:L.set;};
+const pvCutSet=()=>{const L=PV.look,T=L.thirst;return T?{core:T.core,edge:T.edge,burst:T.ac,fx:T.cutfx}:L.set;};
 function pvHit(n,big){const s=pvCutSet();PV.hitT=0.09;PV.shake=big?0.12:0.06;pvBurst(DX0,PY0-14,n,s.burst,big?1.4:1);if(PV.audible)sfx(big?'slash':'hit');}
 function pvStep(dt){
   const T0=PV.t,T1=PV.t+dt;PV.t=T1;const lp=Math.floor(T1/4.4);
@@ -56,8 +56,13 @@ function pvDrawCut(c){
   const span=(c.a1-c.a0)*u,n=Math.max(4,Math.ceil(Math.abs(span)*c.r/2));
   for(let i=0;i<=n;i++){const v=i/n,a=c.a0+span*v,x=c.cx+Math.cos(a)*c.r,y=c.cy+Math.sin(a)*c.r*0.8,tx=-Math.sin(a),ty=Math.cos(a)*0.8;
     const prof=done?Math.pow(Math.sin(Math.PI*v),0.7):(v<0.9?Math.pow(v/0.9,0.6):(1-v)/0.1),w=c.w/2*prof*(done?(0.4+0.6*fadeK):1),r=Math.round(w),cr=Math.floor(w*0.4);
-    const edge=setCol(set.edge,i>>2);if(r<=0){pset(x,y,edge,fadeK);continue;}
-    for(let k=-r;k<=r;k++)pset(x-ty*k,y+tx*k,Math.abs(k)<=cr?set.core:edge,done?fadeK:1);}
+    const edge=set.fx==='fire'?HEAT[2+((i+(PV.t*14|0))%2)]:set.fx==='moon'?'#c0001e':setCol(set.edge,i>>2);if(r<=0){pset(x,y,edge,fadeK);continue;}
+    const al=done?fadeK:1;
+    if(set.fx==='fire'){const R2=r+1;for(let k=-R2;k<=R2;k++)pset(x-ty*k,y+tx*k,Math.abs(k)<=cr?'#fff6c0':Math.abs(k)>r?HEAT[1]:edge,al);
+      if(i%2===0){const h=Math.round((Math.sin(i*0.9+PV.t*24)+1)*2*al);for(let j=1;j<=h;j++)pset(x,y-R2-j,HEAT[clamp(4-j,0,4)],al*(1-j/(h+2)));}continue;}
+    if(set.fx==='moon'){const R2=r+1;for(let k=-R2;k<=R2;k++)pset(x-ty*k,y+tx*k,Math.abs(k)>r?'#f0e8ff':Math.abs(k)<=cr?'#0a0004':edge,al);
+      if(i%5===0){const ph=(PV.t*1.6+i*0.13)%1;pset(x,y+R2+1+ph*6,'#ff1030',al*(1-ph));}continue;}
+    for(let k=-r;k<=r;k++)pset(x-ty*k,y+tx*k,Math.abs(k)<=cr?set.core:edge,al);}
   if(!done){const a=c.a0+span,x=c.cx+Math.cos(a)*c.r,y=c.cy+Math.sin(a)*c.r*0.8;pset(x,y,'#ffffff');pset(x+1,y,'#ffffff');}
 }
 function pvShadow(x,y,w){for(let yy=-1;yy<=1;yy++){const ww=Math.round(w*Math.sqrt(1-yy*yy/4));for(let xx=-ww;xx<=ww;xx++)pset(x+xx,y+yy,'#050305',0.5);}}

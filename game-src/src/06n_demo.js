@@ -55,7 +55,9 @@ function dCursor(x,y,press){const g=DM.g;g.save();g.translate(Math.round(x),Math
 // the mouse, with the pressed button lit
 function dMouse(x,y,btn){const g=DM.g;g.save();g.translate(Math.round(x),Math.round(y));g.scale(1.6,1.6);x=0;y=0;dr(x,y,11,15,'#000');dr(x+1,y+1,9,13,'#2a2028');dr(x+1,y+1,4,6,btn==='l'?'#ff4a5c':'#4a4250');dr(x+6,y+1,4,6,btn==='r'?'#ff4a5c':'#4a4250');dr(x+5,y+1,1,6,'#000');g.restore();}
 function dKey(x,y,label,down,w){w=w||11;dr(x,y+(down?1:2),w,11,'#000');dr(x,y+(down?1:0),w,10,down?'#ff4a5c':'#4a4250');dr(x+1,y+(down?2:1),w-2,8,down?'#c8203a':'#2a2028');dtext(label,x+w/2,y+(down?9:8),down?'#ffffff':'#ece4d7',8);}
-function dBtn(x,y,label,down,r){const g=DM.g;g.font=`${label.length>3?6:8}px Silkscreen, monospace`;r=Math.max(r||9,Math.ceil(g.measureText(label).width/2)+3);g.beginPath();g.arc(x,y+(down?1:0),r,0,Math.PI*2);g.fillStyle=down?'#ff4a5c':'rgba(236,228,215,0.18)';g.fill();g.lineWidth=1;g.strokeStyle=down?'#ffffff':'rgba(236,228,215,0.6)';g.stroke();dtext(label,x,y+3+(down?1:0),'#ffffff',label.length>3?6:8);}
+function dBtn(x,y,label,down,r){const g=DM.g;r=Math.max(r||9,10);g.beginPath();g.arc(x,y+(down?1:0),r,0,Math.PI*2);g.fillStyle=down?'#ff4a5c':'rgba(236,228,215,0.18)';g.fill();g.lineWidth=1;g.strokeStyle=down?'#ffffff':'rgba(236,228,215,0.6)';g.stroke();const ic={DASH:'dash',KUNAI:'kunai',HEAL:'heal',THIRST:'thirst'}[label];
+  if(ic){const Bm=BTN_ICONS[ic],ox=Math.round(x-6),oy=Math.round(y-6+(down?1:0));Bm.forEach((row,j)=>{for(let i=0;i<row.length;i++){const c=BTN_PAL[row[i]];if(c)dr(ox+i,oy+j,1,1,c);}});}
+  else dtext(label,x,y+3+(down?1:0),'#ffffff',label.length>3?6:8);}
 function dSpark(x,y,k,c){for(let i=0;i<8;i++){const a=i/8*Math.PI*2,r=3+k*7;dr(x+Math.cos(a)*r,y+Math.sin(a)*r,1,1,c||'#ffffff',1-k);}}
 function dStick(cx,cy,dx,dy,a){const g=DM.g;g.globalAlpha=a;g.beginPath();g.arc(cx,cy,10,0,Math.PI*2);g.strokeStyle='rgba(236,228,215,0.7)';g.stroke();g.beginPath();g.arc(cx+dx,cy+dy,5,0,Math.PI*2);g.fillStyle='rgba(236,228,215,0.5)';g.fill();g.globalAlpha=1;}
 // ---------- the scenes ----------

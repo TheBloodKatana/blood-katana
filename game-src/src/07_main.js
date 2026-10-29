@@ -237,6 +237,24 @@ function pxSliver(s,from,to,hw,prof,edge,core,a){
   for(let i=0;i<=n;i++){const d=from+span*i/n,p=posAt(s,d),t=tangentAt(s,d),w=hw*prof(i/n),r=Math.round(w),cr=Math.floor(w*0.4),x=LX(p.x),y=LY(p.y);
     if(r<=0){pset(x,y,edge,a);continue;}for(let k=-r;k<=r;k++)pset(x-t.y*k,y+t.x*k,Math.abs(k)<=cr?core:edge,a);}
 }
+// thirst skins with a slash of their own: fire licks up off a hellfire cut; a blood moon cut is dark, silver-rimmed and drips
+function drawSkinCut(s,wpx){
+  const T=thirstSkin();if(!T.cutfx)return false;
+  const fading=s.done&&s.linger<=0,a=fading?clamp(s.fade/s.fadeMax,0,1):1;
+  if(T.cutfx==='fire'){
+    drawCut(s,'#3a0a00',HEAT[2],wpx*1.5);drawCut(s,'#fff6c0',(S.gt*14|0)%2?HEAT[3]:HEAT[2],wpx);
+    for(let d=0;d<s.d;d+=3){const p=posAt(s,d),x=LX(p.x),y=LY(p.y),f=Math.sin(d*0.55+S.gt*24)+0.6*Math.sin(d*0.21-S.gt*9),h=Math.max(0,Math.round((f+1)*2.6*a));
+      for(let j=1;j<=h;j++)pset(x+Math.round(Math.sin(S.gt*30+d+j)*0.6),y-2-j,HEAT[clamp(4-j,0,4)],a*(1-j/(h+2)));
+      if(h>4&&(d/3+(S.gt*20|0))%5===0)pset(x,y-h-4,'#1a0a08',a*0.6);}
+    return true;}
+  if(T.cutfx==='moon'){
+    const b=tsBeat();drawCut(s,'#f0e8ff','#f0e8ff',wpx*1.45);drawCut(s,'#0a0004',b>0.4?'#ff3050':'#c0001e',wpx*(1+0.3*b));
+    for(let d=9;d<s.d;d+=22){const p=posAt(s,d),t=tangentAt(s,d),x=LX(p.x)-t.y*5,y=LY(p.y)+t.x*5-4;// little crescent moons beside the cut
+      for(let i=0;i<9;i++){const an=Math.PI*0.35+i/8*Math.PI*1.3;pset(x+Math.cos(an)*2.5,y+Math.sin(an)*2.5,'#f0e8ff',a);}}
+    for(let d=4;d<s.d;d+=7){const p=posAt(s,d),ph=((S.gt*1.6)+d*0.13)%1;if(ph>0.85)continue;const x=LX(p.x),y=LY(p.y)+2+ph*9;pset(x,y,'#ff1030',a*(1-ph));pset(x,y-1,'#a0001a',a*(1-ph)*0.7);}
+    return true;}
+  return false;
+}
 function drawCut(s,core,edge,wpx){
   const fading=s.done&&s.linger<=0,a=fading?clamp(s.fade/s.fadeMax,0,1):1;
   if(!s.done&&s.d<s.len&&!s.isTap&&s.kind!=='kunai'){const step=6;for(let d=Math.ceil(s.d/step)*step;d<s.len;d+=step){const p=posAt(s,d);pset(LX(p.x),LY(p.y),edge,0.6);}}
@@ -709,7 +727,7 @@ function draw(){
   drawFoeAir();flush();
   drawShots();flush();
   for(const s of S.eslashes){if(s.guard)drawCut(s,C.white,C.steel,5);else if(s.col){drawCut(s,s.core||C.white,s.col,(s.hr||8)*0.75);if(s.kind==='bolt'&&!s.done){const h=head(s);for(let i=0;i<3;i++)pset(LX(h.x)+rand(-4,4),LY(h.y)+rand(-4,4),'#ffe066');}}else if(s.phase)drawCut(s,'#efe6ff',C.phase,6);else if(s.kind==='wind')drawCut(s,C.white,C.wind,6);else if(s.kind==='fire')drawCut(s,'#d8f6ff',C.water,7);else if(s.kind==='neck')drawCut(s,PAL.pale[0],'#2a1a1a',4);else if(s.kind==='chain')drawCut(s,C.steel,'#3a3a42',2);else if(s.kind==='smoke')drawCut(s,'#d8d0d8',C.smoke,9);else if(s.kind==='shove')drawCut(s,'#e8f8ff','#6aa84f',11);else if(s.kind==='tongue')drawCut(s,'#ffb0c0','#e0607a',5);else drawCut(s,'#fff6e0',C.curse,(s.hr||8)*0.75);}
-  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(8,s.hr*0.9));if(!s.done||s.linger>0)tsCutFx(s);}else if(s.ult){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(10,s.hr*0.9));}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
+  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut(),w=Math.max(8,s.hr*0.9);if(!drawSkinCut(s,w))drawCut(s,tc[0],tc[1],w);if(!s.done||s.linger>0)tsCutFx(s);}else if(s.ult){const tc=tsCut(),w=Math.max(10,s.hr*0.9);if(!drawSkinCut(s,w))drawCut(s,tc[0],tc[1],w);}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
   for(const m of S.marks){const x=LX(m.x),y=LY(m.y),L=m.ult?16:11;pline(x-m.c*L,y-m.s*L,x+m.c*L,y+m.s*L,m.life>0.06?C.white:C.hi,1,m.ult?2:1);}
   for(const b of S.bolts){let x=LX(b.a.x),y=LY(b.a.y);const tx=LX(b.b.x),ty=LY(b.b.y);for(let i=1;i<=6;i++){const nx=x+(tx-x)/(7-i)+(i<6?rand(-4,4):0),ny=y+(ty-y)/(7-i)+(i<6?rand(-4,4):0);pline(x,y,nx,ny,i%2?'#e8f0ff':'#9ab8ff');x=nx;y=ny;}}
   drawOrbs();drawAuras();
@@ -769,8 +787,8 @@ function updateHUD(){
   {const tc=S.traceCd||0,kn=S.mode==='run'?knownTech(techW()).length:0;setW('trFill',Math.round((tc>0?1-tc/(S.traceCdMax||1):1)*100)+'%');setT('trVal',S.mode!=='run'?'–':!kn?'None':tc>0?tc.toFixed(1)+'s':`Ready · ${kn}`);
    const v=(tc>0?1-tc/(S.traceCdMax||1):1).toFixed(2);if(hc.tcd!==v){hc.tcd=v;$('tTrace').style.setProperty('--cd',v);}$('tTrace').classList.toggle('off',!kn||wBroken());$('tTrace').classList.toggle('armed',!!(S.traceArm||S.trace));}
   $('tHeal').classList.toggle('off',S.meter<healCost()||P.hp>=P.max);$('tMend').classList.toggle('off',!P.wpn||S.meter<mendCost()||P.wpn.dur>=P.wpn.max);$('tUlt').classList.toggle('ready',S.meter>=btCost()&&!btOn());
-  setT('tKunai',`Kunai ${S.tools?S.tools.kunai:0}`);setT('tShuri',`Shuri ${S.tools?S.tools.shuri:0}`);$('tThrow').classList.toggle('off',!P.wpn);
-  {const pr=S.prompt;$('tUse').hidden=!pr;if(pr)setT('tUse',pr.kind==='weapon'?(pr.price?'Buy':'Take'):pr.kind==='item'?'Buy':pr.smith?'Forge':'Talk');}
+  setT('tKunaiN',String(S.tools?S.tools.kunai:0));setT('tShuriN',String(S.tools?S.tools.shuri:0));$('tKunai').classList.toggle('off',!S.tools||!S.tools.kunai);$('tShuri').classList.toggle('off',!S.tools||!S.tools.shuri);$('tThrow').classList.toggle('off',!P.wpn);
+  {const pr=S.prompt;$('tUse').hidden=!pr;if(pr)setT('tUseL',pr.kind==='weapon'?(pr.price?'Buy':'Take'):pr.kind==='item'?'Buy':pr.smith?'Forge':'Talk');}
   const dc=CFG.dashCd*S.mods.dashCdMul;setW('dashFill',Math.round((dc>0?1-P.dashCd/dc:1)*100)+'%');setT('dashVal',P.dashCd>0?P.dashCd.toFixed(1)+'s':'Ready');
   {const v=(dc>0?1-P.dashCd/dc:1).toFixed(2);if(hc.dcd!==v){hc.dcd=v;$('tDash').style.setProperty('--cd',v);}}
   setT('monVal',String(S.mon));
@@ -849,7 +867,7 @@ async function start(){
   try{document.fonts&&document.fonts.load('8px Silkscreen');document.fonts.load('16px Silkscreen');}catch(_){}
   loadCfg();loadMeta();applySettings();buildSprites();buildProps();buildProps2();
   await loadPlayer();if(!PL.ready)playerFallback();await loadChars();try{applyLook();}catch(_){}
-  buildDebug();syncSnd();
+  buildButtonIcons();buildDebug();syncSnd();
   S.floor=genFloor(1);enterRoom(S.floor.start,null);
   showTitle();studioSplash();
   requestAnimationFrame(frame);
