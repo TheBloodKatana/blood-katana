@@ -69,6 +69,98 @@ Blood Katana es un roguelite samurái veloz en el que cada corte lo dibuja tu pr
 • Atuendos, acabados de hoja y colores de corte. Un giro gratis cada día.
 • Funciona sin conexión. Anuncios solo cuando eliges verlos. Las compras opcionales son cosméticas.
 
+## 日本語
+**アプリ名**: Blood Katana
+
+**簡単な説明**:
+折れた刃一本で、百の地獄を斬り抜けろ。侍ローグライト。
+
+**詳しい説明**:
+刃は折られ、名は奪われた。それをやった男とあなたの間には、百の地獄の階が立ちはだかる。
+
+Blood Katanaは、すべての斬撃を自分の手で描くスピーディーな侍ローグライト。タップで斬り、なぞって断ち、長押しで抜刀し、宙に形を描けば時がゆっくり流れる中で技が放たれる。
+
+• 十の界、百の階：月下の道場、囁く竹林、水没した寺、鬼の地獄、三途の川、紅蓮の氷原、餓鬼界、修羅の戦場、天狗の峰、そして簒奪者の城。
+• 四十の主と獄卒、それぞれに固有の技。大波、交差する裁きの光、骨の手、雷雲、影分身をかわせ。
+• 紋の決闘：主は宙に形を描く。描き終わる前に同じ形を描けば、主自身の筆が主を斬る。
+• 墨の連結：描く途中で止まり、もう一度描けば二つの技が一つに融合する。
+• 敵の斬撃を斬って受け流せ。敵は守り、かわし、フェイントをかけ、取り囲み、あなたの構えを読んでくる。
+• 十一の武器：刀、槍、金棒、鎖鎌、鉄砲を死者から奪い、野太刀、鉄扇、棒、鎌、薙刀を社で鍛えよう。どの武器にも固有の技、血の形態、技がある。
+• 七つの降り方：物語の降下、全員共通の日替わり試練、週替わり試練、波状戦、無限、四十の主と連戦するボスラッシュ、二十の地獄レベル。試練では25の呪いを自由に組み合わせられる。
+• 功績、妖怪図鑑、そして実力を示すほど社に住みつく八人の流れ者。
+• 血樹：挑戦の合間に血晶を預け、新たな技を育て続けよう。
+• 装束、刀の仕上げ、斬撃の色で着飾ろう。毎日一回無料の福引。
+• オフラインで遊べる。広告は自分で選んだ時だけ。課金要素は見た目のみ。
+
+## Français
+**Nom**: Blood Katana
+
+**Description courte**:
+Tranchez à travers cent enfers avec une lame brisée. Un roguelite samouraï.
+
+**Description complète**:
+Votre lame a été brisée. Votre nom a été volé. Entre vous et l'homme qui a fait ça se dressent cent étages d'enfer.
+
+Blood Katana est un roguelite samouraï nerveux où chaque coupe est tracée de votre propre main. Touchez pour frapper, glissez pour trancher, maintenez pour dégainer, et tracez des formes dans l'air pour déchaîner des techniques pendant que le temps ralentit.
+
+• Dix royaumes, cent étages : dojos au clair de lune, bambous hantés, temples engloutis, les enfers des oni, la rivière des morts, des étendues gelées, le royaume des fantômes affamés, le champ de bataille d'Ashura, les pics des tengu et le château de l'usurpateur.
+• Quarante seigneurs et gardiens, chacun avec ses propres coups. Esquivez raz-de-marée, rayons du jugement croisés, mains d'os, nuages d'orage et clones d'ombre.
+• Duels de glyphes : les seigneurs peignent des formes dans l'air. Tracez la même forme avant qu'ils aient fini et leur propre pinceau les tranche.
+• Chaînes d'encre : restez immobile en plein trait et tracez à nouveau pour fusionner deux techniques en une.
+• Parez en tranchant à travers les coups ennemis. Les ennemis se protègent, esquivent, feintent, vous encerclent et lisent votre posture.
+• Onze armes : arrachez katana, yari, kanabō, kusarigama et teppō aux morts, ou forgez le nodachi, l'éventail de guerre, le bō, la kama et le naginata au sanctuaire. Chacune a ses coups, sa forme de sang et ses techniques.
+• Sept façons de descendre : la descente principale, un défi quotidien identique pour tous, une épreuve hebdomadaire, Vagues, Infini, un défilé de boss contre les quarante seigneurs et vingt niveaux de l'enfer. Combinez 25 malédictions dans les Épreuves.
+• Exploits, un bestiaire et huit vagabonds qui viennent vivre à votre sanctuaire à mesure que vous faites vos preuves.
+• L'Arbre de sang : mettez des éclats de côté entre les parties et faites pousser de nouvelles techniques à l'infini.
+• Tenues, finitions de lame et couleurs de coupe. Un tirage gratuit chaque jour.
+• Jouable hors ligne. Des pubs uniquement si vous choisissez d'en regarder. Les achats optionnels sont purement cosmétiques.
+
+## Русский
+**Название**: Blood Katana
+
+**Краткое описание**:
+Прорубитесь сквозь сто преисподних со сломанным клинком. Самурайский рогалик.
+
+**Полное описание**:
+Ваш клинок сломан. Ваше имя украдено. Между вами и тем, кто это сделал, — сто этажей ада.
+
+Blood Katana — динамичный самурайский рогалик, где каждый разрез вы рисуете своей рукой. Нажмите, чтобы ударить, проведите, чтобы разрубить, удерживайте, чтобы выхватить клинок, и рисуйте фигуры в воздухе, чтобы обрушивать техники, пока время замедляется.
+
+• Десять царств, сто этажей: додзё в лунном свете, бамбуковая роща с призраками, затонувшие храмы, ад они, река мёртвых, ледяные пустоши, царство голодных духов, поле битвы Асуры, пики тэнгу и замок узурпатора.
+• Сорок владык и стражей, у каждого свои приёмы. Уклоняйтесь от цунами, скрещённых лучей суда, костяных рук, грозовых туч и теневых клонов.
+• Дуэли знаков: владыки рисуют фигуры в воздухе. Нарисуйте ту же фигуру, пока они не закончили, и их собственная кисть разрежет их.
+• Чернильные цепочки: замрите посреди штриха и рисуйте снова, чтобы слить две техники в одну.
+• Парируйте, разрезая вражеские удары. Враги защищаются, уклоняются, делают финты, окружают вас и читают вашу стойку.
+• Одиннадцать видов оружия: отнимайте у мёртвых катану, яри, канабо, кусаригаму и тэппо или выкуйте в святилище нодати, боевой веер, бо, каму и нагинату. У каждого свои приёмы, кровавая форма и техники.
+• Семь способов спуститься: сюжетный спуск, ежедневное испытание, одинаковое для всех, еженедельное испытание, Волны, Бесконечный режим, битва со всеми сорока владыками подряд и двадцать уровней ада. Сочетайте 25 проклятий в Испытаниях.
+• Подвиги, бестиарий и восемь странников, которые поселяются в вашем святилище, когда вы докажете свою силу.
+• Кровавое древо: копите осколки между забегами и выращивайте новые техники бесконечно.
+• Наряды, отделка клинков и цвета разрезов. Бесплатный розыгрыш каждый день.
+• Играйте без интернета. Реклама — только если вы сами решите её посмотреть. Необязательные покупки — только косметика.
+
+## 简体中文
+**应用名称**: Blood Katana
+
+**简短说明**:
+手持断刀，杀出百重地狱。武士肉鸽动作游戏。
+
+**完整说明**:
+你的刀被折断，你的名字被夺走。在你和那个人之间，横亘着一百层地狱。
+
+Blood Katana 是一款节奏明快的武士肉鸽游戏，每一斩都由你亲手画出。轻触挥斩，划动劈砍，长按拔刀，在空中描画图形即可在时间放缓之际施展技。
+
+• 十个界，一百层：月下道场、闹鬼竹林、沉没古寺、鬼之地狱、冥河三途川、冰封荒原、饿鬼界、修罗战场、天狗峰，以及篡位者之城。
+• 四十位领主与狱卒，各有独门招式。闪避巨浪、交错的审判光束、白骨之手、雷云和影分身。
+• 印之决斗：领主会在空中描画图形。在他们画完之前描出相同的图形，他们自己的笔就会斩伤他们。
+• 墨之连结：描画中途停顿，再继续画，即可将两门技融合为一。
+• 斩向敌人的攻击即可格挡。敌人会防御、闪避、佯攻、包围你，并看破你的架势。
+• 十一种武器：从死者手中夺取太刀、长枪、金棒、锁镰和铁炮，或在神社锻造野太刀、铁扇、长棍、镰刀和薙刀。每种武器都有独特招式、血之形态与技。
+• 七种下降方式：主线下降、所有玩家相同的每日挑战、每周试炼、波次、无尽、与四十位领主连战的首领连战，以及二十个地狱等级。在试炼中自由组合25种诅咒。
+• 功绩、图鉴，以及随着你证明自己而入住神社的八位流浪者。
+• 血树：在挑战之间存下血晶，不断培育新的技。
+• 装束、刀身外观与斩击颜色。每天一次免费抽签。
+• 支持离线游玩。只有你主动选择时才会看广告。可选购买内容仅为外观。
+
 ## Category and tags
 Category: Games → Action (or Role Playing). Tags: Roguelike, Action, Samurai, Pixel art, Offline.
 

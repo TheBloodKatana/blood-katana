@@ -29,7 +29,7 @@ function hermitOffer(o){
   const cur=S.elem,pool=shuffle(ELEMS.filter(E=>!cur||E.id!==cur.id)).slice(0,cur&&cur.rank<3?2:3);
   if(cur&&cur.rank<3)pool.unshift(ELEM_BY[cur.id]);
   const cards=pool.map(E=>{const same=cur&&cur.id===E.id,swap=cur&&!same;
-    return{kind:same?`Rank ${ROMAN[cur.rank+1]} · free`:swap?`Swap · ${SWAP_COST} coins`:'Free',name:`${E.jp} ${E.name}`,desc:same?E.ranks[cur.rank]:E.proc+(E.p<0.1?' Rarer: 5% per hit.':''),dis:swap&&S.mon<SWAP_COST};});
+    return{kind:same?`Rank ${ROMAN[cur.rank+1]} · free`:swap?`Swap · ${SWAP_COST} coins`:'Free',name:`${E.jp} ${E.name}`,desc:same?E.ranks[cur.rank]:tr(E.proc)+(E.p<0.1?' '+tr('Rarer: 5% per hit.'):''),dis:swap&&S.mon<SWAP_COST};});
   openChooser({cancel:'Not today',eyebrow:'Enkū, the element hermit',title:cur?'Rank up, or trade tempers':'Choose a temper',sub:'One element at a time. Every hit has a 10% chance to set it off.',cards,
     pick:j=>{const E=pool[j],same=cur&&cur.id===E.id;
       if(cur&&!same){if(S.mon<SWAP_COST){sfx('deny');return;}S.mon-=SWAP_COST;}
@@ -95,4 +95,5 @@ function drawElemOn(e){
   if(e.markT>0){const r=6;for(let i=0;i<12;i++){const a=i/12*Math.PI*2+S.gt*3;if(i%2)pset(x+Math.cos(a)*r,top-4+Math.sin(a)*r*0.5,'#b48cff');}pset(x,top-4,'#ffffff');}
   if(e.stagT>0)for(let i=0;i<3;i++){const a=S.gt*6+i*2.1;pset(x+Math.cos(a)*7,top-2+Math.sin(a)*2,'#e8d8b0');}
 }
+Object.assign(MENU_ACTS,{lang(t){const v=t.dataset.v;if(v===LANG_PICK)return;CFG.lang=v;save();setTimeout(()=>location.reload(),120);}});
 function elemChip(){const E=elemNow();return E?`<span class="pchip elem" style="border-color:${E.col};color:${E.col}" title="${esc(E.proc)}">${E.jp} ${E.name} ${ROMAN[S.elem.rank]}</span>`:'';}

@@ -73,6 +73,7 @@ const MENUS={
     const seg=(k,label,opts)=>`<div class="set-row"><span>${label}</span><div class="seg">${opts.map(([v,l])=>`<button type="button" data-s="${k}" data-v="${v}" class="${CFG[k]==v?'on':''}">${l}</button>`).join('')}</div></div>`;
     menuShow(`<div class="mv-head"><div class="mv-title">Settings</div><button class="btn ghost mv-x" type="button" data-m="back">Back</button></div>
       <div class="mv-body">
+        <div class="set-sec"><h3>Language</h3><div class="set-row"><span>Language<small>Auto follows your phone</small></span><div class="seg lang" data-notr>${LANGS.map(([v,l])=>`<button type="button" data-m="lang" data-v="${v}" class="${LANG_PICK===v?'on':''}">${v==='auto'?tr('Auto'):l}</button>`).join('')}</div></div></div>
         <div class="set-sec"><h3>Sound</h3>${T('sound','Sound')}${T('music','Music')}${R('sfxVol','Effects volume',0,1,0.05)}${R('musicVol','Music volume',0,1,0.05)}</div>
         <div class="set-sec"><h3>Screen</h3>${T('shake','Screen shake')}${T('flashes','Screen flashes','White flashes on big hits and parries')}${T('lighting','Lighting','Turn off on slow phones')}${T('ambient','Ambient particles')}${T('corpses','Bodies cut in two')}${T('minimap','Minimap')}${S.touchUI?'':T('cursor','Pixel cursor')}
           ${R('darkness','Darkness',0.4,1.4,0.05)}</div>

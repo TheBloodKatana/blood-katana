@@ -2,10 +2,11 @@ import pathlib,base64,subprocess,json,re,io,tempfile
 # Joins the game's modules into one HTML file and copies it into the Android app (www/index.html).
 # Run from anywhere: python3 game-src/build.py   (pyftsubset from fonttools is optional; it shrinks the Japanese font)
 HERE=pathlib.Path(__file__).resolve().parent;S=HERE/'src';A=HERE/'fonts';TMP=pathlib.Path(tempfile.gettempdir())
-ORDER=['01_core.js','01b_music.js','02_data.js','02b_content.js','02c_cosmetics.js','03_sprites.js','03b_sprites.js','04_world.js','05_combat.js','05b_weapons.js','05c_skills.js','05d_foes.js','05e_bosses.js','06_run.js','06c_hub.js','06b_tree.js','06d_app.js','06e_shop.js','06h_preview.js','06i_gift.js','06j_prologue.js','06k_thirst.js','06l_elements.js','06f_modes.js','06g_feats.js','07_main.js']
+ORDER=['00_lang.js','01_core.js','01b_music.js','02_data.js','02b_content.js','02c_cosmetics.js','03_sprites.js','03b_sprites.js','04_world.js','05_combat.js','05b_weapons.js','05c_skills.js','05d_foes.js','05e_bosses.js','06_run.js','06c_hub.js','06b_tree.js','06d_app.js','06e_shop.js','06h_preview.js','06i_gift.js','06j_prologue.js','06k_thirst.js','06l_elements.js','06f_modes.js','06g_feats.js','07_main.js']
 js='\n'.join((S/f).read_text() for f in ORDER if (S/f).exists())
 js=js.replace("'__PLAYER_B64__'","'"+(S/'player_sheet.b64').read_text().strip()+"'")
 js=js.replace('__CHAR_B64__',(S/'char_sheets.json').read_text().strip())
+js=js.replace('__LANG_JSON__',(S/'lang.json').read_text().strip())
 js='(function(){"use strict";\n'+js+'\n})();'
 (TMP/'bk.js').write_text(js)
 page=(S/'page.html').read_text()
@@ -25,6 +26,8 @@ EXT='U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U
 css=face('Silkscreen',A/'silkscreen-latin-400-normal.woff2',400,LAT)+face('Silkscreen',A/'silkscreen-latin-ext-400-normal.woff2',400,EXT)
 css+=face('DotGothic16',A/'dotgothic16-latin-400-normal.woff2',400,LAT)+face('DotGothic16',A/'dotgothic16-latin-ext-400-normal.woff2',400,EXT)
 if sub.exists():css+=face('DotGothic16',sub,400)
+CYR='U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'
+css+=face('DotGothic16',A/'dotgothic16-cyrillic-400-normal.woff2',400,CYR)+face('JetBrains Mono',A/'jetbrains-mono-cyrillic-400-normal.woff2',400,CYR)
 css+=face('JetBrains Mono',A/'jetbrains-mono-latin-400-normal.woff2',400)+face('JetBrains Mono',A/'jetbrains-mono-latin-500-normal.woff2',500)
 page=page.replace('/*__FONTS__*/',css)
 assert '/*__SCRIPT__*/' in page

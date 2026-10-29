@@ -14,6 +14,11 @@ The game itself runs offline and keeps saves on the phone. It uses the internet 
 ## Updating the game inside the app
 Copy the newest `blood-katana.html` over `www/index.html`, then run `npx cap sync android` (or just push: the GitHub workflow syncs for you).
 
+## Languages
+The game ships in English, Portuguese, Japanese, French, Russian and Simplified Chinese. Players pick one in Settings → Language; "Auto" follows the phone's language.
+
+The code stays in English. `game-src/src/lang.json` maps each English string to its translations (`{"Settings":{"pt":"Configurações","ja":"設定",...}}`); `{0}`, `{1}` stand for numbers and names filled in at runtime. `00_lang.js` swaps text where it reaches the screen (canvas text, the page, dialogs), so a new English string shows in English until a key is added for it. To list what is still untranslated, open the game in a language and run `window.__bk.TR.miss` in the browser console.
+
 ## Build option A: GitHub (no Android Studio needed)
 1. Make a GitHub repository and push this folder to its `main` branch.
 2. Open the repository's **Actions** tab. The "Android build" workflow runs on every push (or press "Run workflow").

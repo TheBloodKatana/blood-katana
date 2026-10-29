@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Blood Katana</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
@@ -11,7 +12,11 @@
   --blood:#b8142a; --blood-hi:#ff4a5c; --spirit:#93dcca; --curse:#d9a648; --phase:#b48cff; --shard:#ff3355; --mon:#e8c15a;
   --f-display:"DotGothic16","Hiragino Sans",system-ui,sans-serif;
   --f-body:"DotGothic16","Hiragino Sans",system-ui,sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --f-mono:"JetBrains Mono","DotGothic16","Noto Sans SC","Noto Sans CJK SC",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+:lang(ru) body *,:lang(ja) body *,:lang(zh-Hans) body *{letter-spacing:normal!important}
+:root:lang(zh-Hans){--f-display:"Noto Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;--f-body:"Noto Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;--f-mono:"JetBrains Mono","Noto Sans SC","Noto Sans CJK SC","PingFang SC",monospace;
   color-scheme:dark;
 }
 [hidden]{display:none!important}
@@ -134,6 +139,7 @@ canvas.nocur{cursor:none!important}
 .mv-inner{margin:auto;width:min(100%,620px);display:flex;flex-direction:column;gap:10px;animation:pop .2s ease-out}
 .mv-inner.wide{width:min(100%,980px)}
 .mv-inner.still{animation:none}
+.seg.lang{flex-wrap:wrap;justify-content:flex-end}
 .gift-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .gift-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--ink);border:1px solid var(--line);padding:9px 4px;text-align:center;font-family:var(--f-mono);font-size:10.5px;color:var(--bone);min-width:0}
 .gift-tile canvas{image-rendering:pixelated;width:40px;height:auto}
@@ -483,7 +489,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
       <canvas id="dlgPortrait" width="40" height="40" data-toy></canvas>
       <div class="dlg-body">
         <div class="dlg-name" id="dlgName"></div>
-        <p id="dlgText"></p>
+        <p id="dlgText" data-notr></p>
         <div class="dlg-choices" id="dlgChoices"></div>
       </div>
     </div>

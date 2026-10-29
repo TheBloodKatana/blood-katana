@@ -49,7 +49,7 @@ const DEF={
   hitPauseMul:1,hitShake:1,sfxVol:0.7,musicVol:0.5,startFloor:1,shardMul:1,stagesPerBiome:2,
   trailBlocks:true,parrySlowOn:true,hitPause:true,cutRecovery:true,poise:true,aiReadSpam:true,tapNoParry:false,abilityCds:true,tapAbilities:false,
   sound:true,music:true,dev:false,vibe:true,flashes:true,tsize:1,topac:0.8,lighting:true,ambient:true,corpses:true,cursor:true,minimap:true,
-  slowmoOn:false,noTechCd:false,enemyAttack:true,enemyMove:true,aiDodge:true,aiParry:true,aiFeint:true,god:false,infMeter:false,cheatMoney:false,cheatOhko:false,cheatTools:false,cheatTech:false,hitboxes:false,shake:true
+  slowmoOn:false,noTechCd:false,enemyAttack:true,enemyMove:true,aiDodge:true,aiParry:true,aiFeint:true,lang:'auto',god:false,infMeter:false,cheatMoney:false,cheatOhko:false,cheatTools:false,cheatTech:false,hitboxes:false,shake:true
 };
 const GROUPS=[
   ['Player',[['moveSpeed','Move speed',100,450,5],['dashSpeed','Dash speed',300,1600,20],['dashTime','Dash time',0.05,0.4,0.01,'s'],['dashCd','Dash cooldown',0,3,0.05,'s'],['maxHp','Starting soul',1,12,1],['slideSpeed','Slide speed',600,6000,100,'px/s'],['slideMax','Longest slide',60,900,10,'px'],['drinkTime','Time to drink blood',0.1,2,0.05,'s']]],

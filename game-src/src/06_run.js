@@ -364,6 +364,7 @@ function coolDown(el,ms){if(!el)return;el.classList.add('cool');clearTimeout(el.
 function openDialog(d){S.dialog=d;d.voice=d.voice||voiceOf(d.name);S.swipe=null;keys.clear();portrait(d.spr);renderDialog();}
 function renderDialog(){
   const d=S.dialog;if(!d){$('dlg').hidden=true;return;}
+  d.text=tr(d.text);
   $('dlg').hidden=false;$('dlgName').innerHTML=`${esc(d.name)}${d.title?`<small>${esc(d.title)}</small>`:''}`;
   const t=$('dlgText');t.className=d.big?'big':'';
   if(d.big||dlgMini()||(d.typedText===d.text&&!d.typing)){t.textContent=d.text;d.typing=false;showChoices();return;}
@@ -501,7 +502,7 @@ const ENCOUNTERS=[
      {label:'Ask why it lives on the moon',fn:()=>say('"Rent is very cheap."')},
      {label:'Leave',fn:closeDialog}]});}},
   {id:'boxes',setup(R,x,y){const pz=liarPuzzle();R.puzzle=pz;[-100,0,100].forEach((dx,i)=>{R.deco.push({prop:'box',x:x+dx,y:y},{spr:BOXSPR[i],x:x+dx,y:y-13});});addObj(R,{kind:'npc',enc:'boxes',spr:'chochin',x,y:y+28,name:'Three heirlooms',hidden:true});},
-   start(o){const pz=S.room.puzzle,lines=pz.st.map(s=>`${cap(BOXN[s.sp])}: ${liarLine(s)}`).join('\n');
+   start(o){const pz=S.room.puzzle,lines=pz.st.map(s=>`${tr(cap(BOXN[s.sp]))}: ${tr(liarLine(s))}`).join('\n');
      openDialog({spr:'chochin',name:'Three heirlooms',title:'tsukumogami',text:`A lantern, an umbrella and a sandal, each a hundred years old and each sitting on a box. "One box holds a treasure. The other two hold... something else. Only ONE of us is telling the truth."\n${lines}`,choices:[
        ...[0,1,2].map(i=>({label:`Open the ${BOXN[i]}'s box`,fn:()=>{o.done=true;if(i===pz.ans){giveItem(randomItem(1,2));say(`The ${BOXN[pz.st.findIndex(s=>liarTrue(s,pz.ans))]} was the honest one. It looks very smug about it.`);}
          else if(Math.random()<0.5){S.room.fightReward='coins';S.dialog.after=()=>roomFight(S.room,[{key:pick(curBiome().pool),elite:true},{key:pick(curBiome().pool),elite:true}]);say('Wrong box. Something with too many teeth climbs out.',[{label:'Fight',fn:closeDialog}]);}

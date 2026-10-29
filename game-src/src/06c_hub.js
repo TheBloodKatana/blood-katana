@@ -34,7 +34,7 @@ const ACTS={
     // the rack: copies of blades pried from the dead (30 shards), and five weapons only the shrine forges
     const seen=WKEYS.filter(k=>!FORGE_W.includes(k)&&META.wseen[k]),list=seen.concat(FORGE_W);
     const cards=list.map(k=>{const W=WEAPONS[k],own=up('hub','start_'+k),cur=META.startW===k,cost=FORGE_W.includes(k)?W.forge:30;
-      return{kind:cur?'Carried':own?'Yours · carry it':FORGE_W.includes(k)?`Forge · ${cost} 血晶`:`Commission · ${cost} 血晶`,name:W.name+' '+W.jp,desc:W.desc+' '+W.moves.join(' · '),dis:cur||(!own&&META.shards<cost),k,own,cost};});
+      return{kind:cur?'Carried':own?'Yours · carry it':FORGE_W.includes(k)?`Forge · ${cost} 血晶`:`Commission · ${cost} 血晶`,name:W.name+' '+W.jp,desc:[W.desc,...W.moves].join(' · '),dis:cur||(!own&&META.shards<cost),k,own,cost};});
     cards.push({kind:META.startW?'Put it down':'Carried',name:'Only the broken blade',desc:'Go down with nothing but your own blade.',dis:!META.startW,k:''});
     openChooser({eyebrow:'Old armorer',title:'The rack',sub:`"Every blade you take from the dead, I copy. Five more I forge myself." You have ${META.shards} 血晶.`,cards,cancel:'Leave',pick:i=>{const c=cards[i];
       if(!c.k){META.startW='';saveMeta();P.wpn=null;return;}
