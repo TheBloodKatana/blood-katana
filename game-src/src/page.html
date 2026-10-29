@@ -423,6 +423,12 @@ kbd{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);bord
 .sh-how{font-size:10.5px;color:var(--ash);line-height:1.3}
 .sh-card.eq .sh-how{color:var(--blood-hi)}
 .mv-tabs.sub{margin-bottom:8px}
+.demo-box{flex-wrap:nowrap!important}.demo-box>*{flex:none}
+.demo-box .demo-tabs{flex-wrap:wrap;justify-content:center;max-width:100%;gap:4px}
+.demo-box .demo-tabs button{font-size:10px;padding:3px 7px;white-space:nowrap;flex:none}
+.demo-box.hud{gap:6px;padding:10px 12px 12px}
+.demo-box.hud #demoCv{width:min(440px,80vw,calc((100vh - 250px)*1.786))}
+@media (max-height:520px){.demo-box .demo-tabs{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.demo-box .demo-tabs::-webkit-scrollbar{display:none}.demo-box.hud .demo-title{font-size:15px}.demo-box.hud #demoCv{width:min(440px,80vw,calc((100vh - 215px)*1.786))}.demo-box.hud .demo-txt{font-size:11.5px;max-width:60ch}}
 .sh-buy{align-items:center;text-align:center}.sh-buy canvas{image-rendering:pixelated;background:#1c1520}
 .sh-coin{font-family:'DotGothic16',var(--f-display);font-size:26px;color:var(--mon)}
 .sh-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;background:var(--ink);border:1px solid var(--line);color:var(--bone);padding:9px 11px;margin-top:6px;cursor:pointer;font-family:var(--f-mono);font-size:12px}
@@ -475,7 +481,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
       </div>
       <button class="tsmall" id="tPause" type="button" aria-label="Pause">❚❚</button>
     </div>
-    <div class="demoov" id="demoOv" hidden><div class="demo-box"><div class="demo-k" id="demoK"></div><div class="demo-title" id="demoTitle"></div><canvas id="demoCv" width="200" height="112"></canvas><p class="demo-txt" id="demoTxt"></p><button class="btn" id="demoOk" type="button" disabled>Got it</button></div></div>
+    <div class="demoov" id="demoOv" hidden><div class="demo-box"><div class="demo-k" id="demoK"></div><div class="mv-tabs demo-tabs" id="demoTabs" hidden></div><div class="demo-title" id="demoTitle"></div><canvas id="demoCv" width="200" height="112"></canvas><p class="demo-txt" id="demoTxt"></p><button class="btn" id="demoOk" type="button" disabled>Got it</button></div></div>
     <div class="studio" id="studio" hidden data-notr><canvas id="studioCv" width="320" height="180"></canvas></div>
     <div class="title" id="title" hidden>
       <div class="t-logo"><div class="t-kanji" data-toy>血階</div><div class="t-name">BLOODY&nbsp;DESCENT</div><div class="t-floors">100&nbsp;FLOORS</div><div class="t-sub">Escape a hundred hells. Take back your blade. Take your revenge.</div></div>
@@ -524,7 +530,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
     <div class="menuov help" id="helpOv" hidden>
       <div class="mv-inner">
         <div class="mv-head"><div class="mv-title">How to play</div><button class="btn ghost mv-x" type="button" data-close="helpOv">Back</button></div>
-        <div class="mv-tabs" id="helpTabs"><button type="button" class="on" data-tab="hRun">The run</button><button type="button" data-tab="hKeys">Keyboard</button><button type="button" data-tab="hTouch">Touch</button><button type="button" data-tab="hFoes">Foes</button></div>
+        <div class="mv-tabs" id="helpTabs"><button type="button" class="on" data-tab="hRun">The run</button><button type="button" data-tab="hKeys">Keyboard</button><button type="button" data-tab="hTouch">Touch</button><button type="button" data-tab="hFoes">Foes</button><button type="button" data-hud="1">Your screen</button></div>
         <div class="mv-body">
           <div class="hpane" id="hRun"><ul class="rules">
           <li>Every run starts at the <b>Shrine of the Broken Blade</b>. Spend banked shards on a bigger pouch or a deeper soul, commission a starting weapon, test techniques on the straw dummy, then walk through the gate.</li>

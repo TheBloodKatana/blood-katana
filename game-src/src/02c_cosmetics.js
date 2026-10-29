@@ -172,17 +172,17 @@ function weekendLegend(d){const L=LEGENDS();return L[weekNo(d)%L.length];}
 const AD_SPINS=3;
 function spinState(){const t=dayKey();if(!META.spin||META.spin.day!==t)META.spin={day:t,free:1,ads:0,total:(META.spin&&META.spin.total)||0};return META.spin;}
 function spinOdds(d){
-  const we=isWeekend(d),rows=[['shards25',we?43.5:44],['shards75',18],['koban5',12],['ramen',9],['revive',6],['common',6],['rare',4],['epic',1]];
+  const we=isWeekend(d),rows=[['shardsS',we?45.5:46],['shardsL',14],['koban5',14],['ramen',9],['revive',6],['common',6],['rare',4],['epic',1]];
   if(we)rows.push(['legend',0.5]);return rows;
 }
-const SPIN_NAMES={shards25:'25 shards',shards75:'75 shards',koban5:'5 koban',ramen:'Ramen ticket: +1 soul on your next run',revive:'Revive charm: one revive on your next run',common:'A common skin you don\'t own',rare:'A rare skin you don\'t own',epic:'An epic you don\'t own',legend:'This weekend\'s legendary'};
+const SPIN_NAMES={shardsS:'10 shards',shardsL:'30 shards',koban5:'5 koban',ramen:'Ramen ticket: +1 soul on your next run',revive:'Revive charm: one revive on your next run',common:'A common skin you don\'t own',rare:'A rare skin you don\'t own',epic:'An epic you don\'t own',legend:'This weekend\'s legendary'};
 function rollSpin(){
-  const rows=spinOdds();let r=Math.random()*100,pick='shards25';for(const [k,p] of rows){if(r<p){pick=k;break;}r-=p;}
+  const rows=spinOdds();let r=Math.random()*100,pick='shardsS';for(const [k,p] of rows){if(r<p){pick=k;break;}r-=p;}
   const unowned=rr=>Object.values(COS).filter(x=>x.r===rr&&x.src!=='free'&&!cosOwned(x.key));
   let res={kind:pick};
   switch(pick){
-    case'shards25':META.shards+=25;res.text='25 血晶';break;
-    case'shards75':META.shards+=75;res.text='75 血晶';break;
+    case'shardsS':META.shards+=10;res.text='10 血晶';break;
+    case'shardsL':META.shards+=30;res.text='30 血晶';break;
     case'koban5':META.koban+=5;res.text='5 koban';break;
     case'ramen':META.ramen=(META.ramen||0)+1;res.text='Ramen ticket';break;
     case'revive':META.charm=(META.charm||0)+1;res.text='Revive charm';break;

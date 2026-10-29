@@ -74,7 +74,7 @@ function armInfo(){
     return`<div class="ai-head"><b>${esc(it.name)}</b>${rarTag(it.r)}</div><p class="ai-sub">${esc(it.label)} · ${esc(itemHow(it))}</p>${btn}`;}
   if(sl&&sl.bundle){const b=BUNDLES.find(x=>x.id===sl.bundle),owned=b.items.every(cosOwned);
     return`<div class="ai-head"><b>${esc(b.name)}</b></div><ul class="ai-list">${b.items.map(k=>`<li>${rarTag(COS[k].r)} ${esc(COS[k].name)} <i>${esc(COS[k].label)}</i>${cosOwned(k)?' <em>owned</em>':''}</li>`).join('')}</ul>
-      ${owned?'<button class="btn ghost" type="button" disabled>Owned</button>':(META.koban||0)>=b.koban?`<button class="btn" type="button" data-m="buybundle" data-id="${b.id}">Buy · ${b.koban} koban</button>`:`<button class="btn ghost" type="button" disabled>${b.koban} koban · you have ${META.koban||0}</button>`}`;}
+      ${(()=>{const pr=bundlePrice(b),cut=pr<b.koban&&!owned?` <s>${b.koban}</s>`:'';return owned?'<button class="btn ghost" type="button" disabled>Owned</button>':(META.koban||0)>=pr?`<button class="btn" type="button" data-m="buybundle" data-id="${b.id}">Buy · ${pr} koban${cut}</button>`:`<button class="btn ghost" type="button" disabled>${pr} koban · you have ${META.koban||0}</button>`;})()}${!owned&&bundlePrice(b)<b.koban?'<p class="ai-sub">Cheaper for the pieces you already own.</p>':''}`;}
   if(sl&&sl.pack){const p=KOBAN_PACKS.find(x=>x.id===sl.pack);return`<div class="ai-head"><canvas data-icon="koban" width="14" height="14" class="ai-ic"></canvas><b>${p.koban} koban</b></div><p class="ai-sub">Spend koban on skins, bundles and supplies.</p><button class="btn" type="button" data-m="buypack" data-id="${p.id}">Buy · ${p.price}</button>`;}
   if(sl&&sl.sup){const u=SUPPLIES[sl.sup];return`<div class="ai-head"><canvas data-icon="${u.icon}" width="18" height="16" class="ai-ic"></canvas><b>${esc(u.name)}</b></div><p class="ai-sub">${esc(u.desc)} You have ${META[sl.sup]||0}.</p>${(META.koban||0)>=u.cost?`<button class="btn" type="button" data-m="buysup" data-id="${sl.sup}">Buy · ${u.cost} koban</button>`:`<button class="btn ghost" type="button" disabled>${u.cost} koban · you have ${META.koban||0}</button>`}`;}
   if(ARM.tab==='spin'){const leg=COS[weekendLegend()];if(ARM.spin&&ARM.spin.item){const it=COS[ARM.spin.item];return`<div class="ai-head"><b>${esc(it.name)}</b>${rarTag(it.r)}</div><p class="ai-sub">${esc(it.label)} · yours now</p>${cosEquipped(it.key)?'':`<button class="btn" type="button" data-m="armequip" data-key="${it.key}">Equip</button>`}`;}
@@ -86,6 +86,9 @@ function armInfo(){
 function armRefreshSide(){const inf=$('armInfo');if(inf){inf.innerHTML=armInfo();for(const cv of inf.querySelectorAll('canvas[data-icon]'))paintIcon(cv,cv.dataset.icon);}pvSet(armKeys());
   for(const el of $('menuInner').querySelectorAll('[data-sel]'))el.classList.toggle('sel',el.dataset.sel===selId(ARM.sel));}
 const selId=sl=>!sl?'':sl.key?'k:'+sl.key:sl.bundle?'b:'+sl.bundle:sl.pack?'p:'+sl.pack:'s:'+sl.sup;
+// a bundle costs less for every piece you already own: the full price, scaled by the value of the pieces still missing
+function bundleItemValue(k){const it=COS[k];return it.koban||(RAR[it.r]&&RAR[it.r].koban)||600;}
+function bundlePrice(b){const all=b.items.reduce((a,k)=>a+bundleItemValue(k),0),miss=b.items.filter(k=>!cosOwned(k)).reduce((a,k)=>a+bundleItemValue(k),0);return miss<=0?0:Math.max(10,Math.round(b.koban*miss/all/10)*10);}
 MENUS.armory=function(){
   const st=cosState(),tab=ARM.tab;
   const tabs=[['o','Outfits'],['k','Katana'],['w','Weapons'],['s','Slash sets'],['t','Thirst'],['spin','Daily spin'],['koban','Koban']];
@@ -101,7 +104,7 @@ MENUS.armory=function(){
       <table class="odds"><thead><tr><th>Prize</th><th>Chance</th></tr></thead><tbody>${spinOdds().map(([k,p])=>`<tr class="${k==='epic'?'ep':k==='legend'?'gold':''}"><td>${esc(k==='legend'?'This weekend\'s legendary: '+leg.name:SPIN_NAMES[k])}</td><td>${p}%</td></tr>`).join('')}</tbody></table>
       <p class="mv-note">One free spin a day and up to ${AD_SPINS} more for watching ads. Spins are never sold. Anything you already own turns into koban.</p></div>`;}
   else if(tab==='koban'){const S2=selId(ARM.sel);body=`<div class="set-sec"><h3>Koban</h3><div class="sh-grid packs">${KOBAN_PACKS.map(p=>`<button type="button" class="sh-card pack${S2==='p:'+p.id?' sel':''}" data-m="armsel" data-sel="p:${p.id}"><canvas data-icon="koban" width="14" height="14" style="width:42px;height:42px"></canvas><span class="sh-nm">${p.koban} koban</span><span class="sh-how">${p.price}</span></button>`).join('')}</div></div>
-    <div class="set-sec"><h3>Bundles</h3>${BUNDLES.map(b=>{const owned=b.items.every(cosOwned);return`<button type="button" class="sh-row bundle${S2==='b:'+b.id?' sel':''}" data-m="armsel" data-sel="b:${b.id}"><span class="bthumbs">${b.items.map(k=>`<canvas ${pvAttr(COS[k])} style="width:${COS[k].type==='o'?24:COS[k].type==='s'?40:44}px;height:${COS[k].type==='o'?28:20}px"></canvas>`).join('')}</span><b>${esc(b.name)}</b><i>${owned?'Owned':b.koban+' koban'}</i></button>`;}).join('')}</div>
+    <div class="set-sec"><h3>Bundles</h3>${BUNDLES.map(b=>{const owned=b.items.every(cosOwned);return`<button type="button" class="sh-row bundle${S2==='b:'+b.id?' sel':''}" data-m="armsel" data-sel="b:${b.id}"><span class="bthumbs">${b.items.map(k=>`<canvas ${pvAttr(COS[k])} style="width:${COS[k].type==='o'?24:COS[k].type==='s'?40:44}px;height:${COS[k].type==='o'?28:20}px"></canvas>`).join('')}</span><b>${esc(b.name)}</b><i>${owned?'Owned':bundlePrice(b)+' koban'}</i></button>`;}).join('')}</div>
     <div class="set-sec"><h3>Supplies</h3>${Object.entries(SUPPLIES).map(([id,u])=>`<button type="button" class="sh-row${S2==='s:'+id?' sel':''}" data-m="armsel" data-sel="s:${id}"><canvas data-icon="${u.icon}" width="18" height="16" style="width:36px;height:32px"></canvas><b>${esc(u.name)}</b><i>${u.cost} koban</i></button>`).join('')}</div>
     <p class="mv-note">Koban also come from feats, daily challenges, the 7-day gift, the spin and duplicates.</p>${NP()?'<button class="btn ghost" type="button" data-m="restore">Restore purchases</button>':''}`;}
   menuShow(`<div class="mv-head"><div class="mv-title">Armory <span class="mv-sub">武具蔵</span></div><div class="sh-bal"><span>${META.koban||0} koban</span><span>${META.shards} 血晶</span></div><button class="btn ghost mv-x" type="button" data-m="back">Back</button></div>
@@ -167,17 +170,17 @@ const RCW=78; // one reel card, px
 function prizeCard(pz,win){
   const it=pz.item?COS[pz.item]:null;
   if(it)return`<div class="rc r-${it.r}${win?' win':''}"><canvas ${pvAttr(it)}></canvas><span>${esc(it.name)}</span></div>`;
-  const ic={shards25:['shard','25 血晶'],shards75:['shard','75 血晶'],koban5:['koban','5 koban'],ramen:['ramen','Ramen'],revive:['charm','Revive charm'],koban:['koban',pz.text||'koban']}[pz.kind]||['koban',pz.text||''];
-  return`<div class="rc r-${pz.kind==='shards75'||pz.kind==='revive'?'rare':'common'}${win?' win':''}"><canvas data-icon="${ic[0]}" width="18" height="16"></canvas><span>${esc(ic[1])}</span></div>`;
+  const ic={shardsS:['shard','10 血晶'],shardsL:['shard','30 血晶'],koban5:['koban','5 koban'],ramen:['ramen','Ramen'],revive:['charm','Revive charm'],koban:['koban',pz.text||'koban']}[pz.kind]||['koban',pz.text||''];
+  return`<div class="rc r-${pz.kind==='shardsL'||pz.kind==='revive'?'rare':'common'}${win?' win':''}"><canvas data-icon="${ic[0]}" width="18" height="16"></canvas><span>${esc(ic[1])}</span></div>`;
 }
 function fillerPrize(){
-  const rows=spinOdds();let r=Math.random()*100,k='shards25';for(const [kk,p] of rows){if(r<p){k=kk;break;}r-=p;}
+  const rows=spinOdds();let r=Math.random()*100,k='shardsS';for(const [kk,p] of rows){if(r<p){k=kk;break;}r-=p;}
   if(k==='common'||k==='rare'||k==='epic'){const L=Object.values(COS).filter(x=>x.r===k&&x.src!=='free');return{kind:k,item:L[Math.floor(Math.random()*L.length)].key};}
   if(k==='legend')return{kind:k,item:weekendLegend()};return{kind:k};
 }
 function reelIdle(){
   // a calm strip that shows a bit of everything the spin can give
-  const show=[{kind:'shards25'},{kind:'koban5'},{kind:'common',item:Object.values(COS).find(x=>x.r==='common'&&x.src!=='free').key},{kind:'ramen'},{kind:'rare',item:Object.values(COS).find(x=>x.r==='rare'&&x.src==='shop').key},{kind:'shards75'},{kind:'revive'},{kind:'epic',item:Object.values(COS).find(x=>x.r==='epic').key},{kind:'shards25'}];
+  const show=[{kind:'shardsS'},{kind:'koban5'},{kind:'common',item:Object.values(COS).find(x=>x.r==='common'&&x.src!=='free').key},{kind:'ramen'},{kind:'rare',item:Object.values(COS).find(x=>x.r==='rare'&&x.src==='shop').key},{kind:'shardsL'},{kind:'revive'},{kind:'epic',item:Object.values(COS).find(x=>x.r==='epic').key},{kind:'shardsS'}];
   return show.map(p=>prizeCard(p)).join('');
 }
 function doSpin(kind){
@@ -219,7 +222,7 @@ const MENU_ACTS={
     const p=RAR[it.r].koban;if((META.koban||0)<p){sfx('deny');return;}META.koban-=p;saveMeta();grant();},
   spinfree(){doSpin('free');},spinad(){doSpin('ad');},
   buypack(t){const p=KOBAN_PACKS.find(x=>x.id===t.dataset.id);buyProduct(p.id,p.koban+' koban',p.price,()=>{META.koban=(META.koban||0)+p.koban;saveMeta();sfx('coin');MENU.stack=[];ARM.tab='koban';menuOpen('armory',false);},true);},
-  buybundle(t){const b=BUNDLES.find(x=>x.id===t.dataset.id);if((META.koban||0)<b.koban){sfx('deny');text(P.x,P.y-50,'NOT ENOUGH KOBAN',C.ash);return;}META.koban-=b.koban;for(const k of b.items)if(!cosOwned(k))cosGrant(k);saveMeta();sfx('buy');sfx('learn');menuOpen('armory',false);},
+  buybundle(t){const b=BUNDLES.find(x=>x.id===t.dataset.id),pr=bundlePrice(b);if(pr<=0)return;if((META.koban||0)<pr){sfx('deny');text(P.x,P.y-50,'NOT ENOUGH KOBAN',C.ash);return;}META.koban-=pr;for(const k of b.items)if(!cosOwned(k))cosGrant(k);saveMeta();sfx('buy');sfx('learn');menuOpen('armory',false);},
   buysup(t){const id=t.dataset.id,c=SUPPLIES[id].cost;if((META.koban||0)<c){sfx('deny');return;}META.koban-=c;META[id]=(META[id]||0)+1;saveMeta();sfx('buy');menuOpen('armory',false);},
   testok(){const p=ARM.purchase;ARM.purchase=null;menuBack();if(p)p.onOk();},
   testno(){ARM.purchase=null;menuBack();},

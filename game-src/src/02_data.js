@@ -277,7 +277,8 @@ const TREES=[
   {id:'body',name:'Body',jp:'身',g:'身',desc:'The soul inside the armor.',branches:[
     {name:'Iron',nodes:[ND('soul','Iron soul','+1 max soul',2,45,'魂')],tip:{id:'unbroken',name:'Unbroken',desc:'Once per realm, a killing blow leaves you on one soul instead.',cost:70,g:'不'}},
     {name:'Feet',nodes:[ND('dash','Light feet','Dash recharges 10% faster',3,16,'足')],tip:{id:'ghost',name:'Ghost Step',desc:'Dashing through an enemy cut refunds the dash and slows time.',cost:50,g:'影'}},
-    {name:'Trade',nodes:[ND('purse','Coin purse','Start runs with 10 more mon',3,10,'銭'),ND('haggle','Haggler','Shops 8% cheaper',3,14,'商')],tip:{id:'luck',name:'Lucky Coin',desc:'Foes drop a quarter more mon.',cost:35,g:'福'}}]},
+    {name:'Trade',nodes:[ND('purse','Coin purse','Start runs with 10 more mon',3,10,'銭'),ND('haggle','Haggler','Shops 8% cheaper',3,14,'商')],tip:{id:'luck',name:'Lucky Coin',desc:'Foes drop a quarter more mon.',cost:35,g:'福'}},
+    {name:'Guard',nodes:[ND('parry','Keen eye','Your cuts keep parrying 0.04s longer after they land',6,14,'受')],tip:{id:'trueparry',name:'Perfect Guard',desc:'Cuts keep parrying 0.1s longer still, and every parry refills your dash.',cost:60,g:'守'}}]},
   {id:'reserve',w:'reserve',name:'Broken katana',jp:'折',innate:'r_spin',desc:'Your own blade. Blood Spin is yours from the start.',branches:[
     {name:'Edge',nodes:[ND('len','Longer shard','Its cuts reach 14px farther',5,10,'刃')],tip:{skill:'r_flash',cost:30}},
     {name:'Hand',nodes:[ND('rcd','Quick hand','Its cooldowns 6% faster',3,18,'手')],tip:{skill:'r_mirror',cost:40}},

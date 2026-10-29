@@ -65,6 +65,8 @@ const head=s=>posAt(s,s.d);
 function forTrail(s,fn){const end=s.d;for(let i=1;i<s.pts.length;i++){if(s.cum[i-1]>=end)break;const b=s.cum[i]<=end?s.pts[i]:posAt(s,end);if(fn(s.pts[i-1],b))return true;}return false;}
 function trailLive(o){return(!o.done||o.linger>0)&&o.d>=1;}
 
+// how long a finished cut keeps parrying: generous while you learn, then something you grow on the Blood Tree
+function parryGrace(){if(S.pro||S.tut)return CFG.parryGraceTut;return CFG.parryGrace+0.04*up('body','parry')+(capOn('body','trueparry')?0.1:0)+S.mods.trail;}
 function breakCut(s,pt,by){
   s.d=clamp(s.d-dist(pt,head(s)),0,s.len);s.blocked=true;s.blockAt=pt;s.done=true;s.linger=0;s.fade=s.fadeMax=0.35;
   if(s.team==='e'){
@@ -78,7 +80,7 @@ function breakCut(s,pt,by){
       text(pt.x,pt.y-16,'PARRY',C.spirit,true);tutEvent('parry');featEvent('parry');buzz(25,'MEDIUM');wear(1);if(alive)tryDisarm(e);spawnOrbs(pt.x,pt.y,4,CFG.parryGain+S.mods.parryBlood);S.parries++;sfx('parry');addCombo(2);S.flash=0.09;
       hitPause(10,alive?e:null,1);S.shake+=7;$('rClash').textContent='Foe cut hit your trail';
       if(CFG.parrySlowOn&&!(S.gmx&&S.gmx.noslow))S.slowT=CFG.parrySlowTime*(S.mods.composure?2:1);
-      if(S.mods.composure)P.dashCd=0;
+      if(S.mods.composure||capOn('body','trueparry'))P.dashCd=0;
     }
   }else{
     if(by&&by.guard){
@@ -131,7 +133,7 @@ function finishCut(s){
   if(s.team==='p'){
     const end=s.pts[s.pts.length-1];
     if(s.ab.linger)s.linger=CFG.lingerTime;else s.fade=s.fadeMax=Math.max(0.05,CFG.trailLinger+S.mods.trail);
-    s.parryT=CFG.parryGrace+S.mods.trail;if(!s.ab.linger&&!s.isTap)s.fade=s.fadeMax=Math.max(s.fade,s.parryT);
+    s.parryT=parryGrace();if(!s.ab.linger&&!s.isTap)s.fade=s.fadeMax=Math.max(s.fade,s.parryT);
     if(s.ab.fire&&!s.isWave){s.linger=Math.max(s.linger,2.0);s.fireTrail=true;if(!s.ab.linger)s.noBlock=true;sfx('fire');}
     if(s.ab.teleport&&!s.child)slideAlong(s,s.len);
     if(s.ab.burst)burstAt(end,s);

@@ -52,7 +52,7 @@ function proRoomStart(R){
 }
 function proSpawnStep(){
   const st=proStep();if(!st||!S.room||S.room.pro!==st.room||S.pro.stepSpawned===S.pro.i)return;S.pro.stepSpawned=S.pro.i;
-  if(!S.pro.demoed[st.id]){S.pro.demoed[st.id]=true;tutDemo(st);}
+  if(!S.pro.demoed[st.id]){S.pro.demoed[st.id]=true;if(!S.pro.hudShown){S.pro.hudShown=true;hudGuide(()=>tutDemo(st));}else tutDemo(st);}
   if(st.id==='heal'){P.hp=Math.max(2,P.hp-3);S.hurt=1;text(P.x,P.y-60,'AN ARROW FINDS YOU',C.hi);sfx('hurt');S.meter=Math.max(S.meter,healCost()+2);}
   if(st.id==='thirst')S.meter=orbMax();
   if(st.id==='tech')S.traceCd=0;
@@ -66,6 +66,15 @@ function proEvent(ev){
   S.pro.i++;sfx('learn');text(P.x,P.y-60,'✓',C.spirit,true);
   const nx=proStep();if(nx&&nx.room===st.room)S.pending.push({t:0.5,fn:proSpawnStep});
 }
+// whatever you did a moment ago, the lesson in front of you stays possible: blood to drink, a wound to heal,
+// kunai to throw, a technique ready to trace
+function lessonRescue(id){
+  if(id==='heal'&&!S.drink){if(S.meter<healCost())S.meter=healCost()+2;if(P.hp>=P.max)P.hp=Math.max(1,P.max-2);}
+  if(id==='tool'&&S.tools&&S.tools.kunai<=0)S.tools.kunai=3;
+  if(id==='tech'&&S.traceCd>1.2&&!S.trace)S.traceCd=1.2;
+  if(id==='dash'&&P.dashCd>0.6)P.dashCd=0.6;
+  if(id==='thirst'&&!btOn()&&!S.drink&&S.meter<btCost())S.meter=orbMax();
+}
 function proRoomDone(R){const st=proStep();return!st||st.room>R.pro;}
 function updatePrologue(gdt){
   const p=S.pro;if(!p||S.dead>0)return;p.t+=gdt;const st=proStep(),R=S.room;if(!R)return;
@@ -74,6 +83,7 @@ function updatePrologue(gdt){
   // a lesson that needs someone to practise on brings them back
   if(st&&st.room===R.pro&&st.spawn&&!S.enemies.length&&!S.pending.some(x=>x.spawn)&&p.stepSpawned===p.i&&st.id!=='thirst'){p.stepSpawned=-1;S.pending.push({t:0.5,spawn:true,fn:proSpawnStep});}
   if(st&&st.id==='thirst'&&R.pro===3){if(btOn())proEvent('thirst');else if(!S.drink)S.meter=Math.max(S.meter,orbMax());}
+  if(st&&st.room===R.pro)lessonRescue(st.id);
   if(!R.cleared&&R.pro<4&&proRoomDone(R)&&!S.enemies.length&&!S.pending.some(x=>x.spawn)){R.cleared=true;sfx('door');text(P.x,P.y-60,'THE WAY IS OPEN →',C.bone);}
   // the duel he lets you have, and the end of it
   if(R.pro===4&&!p.fall){p.bossT+=gdt;if(p.bossT>10||p.bossHits>=6)proFall();}

@@ -23,7 +23,7 @@ addEventListener('keydown',e=>{
   if(k==='m'){toggleSound();return;}
   if(k==='`'&&devOn()){e.preventDefault();if($('dbgOv').hidden)openDebug();else $('dbgOv').hidden=true;return;}
   if(!$('menuOv').hidden||!$('helpOv').hidden||!$('dbgOv').hidden){if(k==='escape'||(k==='p'&&S.paused)){e.preventDefault();handleBack();}return;}
-  if(S.demo){e.preventDefault();if(!e.repeat&&(k===' '||k==='enter'||k==='e'))demoClose();return;}
+  if(S.demo){e.preventDefault();if(!e.repeat&&(k===' '||k==='enter'||k==='e'))demoClose();else if(S.demo.id==='hud'&&(k==='arrowright'||k==='arrowleft'||k==='d'||k==='a'))hudTab(S.demo.tab+(k==='arrowright'||k==='d'?1:-1));return;}
   if(S.dialog){
     if(dlgMini()){if(k===' '||k==='enter'||k==='e'){e.preventDefault();if(!e.repeat)dlgPress();}return;}
     if(S.dialog.typing){if([' ','enter','e','1','2','3','4'].includes(k)){e.preventDefault();skipType();}return;}
@@ -95,6 +95,7 @@ document.addEventListener('pointerup',toyUp);document.addEventListener('pointerc
 document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('.btn,.perk,.ftab,.dlg-choices button,.chip');if(b&&b!==document._hov&&e.pointerType==='mouse'){document._hov=b;if(!b.disabled)sfx('blip',1200);}});
 $('tDash').addEventListener('pointerdown',e=>{e.preventDefault();dash();});
 $('demoOk').addEventListener('click',e=>{e.preventDefault();demoClose();});
+$('demoTabs').addEventListener('click',e=>{const b=e.target.closest('[data-hg]');if(!b)return;e.preventDefault();sfx('click');hudTab(+b.dataset.hg);});
 $('tTrace').addEventListener('pointerdown',e=>{e.preventDefault();armTrace();});
 for(const [id,fn] of [['tHeal',()=>drinkBlood()],['tMend',()=>mendWeapon()],['tUlt',()=>bloodthirst()],['tKunai',()=>throwTool('kunai')],['tShuri',()=>throwTool('shuri')],['tThrow',()=>throwWeapon()],['tUse',()=>useKey()]])$(id).addEventListener('pointerdown',e=>{e.preventDefault();fn();});
 $('tPause').addEventListener('pointerdown',e=>{e.preventDefault();if(S.paused)resume();else pause();});
@@ -426,9 +427,14 @@ function drawTelegraph(e){
   const k=1-Math.max(0,e.t)/e.wind,a=0.35+0.6*k,sp=SPR[e.look];
   for(const s of e.cuts){
     if(s.kind==='neck')continue;
-    const col=s.tcol||(s.phase?C.phase:C.curse),step=s.delay?9:6;
-    for(let d=0;d<s.len;d+=step){const p=posAt(s,d);pset(LX(p.x),LY(p.y),col,a);}
-    const A=s.pts[0];pdisc(LX(A.x),LY(A.y),k>0.6?1:0,col,a);
+    // the whole path as a dashed line with a dark edge, and a solid bar filling along it like a fuse: when it reaches the end, the cut comes
+    const col=s.tcol||(s.phase?C.phase:C.curse),fill=k*s.len,dash=s.delay?10:6;
+    for(let d=0;d<s.len;d+=PX){const p=posAt(s,d),x=LX(p.x),y=LY(p.y),on=d<=fill;
+      if(on){pset(x+1,y+1,'#000',0.7);pset(x,y,col,1);pset(x,y-1,col,0.85);}
+      else if(d%dash<dash*0.6){pset(x+1,y+1,'#000',0.5);pset(x,y,col,0.25+0.45*k);}}
+    {const B=s.pts[s.pts.length-1],t=tangentAt(s,s.len),x=LX(B.x),y=LY(B.y),ac=k>0.75&&Math.floor(S.gt*12)%2?C.white:col;
+      pline(x,y,x-t.x*5-t.y*4,y-t.y*5+t.x*4,ac,0.5+0.5*k);pline(x,y,x-t.x*5+t.y*4,y-t.y*5-t.x*4,ac,0.5+0.5*k);}
+    const A=s.pts[0];pdisc(LX(A.x),LY(A.y),k>0.6?2:1,col,0.6+0.4*k);
     if(s.carry){const B=s.pts[s.pts.length-1],t=tangentAt(s,s.len),x=LX(B.x),y=LY(B.y);pline(x,y,x-t.x*4-t.y*3,y-t.y*4+t.x*3,col,a);pline(x,y,x-t.x*4+t.y*3,y-t.y*4-t.x*3,col,a);}
   }
   if(e.pat==='neck'&&e.cuts[0]){const s=e.cuts[0];for(let d=0;d<s.len;d+=8){const p=posAt(s,d);pset(LX(p.x),LY(p.y),C.curse,a*0.8);}}
@@ -437,6 +443,8 @@ function drawTelegraph(e){
       else{for(let d=10;d<70;d+=8)pset(LX(e.x+Math.cos(s.a)*d),LY(cy+Math.sin(s.a)*d),col,a);pdisc(LX(e.x+Math.cos(s.a)*10),LY(cy+Math.sin(s.a)*10),Math.round(k*2),col);}}}
   const c0=e.cuts[0]||(e.shotsPlan&&{tier:2}),tierN=(c0&&c0.tier)||1,top=Math.round(LY(e.y+e.r*0.6-(e.T.fly?10:0))-sp.ay-4)+Math.max(0,sp.h-36);
   for(let i=0;i<tierN;i++)pset(Math.round(LX(e.x))-(tierN-1)+i*2,top,c0&&c0.tcol?c0.tcol:c0&&c0.phase?C.phase:C.curse);
+  // a "!" over anyone about to strike, flashing faster as the cut gets close
+  if(e.cuts.length&&k>0.35&&Math.floor(S.gt*(k>0.75?14:7))%2===0){const tc=c0&&c0.tcol?c0.tcol:c0&&c0.phase?C.phase:C.curse;ptext('!',Math.round(LX(e.x)),top-4,tc,8);}
 }
 function drawShots(){
   for(const s of S.shots){const x=LX(s.x),y=LY(s.y),sp=Math.hypot(s.vx,s.vy)||1,tx=s.vx/sp,ty=s.vy/sp;
@@ -710,6 +718,14 @@ function draw(){
     if(d==='n'){x0=R.w/2/PX-dh/2;y0=0;w=dh;h=WP;}else if(d==='s'){x0=R.w/2/PX-dh/2;y0=R.h/PX-WP;w=dh;h=WP;}else if(d==='w'){x0=0;y0=R.h/2/PX-dh/2;w=WP;h=dh;}else{x0=R.w/PX-WP;y0=R.h/2/PX-dh/2;w=WP;h=dh;}
     const X=x0-fx,Y=y0-fy;
     if(!R.cleared){lx.fillStyle=bcol;if(w>h)for(let x=X+2;x<X+w;x+=5)lx.fillRect(x,Y,2,h);else for(let y=Y+2;y<Y+h;y+=5)lx.fillRect(X,y,w,2);}
+    // make every doorway easy to spot: lit posts either side, light spilling onto the floor, and a chevron pointing out when it is open
+    {const open=R.cleared,ix=d==='w'?1:d==='e'?-1:0,iy=d==='n'?1:d==='s'?-1:0,pc=open?'#e8c15a':C.hi,pulse=0.55+0.35*Math.sin(S.gt*5);
+      if(w>h){lx.fillStyle=pc;lx.fillRect(X-3,Y-2,3,h+4);lx.fillRect(X+w,Y-2,3,h+4);}else{lx.fillStyle=pc;lx.fillRect(X-2,Y-3,w+4,3);lx.fillRect(X-2,Y+h,w+4,3);}
+      if(open){lx.globalAlpha=0.14;lx.fillStyle='#ece4d7';lx.fillRect(X,Y,w,h);for(let k=0;k<18;k++){lx.globalAlpha=0.3*(1-k/18);lx.fillStyle='#ece4d7';if(w>h)lx.fillRect(X,iy>0?Y+h+k:Y-1-k,w,1);else lx.fillRect(ix>0?X+w+k:X-1-k,Y,1,h);}lx.globalAlpha=1;
+        const cx=X+w/2,cy=Y+h/2,ax=ix>0?X+w+12:ix<0?X-13:cx,ay=iy>0?Y+h+12:iy<0?Y-13:cy;
+        for(let j=0;j<2;j++){const off=j*4;for(let i=-5;i<=5;i++){const px=ix?ax-ix*(Math.abs(i)-off)*1+0:ax+i,py=iy?ay-iy*(Math.abs(i)-off):ay+i;
+          const qx=ix?ax+ix*(Math.abs(i)-off):ax+i,qy=iy?ay+iy*(Math.abs(i)-off):ay+i;pset(qx+1,qy+1,'#000000',0.6*pulse);pset(qx,qy,'#e8c15a',pulse*(j?0.65:1));}}}
+      else{lx.globalAlpha=0.25+0.15*Math.sin(S.gt*4);lx.fillStyle=C.hi;lx.fillRect(X,Y,w,h);lx.globalAlpha=1;}}
     if(nb&&(nb.seen||S.revealAll)&&['boss','mini','rest','shop','treasure','event','duel','gate','hermit'].includes(nb.type)){const col={hermit:'#7ad890',boss:C.hi,mini:'#ff8a95',rest:C.spirit,shop:C.mon,treasure:'#ffe066',event:C.phase,duel:C.duel,gate:C.spirit}[nb.type];const cx=X+w/2,cy=d==='n'?Y+h+4:d==='s'?Y-5:Y+h/2,cxx=d==='w'?X+w+4:d==='e'?X-5:cx;pdisc(cxx,cy,1,col,0.9);}
   }
   flush();
@@ -872,6 +888,6 @@ async function start(){
   showTitle();studioSplash();
   requestAnimationFrame(frame);
 }
-window.__bk={TR,tr,LANG,tutDemo,demoClose,drawDemo,TUT,studioSplash,ELEMS,elemProc,hermitOffer,placeHermitRoom,MUS,songFor,startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
+window.__bk={TR,tr,LANG,tutDemo,hudGuide,hudTab,HUD_TABS,demoClose,drawDemo,TUT,studioSplash,ELEMS,elemProc,hermitOffer,placeHermitRoom,MUS,songFor,startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
 try{window.claude?.hot?.snapshot?.(()=>({}));}catch(_){}
 window.claude?.hot?.ready?window.claude.hot.ready(()=>start()):start();

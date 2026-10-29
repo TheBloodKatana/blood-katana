@@ -88,7 +88,7 @@ const TUT=[
 ];
 function startTutorial(){
   S.tut={i:0,moved:0,lx:P.x,ly:P.y,done:false,t:0};S.tutSafe=true;sfx('learn');
-  S.banner={name:'TRAINING',title:'The straw man has all day',t:2.2};tutDemo(TUT[0]);
+  S.banner={name:'TRAINING',title:'The straw man has all day',t:2.2};hudGuide(()=>tutDemo(TUT[0]));
 }
 function endTutorial(skipped){
   if(!S.tut)return;S.tut=null;S.tutSafe=false;META.tut=1;saveMeta();
@@ -115,6 +115,7 @@ function updateTutorial(gdt){
   if(TUT[t.i]&&TUT[t.i].id==='move'){t.moved+=Math.hypot(P.x-t.lx,P.y-t.ly);if(t.moved>260)tutNext();}
   t.lx=P.x;t.ly=P.y;
   if(TUT[t.i]&&TUT[t.i].id==='parry'&&!S.enemies.some(e=>e.practice))spawnSparring();
+  if(TUT[t.i])lessonRescue(TUT[t.i].id);
 }
 function drawTutorial(){
   const t=S.tut;if(!t||S.trace||S.traceArm)return;const st=TUT[t.i];if(!st)return;

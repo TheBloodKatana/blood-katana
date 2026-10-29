@@ -135,7 +135,7 @@ function applySettings(){
 }
 // help and debug overlays
 function openHelp(){$('helpOv').hidden=false;coolDown($('helpOv'),250);}
-$('helpTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;sfx('click');for(const x of $('helpTabs').children)x.classList.toggle('on',x===b);for(const p of document.querySelectorAll('.hpane'))p.hidden=p.id!==b.dataset.tab;});
+$('helpTabs').addEventListener('click',e=>{if(e.target.closest('[data-hud]')){sfx('click');hudGuide();return;}const b=e.target.closest('[data-tab]');if(!b)return;sfx('click');for(const x of $('helpTabs').children)x.classList.toggle('on',x===b);for(const p of document.querySelectorAll('.hpane'))p.hidden=p.id!==b.dataset.tab;});
 function openDebug(){$('dbgOv').hidden=false;}
 document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c){sfx('click');$(c.dataset.close).hidden=true;}});
 // the version on the title, tapped five times, unlocks the developer tools
