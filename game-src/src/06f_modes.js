@@ -81,7 +81,7 @@ function modeFloor(n){
 // ---------- the arena: one big room for waves and the boss rush ----------
 function arenaFloor(){
   const gm=S.gm,bi=gm.realm||0,biome=BIOMES[bi],r={gx:0,gy:0,type:'arena',dist:0};
-  Object.assign(r,{size:'b',doors:{},visited:false,seen:true,cleared:false,obs:[],haz:[],built:false,objs:[],pools:[],waves:null,enc:null});[r.w,r.h]=ROOM_SIZES.b;
+  Object.assign(r,{size:'b',doors:{},visited:false,seen:true,cleared:false,obs:[],haz:[],built:false,objs:[],pools:[],waves:null,enc:null});[r.w,r.h]=ROOM_SIZES.b;r.w=Math.max(r.w,VW);
   return{n:1,realm:bi,biome,stage:1,kind:'arena',bossStage:false,diff:1,rooms:new Map([[rkey(0,0),r]]),start:r,boss:r,gateOpen:true};
 }
 const RUSH_LIST=()=>BIOMES.flatMap(B=>[...B.minis,...B.bosses]);

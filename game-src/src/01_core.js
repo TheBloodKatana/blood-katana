@@ -1,5 +1,8 @@
 // ================= core: constants, settings, helpers, audio, pixel plotting =================
-const VW=900,VH=600,PX=2,LW=VW/PX,LH=VH/PX,WALL=40,WP=WALL/PX,DW=46;
+const VH=600,PX=2,LH=VH/PX,WALL=40,WP=WALL/PX,DW=46;
+// the view is always 600 tall; its width follows the screen so the game fills phones edge to edge
+const viewW=()=>{const a=Math.min(2.4,Math.max(1.5,(innerWidth||900)/Math.max(1,innerHeight||600)));return Math.round(VH*a/4)*4;};
+let VW=viewW(),LW=VW/PX;
 const $=id=>document.getElementById(id);
 const C={ink:'#110e12',bone:'#ece4d7',ash:'#968b97',blood:'#b8142a',hi:'#ff4a5c',spirit:'#93dcca',steel:'#c4ccd2',curse:'#d9a648',phase:'#b48cff',line:'#2e2731',out:'#000000',white:'#ffffff',dark:'#1a1220',
   mon:'#e8c15a',shard:'#ff3355',water:'#6ec8ff',fox:'#ff9a3c',web:'#e8e8f2',ice:'#bfe8ff',fire:'#ff7a2a',wind:'#bfe6b0',poison:'#9ad05a',duel:'#ff8a3a',smoke:'#8a8090'};
@@ -366,7 +369,8 @@ const cv=$('game'),ctx=cv.getContext('2d');
 const low=mk(LW,LH);let lx=low.getContext('2d');lx.imageSmoothingEnabled=false;
 let dpr=1;
 // the screen canvas holds the low-res frame 1:1; CSS (image-rendering:pixelated) does the upscale on the GPU
-function fit(){dpr=1;if(cv.width!==LW)cv.width=LW;if(cv.height!==LH)cv.height=LH;}
+function fit(){dpr=1;const w=viewW();if(w!==VW){VW=w;LW=VW/PX;low.width=LW;lx.imageSmoothingEnabled=false;if(typeof lightCv!=='undefined')lightCv.width=LW;}
+  if(cv.width!==LW)cv.width=LW;if(cv.height!==LH)cv.height=LH;document.documentElement.style.setProperty('--ar',String(LW/LH));}
 fit();addEventListener('resize',fit);
 const BAYER=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
 let BUF=new Map();

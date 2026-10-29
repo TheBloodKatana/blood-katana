@@ -54,7 +54,7 @@ h1 .kanji{color:var(--blood-hi);margin-right:.22em}
 .pchip b{color:var(--blood-hi);font-weight:500}
 
 .stage{position:fixed;inset:0;border:0;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#140b10 0%,#060405 72%);display:flex;align-items:center;justify-content:center}
-canvas#game{display:block;flex:none;width:min(100vw,150vh);width:min(100vw,150dvh);height:auto;aspect-ratio:3/2;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;image-rendering:pixelated}
+canvas#game{display:block;flex:none;width:min(100vw,calc(var(--ar,1.5)*100vh));width:min(100vw,calc(var(--ar,1.5)*100dvh));height:auto;aspect-ratio:var(--ar,1.5);touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;image-rendering:pixelated}
 canvas.nocur{cursor:none!important}
 .overlay,.perkov{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;background:color-mix(in srgb,var(--ink) 88%,transparent);text-align:center;padding:16px;overflow:auto}
 .ov-inner{margin:auto;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
@@ -453,7 +453,6 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
       </div>
       <button class="tsmall" id="tPause" type="button" aria-label="Pause">❚❚</button>
     </div>
-    <button class="fsbtn" id="fsBtn" type="button" aria-label="Fullscreen" title="Fullscreen">⛶</button>
     <div class="title" id="title" hidden>
       <div class="t-logo"><div class="t-kanji" data-toy>血刀</div><div class="t-name">BLOOD&nbsp;KATANA</div><div class="t-sub">Escape a hundred hells. Take back your blade. Take your revenge.</div></div>
       <div class="t-press" id="tPress">Press any key</div>

@@ -22,6 +22,7 @@ const COS_OUTFITS=[
   {id:'hannya',name:'Hannya',jp:'般若',r:'epic',src:'shop'},
   {id:'matsuri',name:'Summer Festival',jp:'祭',r:'epic',src:'shop'},
   {id:'raiden',name:'Thunder God',jp:'雷電',r:'epic',src:'shop'},
+  {id:'kagutsuchi',name:'Fire God',jp:'迦具土',r:'epic',src:'shop'},
   {id:'kin',name:'Gilded Lord',jp:'金',r:'epic',src:'shop'},
   {id:'shogun',name:'Shōgun',jp:'将軍',r:'legendary',src:'paid'},
   {id:'kitsune',name:'Kitsune',jp:'狐',r:'legendary',src:'paid'},
@@ -40,6 +41,7 @@ const COS_BLADES=[ // the katana and the broken blade
   {id:'hyo',name:'Frost',jp:'氷',r:'rare',src:'daily14',h:'#2a3a4a',t:'#bfe8ff',b:'#bfe8ff',hm:'#ffffff',tip:'#ffffff',glow:'#9ad8ff'},
   {id:'tsuki',name:'Moonlight',jp:'月光',r:'epic',src:'shop',h:'#1a1a2a',t:'#c8d0ff',b:'#e0e4ff',tip:'#ffffff',glow:'#c8d0ff'},
   {id:'raiden',name:'Thunder',jp:'雷',r:'epic',src:'shop',h:'#1a1a22',t:'#ffe066',b:'#ffe066',hm:'#ffffff',tip:'#ffffff',glow:'#9ad8ff',flick:true},
+  {id:'kagu',name:'Ember',jp:'燠刃',r:'epic',src:'shop',h:'#1a1010',t:'#ffb02a',b:'#ff6a1a',hm:'#fff0a0',tip:'#ffffff',glow:'#ffb02a'},
   {id:'kin',name:'Gold Leaf',jp:'金箔',r:'epic',src:'shop',h:'#2a2024',t:'#2a2024',b:'#e8c15a',hm:'#fff6d0',tip:'#ffffff'},
   {id:'noroi',name:'Cursed',jp:'呪',r:'epic',src:'shop',h:'#1a1020',t:'#6a4a9a',b:'#6a4a9a',hm:'#9a7ac8',tip:'#e0d0ff',glow:'#b48cff'},
   {id:'ryu',name:'Dragon Bone',jp:'竜骨',r:'legendary',src:'paid',h:'#3a2a1a',t:'#3ad860',b:'#e8dcc0',hm:'#c8a060',tip:'#ffffff',glow:'#3ad860'},
@@ -49,6 +51,7 @@ const COS_WSKINS={
     {id:'steel',name:'Field Steel',r:'common',src:'free',h:'#2a1a10',t:'#d9a648',b:'#c4ccd2',tip:'#ffffff'},
     {id:'lacquer',name:'Red Lacquer',r:'rare',src:'feat:nodachi100',h:'#b8142a',t:'#1a1418',b:'#9aa2aa',hm:'#e8eef4',tip:'#ffffff'},
     {id:'moon',name:'Pale Moon',r:'epic',src:'shop',h:'#1a1a2a',t:'#c8d0ff',b:'#e0e4ff',hm:'#ffffff',tip:'#ffffff',glow:'#c8d0ff'},
+    {id:'blaze',name:'Blazing Nodachi',r:'epic',src:'shop',h:'#2a1010',t:'#ffb02a',b:'#ff5a1a',hm:'#fff0a0',tip:'#ffffff',glow:'#ff8a2a'},
     {id:'oni',name:'Oni Cleaver',r:'legendary',src:'paid',h:'#2a1010',t:'#e8c15a',b:'#7a2228',hm:'#ff4a5c',tip:'#ff8a95',glow:'#ff4a5c'}],
   tessen:[
     {id:'iron',name:'Iron Fan',r:'common',src:'free',rib:'#2a2a30',paper:'#b8142a',paper2:'#8a1024',mark:'#ece4d7',edge:'#4a4a56'},
@@ -110,7 +113,8 @@ COS_BLADES.forEach(x=>COS['k:'+x.id]=Object.assign({key:'k:'+x.id,type:'k',label
 for(const w in COS_WSKINS)COS_WSKINS[w].forEach(x=>COS['w:'+w+':'+x.id]=Object.assign({key:'w:'+w+':'+x.id,type:'w',w,label:WEAPONS[w].name,jp:WEAPONS[w].jp},x));
 COS_SETS.forEach(x=>COS['s:'+x.id]=Object.assign({key:'s:'+x.id,type:'s',label:'Slash set'},x));
 COS_THIRST.forEach(x=>COS['t:'+x.id]=Object.assign({key:'t:'+x.id,type:'t',label:'Thirst skin'},x));
-const BUNDLES=[{id:'raiden',name:'Raiden set',desc:'Thunder God outfit, Thunder katana, Raiden slash set, the Storm Fan and the Raijin thirst skin.',items:['o:raiden','k:raiden','s:raiden','w:tessen:thunder','t:raijin'],koban:1100}];
+const BUNDLES=[{id:'raiden',name:'Raiden set',desc:'Thunder God outfit, Thunder katana, Raiden slash set, the Storm Fan and the Raijin thirst skin.',items:['o:raiden','k:raiden','s:raiden','w:tessen:thunder','t:raijin'],koban:1300},
+  {id:'kagutsuchi',name:'Kagutsuchi set',desc:'Fire God outfit, Ember katana, Blazing Nodachi, Hellfire slash set and the Hellfire thirst skin.',items:['o:kagutsuchi','k:kagu','w:nodachi:blaze','s:gokuen','t:gokuen'],koban:1300}];
 const KOBAN_PACKS=[{id:'koban_s',koban:300,price:'US$0.99'},{id:'koban_m',koban:1000,price:'US$2.99'},{id:'koban_l',koban:2500,price:'US$5.99'}];
 
 // ---------- ownership and equipment (kept in META) ----------

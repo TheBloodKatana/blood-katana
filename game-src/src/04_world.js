@@ -192,7 +192,7 @@ function genFloor(n){
   }
   for(const r of all){
     r.size=['boss','mini','duel','rest','store'].includes(r.type)?'b':r.type==='gate'?'w':r.type==='combat'?pick(['s','s','w','t','b']):'s';
-    [r.w,r.h]=ROOM_SIZES[r.size];
+    [r.w,r.h]=ROOM_SIZES[r.size];r.w=Math.max(r.w,VW);
     r.doors={};for(const d in DIRS){const [dx,dy]=DIRS[d];if(rooms.has(rkey(r.gx+dx,r.gy+dy)))r.doors[d]=true;}
     Object.assign(r,{visited:false,seen:false,cleared:!['combat','boss','mini'].includes(r.type),obs:[],haz:[],built:false,objs:[],pools:[],waves:null,enc:null});
   }

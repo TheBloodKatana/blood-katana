@@ -118,7 +118,7 @@ function exitFS(){
 function toggleFS(){if(isFS())exitFS();else enterFS();}
 const fsChange=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement)&&fsNative){fsNative=false;exitFS();}};
 document.addEventListener('fullscreenchange',fsChange);document.addEventListener('webkitfullscreenchange',fsChange);
-$('fsBtn').addEventListener('click',e=>{e.currentTarget.blur();toggleFS();});
+
 function syncSnd(){$('sndBtn').textContent=CFG.sound?'Sound on':'Sound off';}
 function toggleSound(){CFG.sound=!CFG.sound;save();auInit();auVol();syncSnd();syncDebug();}
 $('sndBtn').addEventListener('click',e=>{toggleSound();e.currentTarget.blur();});

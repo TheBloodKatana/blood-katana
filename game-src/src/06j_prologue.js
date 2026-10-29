@@ -24,7 +24,7 @@ const PRO_ROOMS=[
 ];
 function proFloor(){
   const B=BIOMES.find(b=>b.key==='castle')||BIOMES[BIOMES.length-1],rooms=new Map(),sizes=['s','w','b','w','b'];
-  for(let i=0;i<5;i++){const r={gx:i,gy:0,type:i===0?'start':i===4?'boss':'pro',pro:i,size:sizes[i],dist:i};[r.w,r.h]=ROOM_SIZES[r.size];
+  for(let i=0;i<5;i++){const r={gx:i,gy:0,type:i===0?'start':i===4?'boss':'pro',pro:i,size:sizes[i],dist:i};[r.w,r.h]=ROOM_SIZES[r.size];r.w=Math.max(r.w,VW);
     r.doors={};if(i>0)r.doors.w=true;if(i<4)r.doors.e=true;
     Object.assign(r,{visited:false,seen:false,cleared:false,obs:[],haz:[],built:false,objs:[],pools:[],waves:null,enc:null});rooms.set(rkey(i,0),r);}
   return{n:1,realm:BIOMES.indexOf(B),biome:B,stage:1,kind:'prologue',bossStage:false,diff:1,rooms,start:rooms.get(rkey(0,0)),boss:rooms.get(rkey(4,0)),gateOpen:true};
