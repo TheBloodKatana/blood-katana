@@ -35,16 +35,20 @@ function paintIcon(cv,kind){
   else if(kind==='gift'){P(1,5,'#000',16,1);P(1,6,'#000',1,9);P(16,6,'#000',1,9);P(1,15,'#000',16,1);P(2,6,'#b8142a',14,9);P(2,6,'#e8506a',14,2);P(8,5,'#e8c15a',2,10);P(2,9,'#e8c15a',14,1);P(5,1,'#000',3,1);P(10,1,'#000',3,1);P(4,2,'#000',1,3);P(13,2,'#000',1,3);P(5,2,'#e8c15a',3,3);P(10,2,'#e8c15a',3,3);P(8,3,'#fff0a0',2,2);}
   else if(kind==='shard'){P(6,0,'#000',2,1);P(5,1,'#000',1,2);P(8,1,'#000',1,2);P(4,3,'#000',1,5);P(9,3,'#000',1,5);P(5,8,'#000',1,3);P(8,8,'#000',1,3);P(6,11,'#000',2,1);P(6,1,'#ff4a5c',2,10);P(5,3,'#b8142a',4,5);P(6,2,'#ffffff',1,3);P(5,8,'#7a0d1c',3,2);}
 }
+// a thirst skin's card: a blood blade in its colours with a whisper of its aura
+function prevThirst(cv,it){const g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);flush();const keep=lx,gt=S.gt;lx=g;TS_LEND=it;S.gt=performance.now()/1000;
+  try{for(let i=0;i<22;i++){const x=6+i*1.3,y=15-i*0.55;pset(x,y,tsGrow(i));pset(x,y+1,tsGrow(i+1));}pset(35,3,tsGlint());thirstAura(it,1.3,20,12,0.9);flush();}catch(_){}
+  lx=keep;S.gt=gt;TS_LEND=null;}
 function paintPreviews(){
   for(const cv of $('menuInner').querySelectorAll('canvas[data-pv]')){const key=cv.dataset.pv,it=COS[key];if(!it)continue;
-    if(it.type==='o')prevOutfit(cv,it.id);else if(it.type==='k')prevWeapon(cv,'katana',it);else if(it.type==='w')prevWeapon(cv,it.w,it);else if(it.type==='s')prevSet(cv,it);}
+    if(it.type==='o')prevOutfit(cv,it.id);else if(it.type==='k')prevWeapon(cv,'katana',it);else if(it.type==='w')prevWeapon(cv,it.w,it);else if(it.type==='s')prevSet(cv,it);else if(it.type==='t')prevThirst(cv,it);}
   for(const cv of $('menuInner').querySelectorAll('canvas[data-icon]'))paintIcon(cv,cv.dataset.icon);
 }
 // ---------- the armory menu ----------
-const pvAttr=it=>`data-pv="${it.key}" width="${it.type==='o'?24:it.type==='s'?40:44}" height="${it.type==='o'?28:20}"`;
+const pvAttr=it=>`data-pv="${it.key}" width="${it.type==='o'?24:it.type==='s'||it.type==='t'?40:44}" height="${it.type==='o'?28:20}"`;
 function armCard(it){
   const own=cosOwned(it.key),eq=cosEquipped(it.key),lock=!own&&!(it.r==='legendary'||it.src==='shop'),sel=ARM.sel&&ARM.sel.key===it.key;
-  const pw=it.type==='o'?24:it.type==='s'?40:44,ph=it.type==='o'?28:20;
+  const pw=it.type==='o'?24:it.type==='s'||it.type==='t'?40:44,ph=it.type==='o'?28:20;
   return`<button type="button" class="sh-card r-${it.r}${eq?' eq':''}${lock?' lock':''}${sel?' sel':''}" data-m="armitem" data-key="${it.key}">
     <canvas data-pv="${it.key}" width="${pw}" height="${ph}" style="width:${pw*(it.type==='o'?2.5:2)}px;height:${ph*(it.type==='o'?2.5:2)}px"></canvas>
     <span class="sh-nm">${esc(it.name)}</span><span class="sh-r">${it.r}</span><span class="sh-how">${esc(itemHow(it))}</span></button>`;
@@ -57,6 +61,7 @@ function armKeys(){
   if(sl&&sl.key)return[sl.key];
   if(sl&&sl.bundle)return BUNDLES.find(b=>b.id===sl.bundle).items;
   if(ARM.tab==='w')return[wEqKey(ARM.wtab)];
+  if(ARM.tab==='t')return[cosState().eq.t];
   if(ARM.tab==='spin'){if(ARM.spin&&ARM.spin.item)return[ARM.spin.item];return[weekendLegend()];}
   return[];
 }
@@ -83,9 +88,9 @@ function armRefreshSide(){const inf=$('armInfo');if(inf){inf.innerHTML=armInfo()
 const selId=sl=>!sl?'':sl.key?'k:'+sl.key:sl.bundle?'b:'+sl.bundle:sl.pack?'p:'+sl.pack:'s:'+sl.sup;
 MENUS.armory=function(){
   const st=cosState(),tab=ARM.tab;
-  const tabs=[['o','Outfits'],['k','Katana'],['w','Weapons'],['s','Slash sets'],['spin','Daily spin'],['koban','Koban']];
+  const tabs=[['o','Outfits'],['k','Katana'],['w','Weapons'],['s','Slash sets'],['t','Thirst'],['spin','Daily spin'],['koban','Koban']];
   let body='';
-  if(tab==='o'||tab==='k'||tab==='s'){const list=Object.values(COS).filter(x=>x.type===tab);body=`<div class="sh-grid">${list.map(armCard).join('')}</div>`;}
+  if(tab==='o'||tab==='k'||tab==='s'||tab==='t'){const list=Object.values(COS).filter(x=>x.type===tab);body=`<div class="sh-grid">${list.map(armCard).join('')}</div>`;}
   else if(tab==='w'){body=`<div class="mv-tabs sub">${Object.keys(COS_WSKINS).map(w=>`<button type="button" class="${ARM.wtab===w?'on':''}" data-m="armw" data-w="${w}">${WEAPONS[w].name}</button>`).join('')}</div>
     <div class="sh-grid">${COS_WSKINS[ARM.wtab].map(x=>armCard(COS['w:'+ARM.wtab+':'+x.id])).join('')}</div>`;}
   else if(tab==='spin'){const sp=spinState(),can=sp.free>0&&!ARM.spinning,adLeft=AD_SPINS-sp.ads,leg=COS[weekendLegend()];

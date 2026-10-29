@@ -151,6 +151,7 @@ function populateRoom(R){
   if(R.type==='store'){placeSmith(R,cx-420,cy+40);if(!(S.gmx&&S.gmx.noShops)){addObj(R,{kind:'merchant',spr:'merchant',x:cx+120,y:cy-120,name:'Tanuki merchant'});shopStock(R,cx+120,cy-40,false);}R.deco.push({prop:'hokora',x:cx-420,y:cy-170});
     addObj(R,{kind:'exit',x:cx,y:WALL+90});if(S.floor.n>1)addObj(R,{kind:'onigiri',x:cx-60,y:cy+200});}
   if(R.type==='rest')fillRest(R,cx,cy);
+  if(R.type==='hermit')placeHermitRoom(R,cx,cy);
   if(R.type==='event'){
     const used=S.usedEnc||(S.usedEnc=new Set());
     const pool=ENCOUNTERS.filter(e=>!used.has(e.id));const enc=pool.length?pick(pool):pick(ENCOUNTERS);used.add(enc.id);
@@ -278,7 +279,7 @@ function nextFloor(){
   S.tut=null;S.tutSafe=false;S.trans={t:0,phase:'in'};enterRoom(S.floor.start,null);floorBanner();saveRun();
 }
 function resetRunState(){
-  Object.assign(S,{mods:freshMods(),perkAb:{},owned:{},items:[],runMax:0,mon:10*up('body','purse'),shardsRun:0,carry:0,bt:null,reload:0,toolCd:0,wpnBanner:null,forgeOpen:false,tools:{kunai:toolMax('kunai')+up('hub','tools'),shuri:toolMax('shuri')+up('hub','tools')},traceCd:0,traceCdMax:1,trace:null,traceArm:0,auras:[],hooks:[],clouds:[],counter:null,leap:null,reap:null,ink:null,railAim:null,perfect:false,jam:false,reloadMax:1,smokeShot:false,unbrokenUsed:false,dbgTech:false,kills:0,parries:0,blocks:0,dodges:0,guards:0,combo:0,comboT:0,glyph:null,tmarks:[],gwaves:[],held:null,remains:[],zones:[],force:null,dark:null,bossLine:null,inkLock:0,tut:null,pro:null,tutSafe:false,fuseT:0,fuseBonus:1,chooser:null,
+  Object.assign(S,{mods:freshMods(),perkAb:{},owned:{},items:[],runMax:0,mon:10*up('body','purse'),shardsRun:0,carry:0,bt:null,reload:0,toolCd:0,wpnBanner:null,forgeOpen:false,tools:{kunai:toolMax('kunai')+up('hub','tools'),shuri:toolMax('shuri')+up('hub','tools')},traceCd:0,traceCdMax:1,trace:null,traceArm:0,auras:[],hooks:[],clouds:[],counter:null,leap:null,reap:null,ink:null,railAim:null,perfect:false,jam:false,reloadMax:1,smokeShot:false,unbrokenUsed:false,dbgTech:false,kills:0,parries:0,blocks:0,dodges:0,guards:0,combo:0,comboT:0,glyph:null,tmarks:[],gwaves:[],held:null,remains:[],zones:[],force:null,dark:null,bossLine:null,inkLock:0,tut:null,pro:null,elem:null,tutSafe:false,fuseT:0,fuseBonus:1,chooser:null,
     meter:0,full:false,armed:false,dead:0,hurt:0,slowT:0,hitstop:0,flash:0,cdTap:0,cdCut:0,cdLock:0,cdTapMax:0,cdCutMax:0,abCd:{},abCdMax:{},buffer:null,tapTimes:[],tapChain:0,cutCount:0,anim:null,
     drink:null,event:null,duel:null,follower:null,quest:null,firstCutUsed:false,
     darumaUsed:false,favorUsed:false,reviveUsed:false,charmUsed:false,adShards:false,usedEnc:new Set(),itemBanner:null,banner:null,summary:false,choosing:false,dialog:null,paused:false,
@@ -348,7 +349,7 @@ function renderPerkStrip(){
   const el=$('perkStrip');if(!el||!S.items)return;const ids=Object.keys(S.owned||{});
   const items=S.items.map(id=>`<span class="pchip item" title="${esc(ITEM[id].desc)}">${esc(ITEM[id].name)}</span>`).join('');
   const boons=ids.map(id=>{const p=PERKS.find(x=>x.id===id);return p?`<span class="pchip" title="${esc(p.desc)}">${esc(p.name)}</span>`:'';}).join('');
-  el.hidden=!(items||boons);el.innerHTML=(items?`<span class="label">Treasures ${S.items.length}/${itemSlots()}</span>`+items:'')+(boons?`<span class="label">Boons ${ids.length}/${boonSlots()}</span>`+boons:'');
+  const el2=elemChip();el.hidden=!(items||boons||el2);el.innerHTML=(el2?`<span class="label">Temper</span>`+el2:'')+(items?`<span class="label">Treasures ${S.items.length}/${itemSlots()}</span>`+items:'')+(boons?`<span class="label">Boons ${ids.length}/${boonSlots()}</span>`+boons:'');
 }
 $('perkCards').addEventListener('click',e=>{if($('perkCards').classList.contains('cool'))return;const b=e.target.closest('[data-i]');if(b)chooserPick(+b.dataset.i);});
 

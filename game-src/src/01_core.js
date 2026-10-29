@@ -105,10 +105,10 @@ function auInit(){
     const dl=c.createDelay(1);dl.delayTime.value=0.36;const fb=c.createGain();fb.gain.value=0.32;
     AU.musIn.connect(lp);lp.connect(AU.mus);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(AU.mus);
     const nb=c.createBuffer(1,c.sampleRate,c.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;AU.nb=nb;
-    AU.next=c.currentTime+0.1;auVol();startDrone();buildSamples();
+    AU.next=c.currentTime+0.1;auVol();buildSamples();
   }catch(_){AU.ctx=null;}
 }
-function auVol(){if(!AU.ctx)return;const t=AU.ctx.currentTime;AU.sfx.gain.setTargetAtTime(CFG.sound?CFG.sfxVol*0.9:0,t,0.02);AU.mus.gain.setTargetAtTime(CFG.sound&&CFG.music?CFG.musicVol*0.6:0,t,0.15);}
+function auVol(){if(!AU.ctx)return;const t=AU.ctx.currentTime;AU.sfx.gain.setTargetAtTime(CFG.sound?CFG.sfxVol*0.9:0,t,0.02);AU.mus.gain.setTargetAtTime(CFG.sound&&CFG.music?CFG.musicVol*0.9:0,t,0.15);}
 const pm=()=>0.62+0.38*clamp(S.ts,0,1); // sounds drop in pitch during slow-mo
 function tone(f,dur,o={}){
   const c=AU.ctx;if(!c||!CFG.sound)return;const t=c.currentTime+Math.max(0,o.delay||0),k=o.nopm?1:pm();
@@ -153,20 +153,24 @@ function startDrone(){
 function setDrone(root){if(!AU.drone)return;const t=AU.ctx.currentTime;[1,1.5,2].forEach((m,i)=>AU.drone.oscs[i].frequency.setTargetAtTime(root*m,t,0.8));}
 const SCALES={in:[293.66,311.13,392,440,466.16,587.33,622.25,783.99,880],yo:[293.66,329.63,392,440,493.88,587.33,659.25,783.99,880],min:[220,261.63,293.66,329.63,392,440,523.25,587.33],hell:[146.83,155.56,196,220,233.08,293.66,311.13]};
 const TAIKO=[1,0,0,1,0,0,1,0,1,0,1,0,0,0,2,2];
+// ---------- the soundtrack director: which song plays, and whether its fight layers are in ----------
+const MUS={E:null,id:null,fight:null,next:null,at:0};
+function songFor(){
+  if(S.mode==='title')return'title';
+  if(S.pro)return S.room&&S.room.pro===4?'kuroda':'castle';
+  if(S.inHub||(S.floor&&S.floor.kind==='hub'))return'shrine';
+  const b=S.boss;if(b&&S.enemies.includes(b)&&!b.practice)return b.key==='usurper'?'kuroda':'lord';
+  if(S.gm&&S.gm.id==='rush')return'lord';
+  const k=curBiome().key;return SONGS.some(x=>x.id===k)?k:'dojo';
+}
 function musicTick(){
-  const c=AU.ctx;if(!c||!CFG.sound||!CFG.music)return;
-  const B=curBiome(),boss=!!S.boss&&S.running,beat=boss?0.2:B.music.beat;
-  if(AU.next<c.currentTime-0.5)AU.next=c.currentTime+0.05;
-  while(AU.next<c.currentTime+0.25){
-    const t=AU.next,st=AU.step++,dl=t-c.currentTime,sc=SCALES[B.music.scale];
-    if(boss||B.music.taiko){const p=TAIKO[st%16];if(p===1)drum(t,95,boss?0.5:0.25,0.4);else if(p===2&&boss)drum(t,150,0.22,0.16);if(boss&&st%4===2)hiss(0.04,{f:3500,ft:'highpass',vol:0.05,delay:dl,dest:AU.mus,nopm:true});}
-    const chance=S.dead>0?0.05:boss?0.3:(S.mode==='hub'||S.dialog||S.choosing)?0.5:0.22;
-    if(Math.random()<chance){
-      const f=sc[Math.floor(Math.random()*sc.length)]*(boss&&Math.random()<0.35?0.5:1);
-      if(B.music.flute&&Math.random()<0.25&&!boss)flute(f,dl,rand(0.8,1.6),0.05);else pluck(f,dl,boss?0.09:0.07);
-    }
-    AU.next+=beat;
-  }
+  const c=AU.ctx;if(!c)return;
+  if(!MUS.E){try{MUS.E=createEngine(c,AU.mus);}catch(_){return;}}
+  const E=MUS.E,id=CFG.sound&&CFG.music?songFor():null,now=performance.now();
+  if(id!==MUS.next){MUS.next=id;MUS.at=now+(E.playing?700:0);if(E.playing)E.stop(0.25);const sg=SONGS.find(x=>x.id===id);if(sg)E.warm(sg);}
+  if(MUS.id!==MUS.next&&now>=MUS.at){MUS.id=MUS.next;const sg=SONGS.find(x=>x.id===MUS.id);if(sg){E.fight=!!MUS.fight;E.play(sg);}}
+  const fight=S.mode==='run'&&S.dead<=0&&S.enemies.some(e=>!e.T.dummy&&!e.practice&&!e.illusion);
+  if(fight!==MUS.fight){MUS.fight=fight;E.setFight(fight);}
 }
 function sfx(name,arg){
   if(!AU.ctx||!CFG.sound)return;

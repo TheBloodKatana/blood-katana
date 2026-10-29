@@ -6,7 +6,7 @@ const PV={cv:null,g:null,raf:0,t:0,last:0,look:null,parts:[],cuts:[],ink:[],loop
 function pvLook(keys){
   const st=cosState(),L={o:equippedOid(),set:slashSet(),w:'katana',skin:null};
   for(const key of [].concat(keys||[])){const it=COS[key];if(!it)continue;
-    if(it.type==='o')L.o=it.id;else if(it.type==='s')L.set=it;else if(it.type==='k'){L.w='katana';L.skin=it;}else if(it.type==='w'){L.w=it.w;L.skin=it;}}
+    if(it.type==='o')L.o=it.id;else if(it.type==='s')L.set=it;else if(it.type==='k'){L.w='katana';L.skin=it;}else if(it.type==='w'){L.w=it.w;L.skin=it;}else if(it.type==='t')L.thirst=it;}
   if(!L.skin)L.skin=wSkinCols(L.w);
   return L;
 }
@@ -33,16 +33,17 @@ const PX0=38,PY0=51,DX0=78;
 const PV_BEATS=[{t:0.55,k:'side'},{t:1.3,k:'down'},{t:2.1,k:'trace'},{t:2.62,k:'cast'}];
 function pvCut(cx,cy,r,a0,a1,w,set){PV.cuts.push({cx,cy,r,a0,a1,w,set,t:0,trav:0.09,ling:0.06,fade:0.2});}
 function pvBurst(x,y,n,cols,sp){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(sp||1)*(30+Math.random()*80);PV.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-20,life:0.3+Math.random()*0.45,max:0.75,col:cols[i%cols.length],size:Math.random()<0.3?2:1});}}
-function pvHit(n,big){const s=PV.look.set;PV.hitT=0.09;PV.shake=big?0.12:0.06;pvBurst(DX0,PY0-14,n,s.burst,big?1.4:1);if(PV.audible)sfx(big?'slash':'hit');}
+const pvCutSet=()=>{const L=PV.look,T=L.thirst;return T?{core:T.core,edge:T.edge,burst:T.ac}:L.set;};
+function pvHit(n,big){const s=pvCutSet();PV.hitT=0.09;PV.shake=big?0.12:0.06;pvBurst(DX0,PY0-14,n,s.burst,big?1.4:1);if(PV.audible)sfx(big?'slash':'hit');}
 function pvStep(dt){
   const T0=PV.t,T1=PV.t+dt;PV.t=T1;const lp=Math.floor(T1/4.4);
   if(lp!==PV.loop){PV.loop=lp;PV.ink=[];PV.cast=false;}
   const lt0=T0-lp*4.4,lt1=T1-lp*4.4,L=PV.look;
   for(const b of PV_BEATS)if(lt0<b.t&&lt1>=b.t){
-    if(b.k==='side'){PV.anim={k:'side',t:0};pvCut(PX0+6,PY0-14,24,-1.15,1.0,7,L.set);setTimeout(()=>PV.cv&&pvHit(10),60);}
-    else if(b.k==='down'){PV.anim={k:'down',t:0};pvCut(PX0+4,PY0-16,22,-1.9,0.55,7,L.set);setTimeout(()=>PV.cv&&pvHit(10),60);}
+    if(b.k==='side'){PV.anim={k:'side',t:0};pvCut(PX0+6,PY0-14,24,-1.15,1.0,7,pvCutSet());setTimeout(()=>PV.cv&&pvHit(10),60);}
+    else if(b.k==='down'){PV.anim={k:'down',t:0};pvCut(PX0+4,PY0-16,22,-1.9,0.55,7,pvCutSet());setTimeout(()=>PV.cv&&pvHit(10),60);}
     else if(b.k==='trace'){PV.ink=[];PV.traceT=0;}
-    else if(b.k==='cast'){PV.cast=true;pvCut(DX0-2,PY0-14,18,-2.4,0.8,9,L.set);pvCut(DX0+2,PY0-14,18,-0.7,2.4,9,L.set);setTimeout(()=>PV.cv&&pvHit(24,true),70);}
+    else if(b.k==='cast'){PV.cast=true;pvCut(DX0-2,PY0-14,18,-2.4,0.8,9,pvCutSet());pvCut(DX0+2,PY0-14,18,-0.7,2.4,9,pvCutSet());setTimeout(()=>PV.cv&&pvHit(24,true),70);}
   }
   if(PV.traceT!=null){PV.traceT+=dt;const k=Math.min(1,PV.traceT/0.45);const n=Math.floor(k*30);while(PV.ink.length<n){const i=PV.ink.length,a=-Math.PI/2+i/30*Math.PI*2;PV.ink.push({x:DX0+Math.cos(a)*15,y:PY0-15+Math.sin(a)*12});}if(PV.traceT>0.8){PV.traceT=null;PV.ink=[];}}
   if(PV.anim){PV.anim.t+=dt;if(PV.anim.t>0.24)PV.anim=null;}
@@ -62,7 +63,7 @@ function pvDrawCut(c){
 function pvShadow(x,y,w){for(let yy=-1;yy<=1;yy++){const ww=Math.round(w*Math.sqrt(1-yy*yy/4));for(let xx=-ww;xx<=ww;xx++)pset(x+xx,y+yy,'#050305',0.5);}}
 function pvRender(){
   const L=PV.look,g=PV.g;if(!g||!L)return;
-  flush();const keep=lx,gt=S.gt,face=S.face;lx=g;S.gt=PV.t;S.face=1;
+  flush();const keep=lx,gt=S.gt,face=S.face;lx=g;S.gt=PV.t;S.face=1;TS_LEND=L.thirst||null;
   try{
     g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.drawImage(pvFloor(),0,0);
     const sx=PV.shake>0?Math.round((Math.random()-.5)*2):0;g.setTransform(1,0,0,1,sx,0);
@@ -74,7 +75,9 @@ function pvRender(){
     pvShadow(PX0,PY0,6);flush();
     const ox=Math.round(PX0-sp.ax),oy=Math.round(PY0-(sp.h-1));g.drawImage(fr.c,ox,oy);
     // the weapon in hand, hidden while the swing frames carry the cut, just like in a fight
-    if(!an){const h={x:ox+fr.hand.x,y:oy+fr.hand.y},blood=PV.loop%2===1,lt=PV.t-PV.loop*4.4,gg=blood?Math.max(0,Math.min(1,(lt-3.2)/0.35))*(lt>4.15?Math.max(0,(4.4-lt)/0.25):1):0;
+    const T=L.thirst,lt0=PV.t-PV.loop*4.4,tg=T?Math.max(0,Math.min(1,(lt0-0.2)/0.35))*(lt0>4.1?Math.max(0,(4.4-lt0)/0.3):1):0;
+    if(T&&tg>0){thirstAura(T,PV.t,PX0,PY0-18,tg);thirstAct(T,(lt0-0.2)/0.7,PX0,PY0-18,PV.t);}
+    if(!an){const h={x:ox+fr.hand.x,y:oy+fr.hand.y},blood=T?true:PV.loop%2===1,lt=lt0,gg=T?tg:blood?Math.max(0,Math.min(1,(lt-3.2)/0.35))*(lt>4.15?Math.max(0,(4.4-lt)/0.25):1):0;
       const a=PV.cast?-0.2:L.w==='kama'?-0.15:-0.55-Math.sin(PV.t*2)*0.04;
       drawHeld(h,a,L.w,false,gg>0,false,false,{skin:L.skin,face:1,g:gg});}
     flush();
@@ -84,7 +87,7 @@ function pvRender(){
     for(const p of PV.parts){const a=Math.min(1,p.life/p.max*1.5);pset(p.x,p.y,p.col,a);if(p.size>1){pset(p.x+1,p.y,p.col,a);pset(p.x,p.y+1,p.col,a);}}
     flush();g.setTransform(1,0,0,1,0,0);
   }catch(e){try{console.error(e);}catch(_){}}
-  lx=keep;S.gt=gt;S.face=face;
+  lx=keep;S.gt=gt;S.face=face;TS_LEND=null;
 }
 function pvFrame(now){
   if(!PV.cv||!PV.cv.isConnected){pvStop();return;}

@@ -10,7 +10,7 @@ const devOn=()=>!!(CFG.dev||/[?&]dev\b/.test(location.search));
 function saveRun(){
   if(!S.floor||S.inHub||S.pro||S.dead>0||S.mode!=='run'||(S.gm&&S.gm.arena))return;
   const d={v:1,n:S.floor.n,realmPick:S.realmPick,hp:P.hp,shield:P.shield||0,wpn:P.wpn,items:S.items,owned:S.owned,runMax:S.runMax||0,mon:S.mon,carry:S.carry,shardsRun:S.shardsRun,
-    tools:S.tools,meter:S.meter,stats:S.stats,unbrokenUsed:!!S.unbrokenUsed,usedEnc:[...(S.usedEnc||[])],gm:S.gm,reviveUsed:!!S.reviveUsed,t:Date.now()};
+    tools:S.tools,meter:S.meter,stats:S.stats,unbrokenUsed:!!S.unbrokenUsed,usedEnc:[...(S.usedEnc||[])],gm:S.gm,reviveUsed:!!S.reviveUsed,elem:S.elem||null,t:Date.now()};
   try{localStorage.setItem(RUN_KEY,JSON.stringify(d));}catch(_){}
 }
 function loadRunData(){try{const d=JSON.parse(localStorage.getItem(RUN_KEY)||'null');return d&&d.v===1&&d.n>=1&&d.n<=totalFloors()?d:null;}catch(_){return null;}}
@@ -20,7 +20,7 @@ function continueRun(){
   auInit();S.gmNext=d.gm||{id:'story',mods:[]};resetRunState();S.inHub=false;applyMode();recomputeMods();S.reviveUsed=!!d.reviveUsed;
   S.realmPick=Array.isArray(d.realmPick)&&d.realmPick.length===BIOMES.length?d.realmPick:BIOMES.map(B=>({boss:pick(B.bosses),mini:pick(B.minis)}));
   Object.assign(S,{items:(d.items||[]).filter(id=>ITEM[id]),owned:d.owned||{},runMax:d.runMax||0,mon:d.mon|0,carry:d.carry|0,shardsRun:d.shardsRun|0,tools:d.tools||S.tools,meter:+d.meter||0,
-    stats:Object.assign(S.stats,d.stats||{}),unbrokenUsed:!!d.unbrokenUsed,usedEnc:new Set(d.usedEnc||[])});
+    stats:Object.assign(S.stats,d.stats||{}),unbrokenUsed:!!d.unbrokenUsed,usedEnc:new Set(d.usedEnc||[]),elem:d.elem&&ELEM_BY[d.elem.id]?d.elem:null});
   for(const id in S.owned)if(!PERKS.find(p=>p.id===id))delete S.owned[id];
   if(d.wpn&&WEAPONS[d.wpn.id]){P.wpn=d.wpn;P.wpn.uid=WUID++;}
   recomputeMods();P.hp=clamp(d.hp|0,1,P.max);P.shield=d.shield||0;

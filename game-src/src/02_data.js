@@ -302,7 +302,7 @@ const TOTAL_LV=TREES.reduce((a,t)=>a+t.branches.reduce((b,br)=>b+br.nodes.reduce
 // meta progress (kept forever)
 const META_KEY='blood-katana-shrine-v2';
 const freshMeta=()=>({shards:0,up:{},wseen:{},runs:0,wins:0,bestFloor:0,kills:0,seen:{},legacy:false,realms:0,startW:'',tut:0,
-  koban:0,cos:{own:{},eq:{o:'o:default',k:'k:steel',s:'s:crimson',w:{}}},spin:{day:'',free:1,ads:0,total:0},npc:{},feat:{done:{},n:{}},best:{},rec:{},daily:{streak:0,best:0},hell:0,ramen:0,charm:0,foxBless:0,gift:{day:'',idx:0,cycle:0,pick:null},pro:0});
+  koban:0,cos:{own:{},eq:{o:'o:default',k:'k:steel',s:'s:crimson',t:'t:crimson',w:{}}},spin:{day:'',free:1,ads:0,total:0},npc:{},feat:{done:{},n:{}},best:{},rec:{},daily:{streak:0,best:0},hell:0,ramen:0,charm:0,foxBless:0,gift:{day:'',idx:0,cycle:0,pick:null},pro:0});
 let META=freshMeta();
 function loadMeta(){
   try{const m=JSON.parse(localStorage.getItem(META_KEY)||'{}');for(const k in META)if(k in m&&typeof m[k]===typeof META[k])META[k]=m[k];

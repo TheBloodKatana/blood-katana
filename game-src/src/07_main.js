@@ -296,6 +296,7 @@ function drawPlayer(){
   const sw=S.swipe,h=o.hand,holdA=sw&&sw.hold?holdAim(sw):null,a=S.anim?Math.atan2(S.anim.dir.y,S.anim.dir.x):holdA!==null?holdA:Math.atan2(LY(S.aim.y)-h.y,LX(S.aim.x)-h.x),c=Math.cos(a),s=Math.sin(a),tired=S.cdCut>0.05||!!S.drink;
   // the sprite's own swing frames carry the cut, so the weapon in hand steps aside until the swing ends
   const L=S.anim&&curW().style!=='gun'?0:drawHeld(h,a,curW().id,wBroken(),btFor(curW().id),tired,P.wpn&&P.wpn.cursed);S.tipW={x:S.X0+(h.x+c*L)*PX,y:S.Y0+(h.y+s*L)*PX};
+  if(btOn()||S.btFx){const T=thirstSkin(),ax=LX(P.x),ay=LY(P.y)-8-(P.z||0)/PX;if(btOn())thirstAura(T,S.gt,ax,ay,S.bt&&S.bt.t<0.4?S.bt.t/0.4:1);if(S.btFx){const u=(S.gt-S.btFx)/0.7;if(u>1)S.btFx=null;else thirstAct(T,u,ax,ay,S.gt);}}
   drawOrb();
   // stances, charge, reload
   const px=LX(P.x),py=LY(P.y-14-z);
@@ -309,15 +310,15 @@ function drawPlayer(){
   if(S.touchUI){flush();const bx=Math.round(LX(P.x))-7,by=Math.round(LY(P.y+P.r*0.6))+3;if(S.cdTap>0&&S.cdTapMax>0){lx.fillStyle='#000';lx.fillRect(bx-1,by-1,16,3);lx.fillStyle=C.bone;lx.fillRect(bx,by,Math.round(14*S.cdTap/S.cdTapMax),1);}if(S.cdCut>0&&S.cdCutMax>0){lx.fillStyle='#000';lx.fillRect(bx-1,by+2,16,3);lx.fillStyle=C.hi;lx.fillRect(bx,by+3,Math.round(14*S.cdCut/S.cdCutMax),1);}}
 }
 // the weapon in hand. Everything is captured, joined into solid lines and outlined in black; skins only change colours.
-function bloodGrow(P2,k0,n,g,jf){const m=Math.round(n*g);for(let i=0;i<m;i++){const k=k0+i,q=P2(k,jf?jf(k):0);pset(q.x,q.y,i%7===0?C.white:(i%3===2?C.hi:C.blood));}if(m>0){const q=P2(k0+m,jf?jf(k0+m):0);pset(q.x,q.y,C.white);}return k0+m;}
+function bloodGrow(P2,k0,n,g,jf){const m=Math.round(n*g);for(let i=0;i<m;i++){const k=k0+i,q=P2(k,jf?jf(k):0);pset(q.x,q.y,tsGrow(i));}if(m>0){const q=P2(k0+m,jf?jf(k0+m):0);pset(q.x,q.y,tsGlint());}return k0+m;}
 function drawHeld(h,a,id,broken,blood,tired,cursed,opt){
   const c=Math.cos(a),s=Math.sin(a),P2=(k,j)=>({x:h.x+c*k-s*(j||0),y:h.y+s*k+c*(j||0)}),seg=(k0,k1,col,th,j)=>{const A=P2(k0,j),B=P2(k1,j);pline(A.x,A.y,B.x,B.y,col,1,th);};
   const pk=(k,j,col)=>{const q=P2(k,j);pset(q.x,q.y,col);},bend=(k0,j0,k1,j1,col)=>{const A=P2(k0,j0),B=P2(k1,j1);pline(A.x,A.y,B.x,B.y,col);};
-  const SK=opt&&opt.skin||wSkinCols(id),steel=tired&&SK.dflt?'#6a7076':SK.b,glow=blood?(Math.floor(S.gt*14)%2?C.white:C.hi):cursed?C.phase:SK.glow&&!tired?SK.glow:null;let tip=6;
+  const SK=opt&&opt.skin||wSkinCols(id),steel=tired&&SK.dflt?'#6a7076':SK.b,glow=blood?(Math.floor(S.gt*14)%2?tsGlint():tsGrow(2)):cursed?C.phase:SK.glow&&!tired?SK.glow:null;let tip=6;
   const up=opt&&opt.face?-opt.face:-S.face,g=opt&&opt.g!=null?opt.g:blood&&S.bt?Math.min(1,(S.bt.max-S.bt.t)/0.3):0;
   capBegin();
   switch(id){
-    case'reserve':seg(-3,-1,SK.h);pset(h.x,h.y,SK.t);seg(1,5,steel);tip=6;if(blood){for(let k=6;k<22;k++)pk(k,0,k%3===2?C.hi:C.blood);tip=22;}break;
+    case'reserve':seg(-3,-1,SK.h);pset(h.x,h.y,SK.t);seg(1,5,steel);tip=6;if(blood){for(let k=6;k<22;k++)pk(k,0,tsGrow(k));tip=22;}break;
     case'katana':seg(-4,-1,SK.h);pset(h.x,h.y,SK.t);pk(0,1,SK.t);pk(0,-1,SK.t);if(broken){seg(1,7,steel);pk(8,1,steel);tip=8;}
       else{const fl=SK.flick&&Math.floor(S.gt*14)%3===0;seg(1,14,fl?C.white:steel);if(SK.hm&&!tired)for(let k=4;k<14;k+=4)pk(k,0,SK.hm);pk(15,0,SK.tip);tip=15;}break;
     case'yari':seg(-8,broken?10:16,'#8a5a2e');if(broken){pset(P2(11,1).x,P2(11,1).y,'#c8925a');tip=11;}else{seg(16,21,steel);pset(P2(17,1).x,P2(17,1).y,'#c23a2a');pset(P2(22).x,P2(22).y,C.white);tip=22;}break;
@@ -341,7 +342,7 @@ function drawHeld(h,a,id,broken,blood,tired,cursed,opt){
     case'kama':seg(-3,5,SK.h);pk(6,0,SK.t);
       {const bl=broken?[[6,-1],[6,-2],[5,-3]]:[[6,-1],[6,-2],[6,-3],[5,-4],[5,-5],[4,-6]];bl.forEach(([k,j],i)=>pk(k,j*S.face,SK.hm&&i%2&&!tired?SK.hm:steel));
         if(!broken){for(const [k,j] of [[7,-1],[7,-2],[7,-3],[6,-4]])pk(k,j*S.face,steel);
-          if(g>0){const ext=[[3,-7],[2,-8],[1,-8],[0,-8],[-1,-8],[-2,-7],[-3,-7],[-4,-6]],m=Math.round(ext.length*g);for(let i=0;i<m;i++)pk(ext[i][0],ext[i][1]*S.face,i===m-1?C.white:(i%3===2?C.hi:C.blood));for(let i=0;i<Math.min(3,m);i++)pk([5,4,3][i],[-6,-7,-8][i]*S.face,C.blood);}
+          if(g>0){const ext=[[3,-7],[2,-8],[1,-8],[0,-8],[-1,-8],[-2,-7],[-3,-7],[-4,-6]],m=Math.round(ext.length*g);for(let i=0;i<m;i++)pk(ext[i][0],ext[i][1]*S.face,i===m-1?tsGlint():tsGrow(i));for(let i=0;i<Math.min(3,m);i++)pk([5,4,3][i],[-6,-7,-8][i]*S.face,tsGrow(1));}
           else pk(3,-7*S.face,SK.tip);}}
       tip=7;break;
   }
@@ -354,12 +355,12 @@ function drawOrb(){
   const ox=P.x-S.face*22,oy=P.y-46+Math.sin(S.gt*2.4)*2;S.orbW={x:ox,y:oy};
   const X=LX(ox),Y=LY(oy),R=2+f*10+(thirst?2:0),n=Math.round(3+f*46+(thirst?14:0));
   if(!S.orbP)S.orbP=[];while(S.orbP.length<n)S.orbP.push({a:rand(0,6.283),r:Math.sqrt(Math.random()),sp:rand(1.2,3.6)*(Math.random()<0.5?-1:1),ph:rand(0,6.283),wob:rand(0.6,1.4)});if(S.orbP.length>n)S.orbP.length=n;
-  const pulse=ready?0.85+0.15*Math.sin(S.gt*8):1;
+  const pulse=ready?0.85+0.15*Math.sin(S.gt*8):1,OP=tsOrb();
   for(const q of S.orbP){const a=q.a+S.gt*q.sp,rr=R*q.r*pulse*(0.85+0.15*Math.sin(S.gt*3*q.wob+q.ph)),x=X+Math.cos(a)*rr,y=Y+Math.sin(a)*rr*0.85;
-    const core=q.r<0.4,col=thirst&&Math.random()<0.15?C.white:core?(f>0.5?'#ff8a95':C.hi):q.r<0.75?C.blood:'#7a0d1c';pset(x,y,col);
-    if(f>0.3&&!core){const a2=a-q.sp*0.06;pset(X+Math.cos(a2)*rr,Y+Math.sin(a2)*rr*0.85,'#5a0a14',0.6);}}
+    const core=q.r<0.4,col=thirst&&Math.random()<0.15?OP[4]:core?(f>0.5?OP[0]:OP[1]):q.r<0.75?OP[2]:OP[3];pset(x,y,col);
+    if(f>0.3&&!core){const a2=a-q.sp*0.06;pset(X+Math.cos(a2)*rr,Y+Math.sin(a2)*rr*0.85,OP[3],0.6);}}
   if(f>0.45&&Math.random()<f*0.25)S.parts.push({x:ox+rand(-R,R)*PX*0.6,y:oy+R*PX*0.5,vx:rand(-8,8),vy:rand(30,70),life:0.5,max:0.5,size:1,col:C.blood,stamp:false});
-  if(ready&&!thirst){for(let i=0;i<16;i++){if(Math.floor(S.gt*6+i)%3)continue;const t=i/16*Math.PI*2+S.gt;pset(X+Math.cos(t)*(R+3),Y+Math.sin(t)*(R+3)*0.85,C.hi,0.8);}}
+  if(ready&&!thirst){for(let i=0;i<16;i++){if(Math.floor(S.gt*6+i)%3)continue;const t=i/16*Math.PI*2+S.gt;pset(X+Math.cos(t)*(R+3),Y+Math.sin(t)*(R+3)*0.85,OP[1],0.8);}}
   const r=Math.round(R);
   if(P.wpn){const w=P.wpn,bx=Math.round(X)-6,by=Math.round(Y)+r+4,fr=w.dur/w.max;flush();lx.fillStyle='#000';lx.fillRect(bx-1,by-1,14,3);lx.fillStyle=w.dur<=0?'#5a5a62':fr<0.25?C.hi:w.cursed?C.phase:C.steel;lx.fillRect(bx,by,w.dur<=0?12:Math.max(1,Math.round(12*fr)),1);}
   if(S.bt&&S.bt.max&&!S.bt.strike){flush();lx.fillStyle=C.hi;lx.fillRect(Math.round(X)-6,Math.round(Y)-r-5,Math.round(12*S.bt.t/S.bt.max),1);}
@@ -620,7 +621,7 @@ function drawMinimap(){
   for(const r of rooms){const x=ox+(r.gx-mnx)*(cw+2),y=oy+(r.gy-mny)*(ch+2),cur=r===S.room;
     lx.fillStyle=cur?'#ece4d7':r.visited?'#5a4a52':'#2e2731';lx.fillRect(x,y,cw,ch);
     if(r.doors.e&&(r.visited||cur))lx.fillRect(x+cw,y+3,2,1);if(r.doors.s&&(r.visited||cur))lx.fillRect(x+5,y+ch,1,2);
-    const ic={boss:C.hi,mini:'#ff8a95',rest:C.spirit,store:C.mon,shop:C.mon,treasure:'#ffe066',event:C.phase,duel:C.duel,gate:S.floor.gateOpen?C.spirit:C.ash}[r.type];
+    const ic={boss:C.hi,mini:'#ff8a95',rest:C.spirit,store:C.mon,shop:C.mon,treasure:'#ffe066',event:C.phase,duel:C.duel,hermit:'#7ad890',gate:S.floor.gateOpen?C.spirit:C.ash}[r.type];
     if(S.quest&&((!S.quest.has&&r===S.quest.target)||(S.quest.has&&r===S.quest.R))&&Math.floor(S.gt*3)%2){lx.fillStyle='#e8eef8';lx.fillRect(x+1,y+1,cw-2,ch-2);}
     if(ic&&(r.seen||S.revealAll)&&!(r.type==='duel'&&r.duelDone)){lx.fillStyle=ic;if(r.type==='duel'){lx.fillRect(x+3,y+1,1,1);lx.fillRect(x+4,y+2,1,1);lx.fillRect(x+5,y+3,1,1);lx.fillRect(x+6,y+4,1,1);lx.fillRect(x+7,y+5,1,1);lx.fillRect(x+7,y+1,1,1);lx.fillRect(x+6,y+2,1,1);lx.fillRect(x+4,y+4,1,1);lx.fillRect(x+3,y+5,1,1);}else if(r.type==='gate'){lx.fillRect(x+3,y+1,5,1);lx.fillRect(x+4,y+2,1,4);lx.fillRect(x+6,y+2,1,4);}else if(r.type==='boss'){lx.fillRect(x+4,y+2,3,2);lx.fillRect(x+4,y+4,1,1);lx.fillRect(x+6,y+4,1,1);}else lx.fillRect(x+4,y+2,3,3);}
     if(cur){lx.fillStyle='#b8142a';lx.fillRect(x+5,y+3,1,1);}}
@@ -689,14 +690,14 @@ function draw(){
     if(d==='n'){x0=R.w/2/PX-dh/2;y0=0;w=dh;h=WP;}else if(d==='s'){x0=R.w/2/PX-dh/2;y0=R.h/PX-WP;w=dh;h=WP;}else if(d==='w'){x0=0;y0=R.h/2/PX-dh/2;w=WP;h=dh;}else{x0=R.w/PX-WP;y0=R.h/2/PX-dh/2;w=WP;h=dh;}
     const X=x0-fx,Y=y0-fy;
     if(!R.cleared){lx.fillStyle=bcol;if(w>h)for(let x=X+2;x<X+w;x+=5)lx.fillRect(x,Y,2,h);else for(let y=Y+2;y<Y+h;y+=5)lx.fillRect(X,y,w,2);}
-    if(nb&&(nb.seen||S.revealAll)&&['boss','mini','rest','shop','treasure','event','duel','gate'].includes(nb.type)){const col={boss:C.hi,mini:'#ff8a95',rest:C.spirit,shop:C.mon,treasure:'#ffe066',event:C.phase,duel:C.duel,gate:C.spirit}[nb.type];const cx=X+w/2,cy=d==='n'?Y+h+4:d==='s'?Y-5:Y+h/2,cxx=d==='w'?X+w+4:d==='e'?X-5:cx;pdisc(cxx,cy,1,col,0.9);}
+    if(nb&&(nb.seen||S.revealAll)&&['boss','mini','rest','shop','treasure','event','duel','gate','hermit'].includes(nb.type)){const col={hermit:'#7ad890',boss:C.hi,mini:'#ff8a95',rest:C.spirit,shop:C.mon,treasure:'#ffe066',event:C.phase,duel:C.duel,gate:C.spirit}[nb.type];const cx=X+w/2,cy=d==='n'?Y+h+4:d==='s'?Y-5:Y+h/2,cxx=d==='w'?X+w+4:d==='e'?X-5:cx;pdisc(cxx,cy,1,col,0.9);}
   }
   flush();
   drawHazards();flush();drawFoeGround();flush();
   if(S.floor&&S.floor.n===1&&R.type==='start'&&S.mode==='run'&&!S.pro){const a=0.85;lx.globalAlpha=a;const H=S.touchUI?['STICK TO MOVE  ·  DASH BUTTON','TAP · SWIPE · HOLD: THREE MOVES PER WEAPON','PRESS 技 THEN DRAW A CIRCLE: BLOOD SPIN','SPEND THE ORB: HEAL · MEND · THIRST']:['WASD MOVE  ·  SPACE DASH  ·  CLICK, SWIPE OR HOLD TO ATTACK','HOLD RIGHT-CLICK AND DRAW A CIRCLE: BLOOD SPIN','E TAKE WEAPONS  ·  G OR MIDDLE-CLICK THROWS THEM','Q HEAL  ·  F MEND  ·  R BLOODTHIRST  ·  X C TOOLS'];H.forEach((t,i)=>ptext(t,LX(R.w/2),LY(R.h/2-120+i*20),'#7a6a72',8));lx.globalAlpha=1;}
   for(const g of S.ghosts){const sp=SPR[g.look];if(!sp)continue;const red=g.look==='player';if(red&&!sp.redL){sp.redL=tinted(sp.gl,'#e0283e');sp.redR=tinted(sp.gr,'#e0283e');}lx.globalAlpha=g.life/0.2*(red?0.6:0.45);const fl=g.face<0,ax=fl?sp.w-1-sp.ax:sp.ax;lx.drawImage(red?(fl?sp.redL:sp.redR):(fl?sp.gl:sp.gr),Math.round(LX(g.x)-ax),Math.round(LY(g.y+P.r*0.6)-sp.ay));}
   lx.globalAlpha=1;
-  const actors=[...(R.obs||[]).filter(o=>o.img&&!o.dead).map(o=>({y:o.y+o.h,f:()=>drawObstacle(o)})),...((S.event&&S.event.marchers)||[]).map(m=>({y:m.y,f:()=>drawMarcher(m)})),...(S.follower?[{y:S.follower.y,f:drawFollower}]:[]),...R.deco.map(d=>({y:d.y,f:()=>drawDeco(d)})),...R.objs.map(o=>({y:o.y+(o.kind==='exit'?-30:0),f:()=>drawObj(o)})),...S.corpses.map(c=>({y:c.depth,f:()=>drawCorpse(c)})),...S.enemies.map(e=>({y:e.y,f:()=>drawEnemy(e)})),{y:P.y,f:drawPlayer}].sort((a,b)=>a.y-b.y);
+  const actors=[...(R.obs||[]).filter(o=>o.img&&!o.dead).map(o=>({y:o.y+o.h,f:()=>drawObstacle(o)})),...((S.event&&S.event.marchers)||[]).map(m=>({y:m.y,f:()=>drawMarcher(m)})),...(S.follower?[{y:S.follower.y,f:drawFollower}]:[]),...R.deco.map(d=>({y:d.y,f:()=>drawDeco(d)})),...R.objs.map(o=>({y:o.y+(o.kind==='exit'?-30:0),f:()=>drawObj(o)})),...S.corpses.map(c=>({y:c.depth,f:()=>drawCorpse(c)})),...S.enemies.map(e=>({y:e.y,f:()=>{drawEnemy(e);drawElemOn(e);}})),{y:P.y,f:drawPlayer}].sort((a,b)=>a.y-b.y);
   for(const a of actors){a.f();flush();}
   drawAmbient();flush();
   if(CFG.lighting)drawLighting();
@@ -706,7 +707,7 @@ function draw(){
   drawFoeAir();flush();
   drawShots();flush();
   for(const s of S.eslashes){if(s.guard)drawCut(s,C.white,C.steel,5);else if(s.col){drawCut(s,s.core||C.white,s.col,(s.hr||8)*0.75);if(s.kind==='bolt'&&!s.done){const h=head(s);for(let i=0;i<3;i++)pset(LX(h.x)+rand(-4,4),LY(h.y)+rand(-4,4),'#ffe066');}}else if(s.phase)drawCut(s,'#efe6ff',C.phase,6);else if(s.kind==='wind')drawCut(s,C.white,C.wind,6);else if(s.kind==='fire')drawCut(s,'#d8f6ff',C.water,7);else if(s.kind==='neck')drawCut(s,PAL.pale[0],'#2a1a1a',4);else if(s.kind==='chain')drawCut(s,C.steel,'#3a3a42',2);else if(s.kind==='smoke')drawCut(s,'#d8d0d8',C.smoke,9);else if(s.kind==='shove')drawCut(s,'#e8f8ff','#6aa84f',11);else if(s.kind==='tongue')drawCut(s,'#ffb0c0','#e0607a',5);else drawCut(s,'#fff6e0',C.curse,(s.hr||8)*0.75);}
-  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood)drawCut(s,C.ink,C.hi,Math.max(8,s.hr*0.9));else if(s.ult)drawCut(s,C.ink,C.hi,Math.max(10,s.hr*0.9));else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
+  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(8,s.hr*0.9));}else if(s.ult){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(10,s.hr*0.9));}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
   for(const m of S.marks){const x=LX(m.x),y=LY(m.y),L=m.ult?16:11;pline(x-m.c*L,y-m.s*L,x+m.c*L,y+m.s*L,m.life>0.06?C.white:C.hi,1,m.ult?2:1);}
   for(const b of S.bolts){let x=LX(b.a.x),y=LY(b.a.y);const tx=LX(b.b.x),ty=LY(b.b.y);for(let i=1;i<=6;i++){const nx=x+(tx-x)/(7-i)+(i<6?rand(-4,4):0),ny=y+(ty-y)/(7-i)+(i<6?rand(-4,4):0);pline(x,y,nx,ny,i%2?'#e8f0ff':'#9ab8ff');x=nx;y=ny;}}
   drawOrbs();drawAuras();
@@ -851,6 +852,6 @@ async function start(){
   showTitle();
   requestAnimationFrame(frame);
 }
-window.__bk={startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
+window.__bk={ELEMS,elemProc,hermitOffer,placeHermitRoom,MUS,songFor,startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
 try{window.claude?.hot?.snapshot?.(()=>({}));}catch(_){}
 window.claude?.hot?.ready?window.claude.hot.ready(()=>start()):start();

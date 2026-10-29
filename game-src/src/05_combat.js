@@ -594,7 +594,7 @@ function hitEnemy(e,s){
   if(shieldBlocks(e,s)){shieldClang(e,s);return;}
   if((e.boss||isDuel(e))&&e.armorT>0&&!s.ult&&!s.pierceArmor){deflect(e,s);return;}
   if(e.boss)e.ifr=S.gt+0.1;
-  damageEnemy(e,(s.ult?CFG.ultDmg:1)+(s.child||s.fox?0:S.mods.dmg)+(s.dmgBonus||0)+(S.gmx&&S.gmx.berserk&&!s.child?(S.combo>=25?2:S.combo>=10?1:0):0));
+  damageEnemy(e,elemDmg(e,s,(s.ult?CFG.ultDmg:1)+(s.child||s.fox?0:S.mods.dmg)+(s.dmgBonus||0)+(S.gmx&&S.gmx.berserk&&!s.child?(S.combo>=25?2:S.combo>=10?1:0):0)));
   const t=cutDir(s,e),f=(s.ult?380:260)*(e.T.heavy?0.25:1);e.kx=t.x*f;e.ky=t.y*f;
   if(s.fling&&!e.boss&&!e.T.heavy){const d=dist(e,P)||1;e.kx=(e.x-P.x)/d*s.fling;e.ky=(e.y-P.y)/d*s.fling;}
   if(s.knockSide&&!e.boss&&!e.T.heavy){const n={x:-t.y,y:t.x},side=(e.x-P.x)*n.x+(e.y-P.y)*n.y>0?1:-1;e.kx=n.x*side*560+t.x*200;e.ky=n.y*side*560+t.y*200;}
@@ -612,6 +612,7 @@ function hitEnemy(e,s){
   if(s.ab.chain&&!s.isChain&&(s.ult||abReady('chain'))){if(!s.ult)abUse('chain');const others=S.enemies.filter(o=>o!==e&&o.state!=='spawn'&&!o.smoke&&!o.T.sumo&&dist(o,e)<180).sort((a,b)=>dist(a,e)-dist(b,e)).slice(0,2);
     for(const o of others){S.bolts.push({a:{x:e.x,y:e.y-14},b:{x:o.x,y:o.y-14},life:0.18});damageEnemy(o,1);o.flash=1;spray(o.x,o.y-14,5,0,-1);if(o.hp<=0)kill(o,null);}if(others.length)sfx('zap');}
   if(s.tags&&!s.child){s.done=true;s.fade=s.fadeMax=0.1;const at={x:e.x,y:e.y-10};S.pending.push({t:0,fn:()=>burstAt(at,{team:'p',ab:{},hits:new Set(),fam:++FAM,dmgBonus:0},55)});}
+  elemTryProc(e,s);
   if(e.hp<=0){kill(e,s);return;}
   if(s.hook){s.hookN=(s.hookN||0)+1;if(s.hookN>=(s.hookMax||1)){s.done=true;s.fade=s.fadeMax=0.2;}startHook(e,s);return;}
   if(s.grapple&&!s.grappled){s.grappled=true;s.done=true;s.fade=s.fadeMax=0.2;grappleZip({x:e.x,y:e.y},e);return;}
@@ -628,7 +629,7 @@ function hitEnemy(e,s){
   else if(e.state==='eat'||(!e.T.heavy&&(e.state==='wind'||e.state==='guard')))stunEnemy(e,0.3);
 }
 function kill(e,s,quiet){
-  S.enemies=S.enemies.filter(x=>x!==e);
+  S.enemies=S.enemies.filter(x=>x!==e);if(e.markT>0)elemOnKill(e);
   if(!e.illusion&&!quiet)try{featEvent('kill',e);}catch(_){}
   if(e.spar){S.tutSafe=false;S.pending.push({t:0.6,fn:()=>{S.banner={name:'WELL STRUCK',title:'The duelist bows and leaves',t:2};}});}
   if(S.gmx&&S.gmx.vampire&&!e.illusion&&!e.practice){S.vampN=(S.vampN||0)+1;if(S.vampN>=4){S.vampN=0;heal(1);}}
@@ -685,11 +686,12 @@ function updateEnemy(e,gdt){
   e.flash=Math.max(0,e.flash-gdt*6);e.t-=gdt;e.cd=Math.max(0,e.cd-gdt);e.anim+=gdt;
   e.dodgeCd=Math.max(0,e.dodgeCd-gdt);e.guardCd=Math.max(0,e.guardCd-gdt);e.planT-=gdt;if(e.blinkT>0)e.blinkT-=gdt;if(e.armorT>0)e.armorT-=gdt;
   if(e.bleedT>0){e.bleedT-=gdt;if(e.bleedT<=0){damageEnemy(e,1+(e.bleedPlus||0));e.bleedPlus=0;burst(e.x,e.y-14,8,C.blood,160,0.4,2.5,true);text(e.x,e.y-40,'BLEED',C.blood);if(e.hp<=0){kill(e,null);return;}}}
+  if(e.elemFx&&elemTick(e,gdt))return;
   e.x+=e.kx*gdt;e.y+=e.ky*gdt;const kd=Math.max(0,1-gdt*7);e.kx*=kd;e.ky*=kd;
   const d=dist(P,e)||1,ux=(P.x-e.x)/d,uy=(P.y-e.y)/d;
   if(Math.abs(P.x-e.x)>4&&e.state!=='strike'&&e.state!=='dodge'&&e.state!=='hide')e.face=P.x>e.x?1:-1;
   if(e.react){e.react.t-=gdt;if(e.react.t<=0){const r=e.react;e.react=null;doReact(e,r);}}
-  const spd=CFG.enemySpeed*T.spd*(e.enraged?1.2:1)*(1+0.04*(fl()-1));
+  const spd=CFG.enemySpeed*T.spd*(e.enraged?1.2:1)*(1+0.04*(fl()-1))*(e.slowT>0?0.5:1);
   if(T.smoke&&e.state!=='spawn'){
     e.smokeT-=gdt;
     if(e.smoke){if(e.smokeT<=0||d<80){e.smoke=false;e.smokeT=rand(2.6,3.6);burst(e.x,e.y-14,20,C.smoke,200,0.6,3);if(CFG.enemyAttack&&e.state==='strafe'){e.cd=0;startWind(e,'smoke',0.7);}}}

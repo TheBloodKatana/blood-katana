@@ -179,6 +179,11 @@ function genFloor(n){
     }
     if(kind==='combat'){
       const combats=()=>all.filter(r=>r.type==='combat').length,takeEnd=()=>ends.length&&combats()>2?ends.splice(Math.floor(Math.random()*ends.length),1)[0]:null;
+      // Enkū's shrine: a quiet side room, from the third level of each realm on
+      if(stage>=3&&!(S.gm&&S.gm.arena)&&Math.random()<0.25){let hm=takeEnd();
+        if(!hm){for(const r of shuffle(all.filter(x=>x.type==='combat'))){const free=Object.values(DIRS).map(([dx,dy])=>({x:r.gx+dx,y:r.gy+dy})).filter(q=>!rooms.has(rkey(q.x,q.y))&&Object.values(DIRS).filter(([a,b])=>rooms.has(rkey(q.x+a,q.y+b))).length===1);
+          if(free.length){const q=pick(free);hm={gx:q.x,gy:q.y,dist:r.dist+1};rooms.set(rkey(q.x,q.y),hm);all.push(hm);break;}}}
+        if(hm)hm.type='hermit';}
       if(Math.random()<0.55){const tr=takeEnd();if(tr)tr.type='treasure';}
       if(Math.random()<0.22){const du=takeEnd();if(du)du.type='duel';}
       if(Math.random()<0.18){const sh=takeEnd();if(sh)sh.type='shop';}

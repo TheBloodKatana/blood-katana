@@ -85,17 +85,36 @@ const COS_SETS=[
   {id:'chigetsu',name:'Blood Moon',jp:'血月',r:'legendary',src:'paid',core:'#1a0a10',edge:'#ff2040',tr:'#ff2040',trc:'#ffb0b8',burst:['#ff2040','#ff8a95','#1a0a10'],spark:'#ff8a95',fx:'ring'},
   {id:'kokuyo',name:'Void',jp:'黒曜',r:'legendary',src:'paid',core:'#000000',edge:'#ffffff',tr:'#ffffff',trc:'#000000',burst:['#ffffff','#000000','#968b97'],spark:'#000000',fx:'void'},
   {id:'matsuri',name:'Festival',jp:'祭',r:'legendary',src:'paid',core:'#ffffff',edge:'rainbow',tr:'rainbow',trc:'#ffffff',burst:['#ff4a5c','#ffe066','#5ad8a0','#9ad8ff','#b48cff'],spark:'#ffffff',fx:'fireworks'}];
-// one registry: o:outfit · k:katana skin · w:<weapon>:skin · s:slash set
+// Bloodthirst and technique skins: the grown blade, the aura, the trigger burst, technique cuts and the blood orb
+const COS_THIRST=[
+ {id:'crimson',name:'Crimson',jp:'紅血',r:'common',src:'free',grow:['#b8142a','#ff4a5c','#ffffff'],core:'#1a0a10',edge:'#ff4a5c',aura:'drip',ac:['#b8142a','#ff4a5c','#ffffff'],act:'splash'},
+ {id:'sumi',name:'Ink Blood',jp:'墨血',r:'rare',src:'feat:thirst300',grow:['#18181c','#4a4a54','#d8d4cc'],core:'#ece4d7',edge:'#18181c',aura:'ink',ac:['#18181c','#3a3a42','#d8d4cc'],act:'inksplash'},
+ {id:'sakura',name:'Sakura Blood',jp:'桜血',r:'rare',src:'shop',grow:['#d86a8a','#f2a7b8','#fff0f4'],core:'#fff0f4',edge:'#f2a7b8',aura:'petal',ac:['#f2a7b8','#ff8aa8','#fff0f4'],act:'petalburst'},
+ {id:'hyo',name:'Frostbite',jp:'凍血',r:'rare',src:'feat:daily21',grow:['#3a8ac8','#9ad8ff','#ffffff'],core:'#ffffff',edge:'#9ad8ff',aura:'frost',ac:['#bfe8ff','#9ad8ff','#ffffff'],act:'shatter'},
+ {id:'hisui',name:'Jade Spirit',jp:'翠血',r:'rare',src:'feat:best75',grow:['#2a9a6a','#5ad8a0','#e8fff4'],core:'#e8fff4',edge:'#5ad8a0',aura:'leaf',ac:['#5ad8a0','#3a9a6a','#c8f8e0'],act:'leafgust'},
+ {id:'oki',name:'Ember',jp:'燠',r:'rare',src:'shop',grow:['#c84a1a','#ff8a2a','#fff0a0'],core:'#fff0a0',edge:'#ff8a2a',aura:'ember',ac:['#ff6a1a','#ffb02a','#fff0a0'],act:'flare'},
+ {id:'kage',name:'Oni Shadow',jp:'鬼影',r:'epic',src:'shop',grow:['#3a1a5a','#b48cff','#e8d8ff'],core:'#2a1a3a',edge:'#b48cff',aura:'smoke',ac:['#6a4a9a','#b48cff','#2a1a3a'],act:'smokepuff'},
+ {id:'gokuen',name:'Hellfire',jp:'獄炎',r:'epic',src:'shop',grow:['#ff3a0a','#ffb02a','#fff6c0'],core:'#fff6c0',edge:'#ff5a1a',aura:'flame',ac:['#ff3a0a','#ffb02a','#fff6c0'],act:'flare'},
+ {id:'tsuki',name:'Moonblood',jp:'月血',r:'epic',src:'shop',grow:['#6a72b0','#c8d0ff','#ffffff'],core:'#ffffff',edge:'#c8d0ff',aura:'moon',ac:['#c8d0ff','#ffffff','#8a96e0'],act:'moonrise'},
+ {id:'kin',name:'Gold Leaf',jp:'金血',r:'epic',src:'shop',grow:['#b08a30','#e8c15a','#fff6d0'],core:'#fff6d0',edge:'#e8c15a',aura:'gold',ac:['#e8c15a','#fff6d0','#b08a30'],act:'goldrain'},
+ {id:'kitsunebi',name:'Foxfire',jp:'狐火',r:'epic',src:'shop',grow:['#2a6ac8','#6ac8ff','#e0f4ff'],core:'#e0f4ff',edge:'#6ac8ff',aura:'fox',ac:['#6ac8ff','#2a6ac8','#e0f4ff'],act:'wispring'},
+ {id:'raijin',name:'Raijin',jp:'雷神',r:'epic',src:'shop',grow:['#c8a020','#ffe066','#ffffff'],core:'#ffffff',edge:'#ffe066',aura:'bolt',ac:['#ffe066','#9ad8ff','#ffffff'],act:'thunder'},
+ {id:'chigetsu',name:'Blood Moon',jp:'血月',r:'legendary',src:'paid',grow:['#5a0a18','#ff2040','#ff8a95'],core:'#1a0a10',edge:'#ff2040',aura:'ring',ac:['#ff2040','#ff8a95','#1a0a10'],act:'eclipse'},
+ {id:'kokuyo',name:'Void',jp:'黒曜',r:'legendary',src:'paid',grow:['#000000','#ffffff','#968b97'],core:'#000000',edge:'#ffffff',aura:'void',ac:['#ffffff','#000000','#968b97'],act:'inversion'},
+ {id:'matsuri',name:'Festival',jp:'祭',r:'legendary',src:'paid',grow:'rainbow',core:'#ffffff',edge:'rainbow',aura:'firework',ac:['#ff4a5c','#ffe066','#5ad8a0','#9ad8ff','#b48cff'],act:'fireworks'},
+ {id:'ryujin',name:'Ryūjin',jp:'竜神',r:'legendary',src:'paid',grow:['#1a7a4a','#3ad860','#e8fff0'],core:'#e8fff0',edge:'#3ad860',aura:'dragon',ac:['#3ad860','#1a7a4a','#e8c15a'],act:'roar'}];
+// one registry: o:outfit · k:katana skin · w:<weapon>:skin · s:slash set · t:thirst skin
 const COS={};
 COS_OUTFITS.forEach(x=>COS['o:'+x.id]=Object.assign({key:'o:'+x.id,type:'o',label:'Outfit'},x));
 COS_BLADES.forEach(x=>COS['k:'+x.id]=Object.assign({key:'k:'+x.id,type:'k',label:'Katana'},x));
 for(const w in COS_WSKINS)COS_WSKINS[w].forEach(x=>COS['w:'+w+':'+x.id]=Object.assign({key:'w:'+w+':'+x.id,type:'w',w,label:WEAPONS[w].name,jp:WEAPONS[w].jp},x));
 COS_SETS.forEach(x=>COS['s:'+x.id]=Object.assign({key:'s:'+x.id,type:'s',label:'Slash set'},x));
-const BUNDLES=[{id:'raiden',name:'Raiden set',desc:'Thunder God outfit, Thunder katana, Raiden slash set and the Storm Fan.',items:['o:raiden','k:raiden','s:raiden','w:tessen:thunder'],koban:1100}];
+COS_THIRST.forEach(x=>COS['t:'+x.id]=Object.assign({key:'t:'+x.id,type:'t',label:'Thirst skin'},x));
+const BUNDLES=[{id:'raiden',name:'Raiden set',desc:'Thunder God outfit, Thunder katana, Raiden slash set, the Storm Fan and the Raijin thirst skin.',items:['o:raiden','k:raiden','s:raiden','w:tessen:thunder','t:raijin'],koban:1100}];
 const KOBAN_PACKS=[{id:'koban_s',koban:300,price:'US$0.99'},{id:'koban_m',koban:1000,price:'US$2.99'},{id:'koban_l',koban:2500,price:'US$5.99'}];
 
 // ---------- ownership and equipment (kept in META) ----------
-function cosState(){if(!META.cos)META.cos={own:{},eq:{o:'o:default',k:'k:steel',s:'s:crimson',w:{}}};if(!META.cos.eq.w)META.cos.eq.w={};if(META.koban==null)META.koban=0;return META.cos;}
+function cosState(){if(!META.cos)META.cos={own:{},eq:{o:'o:default',k:'k:steel',s:'s:crimson',t:'t:crimson',w:{}}};if(!META.cos.eq.w)META.cos.eq.w={};if(!META.cos.eq.t)META.cos.eq.t='t:crimson';if(META.koban==null)META.koban=0;return META.cos;}
 function cosOwned(key){const it=COS[key];return!!it&&(it.src==='free'||!!cosState().own[key]);}
 function cosGrant(key,why){
   const it=COS[key];if(!it)return null;

@@ -60,7 +60,7 @@ function bloodthirst(){
   if(S.meter<c-0.01){text(P.x,P.y-50,`BLOODTHIRST NEEDS ${c} BLOOD`,C.ash);sfx('deny');return;}
   orbSpend(c);if(P.wpn)P.wpn.dur=P.wpn.max;
   S.bt=W.bt.type==='strike'?{id:W.id,strike:true,t:25,max:25}:{id:W.id,t:btTime(),max:btTime()};
-  text(P.x,P.y-64,W.bt.type==='strike'?'BLOODTHIRST · ONE STRIKE':'BLOODTHIRST',C.hi,true);sfx('ult');S.flash=0.12;S.shake+=5;burst(P.x,P.y-16,30,C.hi,300,0.6,3);
+  text(P.x,P.y-64,W.bt.type==='strike'?'BLOODTHIRST · ONE STRIKE':'BLOODTHIRST',C.hi,true);sfx('ult');S.flash=0.12;S.shake+=5;{const T=thirstSkin();burst(P.x,P.y-16,30,T.ac[0],300,0.6,3);}S.btFx=S.gt;
 }
 // ---------- drops, disarming, throwing ----------
 function titleName(s){return s.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ');}

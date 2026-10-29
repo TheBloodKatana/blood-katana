@@ -22,9 +22,12 @@ const FEATS=[
   {id:'bobamboo',name:'Bamboo and bamboo',desc:'Fell the lord of the Whispering Bamboo carrying the bō.',goal:1,stat:()=>fN('bobamboo'),reward:['w:bo:bamboo']},
   {id:'naginataduels',name:'Onna-musha',desc:'Win 5 duels with the naginata.',goal:5,stat:()=>fN('duel_naginata'),reward:['w:naginata:onna']},
   {id:'best50',name:'Half the scroll',desc:'Fill half the bestiary.',goal:50,stat:()=>bestPct(),reward:['s:rei']},
+  {id:'best75',name:'Most of the scroll',desc:'Fill three quarters of the bestiary.',goal:75,stat:()=>bestPct(),reward:['t:hisui']},
   {id:'best100',name:'Every name written',desc:'Fill the whole bestiary.',goal:100,stat:()=>bestPct(),reward:['o:hone','k:hone']},
   {id:'daily1',name:'Daily devotion',desc:'Clear a daily challenge.',goal:1,stat:()=>fN('daily'),reward:['o:tabibito',20]},
   {id:'daily7',name:'A week of devotion',desc:'Clear daily challenges 7 days in a row.',goal:7,stat:()=>(META.daily&&META.daily.best)||0,reward:['o:yuki','s:yuki']},
+  {id:'daily21',name:'Three weeks of devotion',desc:'Clear daily challenges 21 days in a row.',goal:21,stat:()=>(META.daily&&META.daily.best)||0,reward:['t:hyo']},
+  {id:'thirst300',name:'Drunk on it',desc:'Kill 300 foes while in Bloodthirst.',goal:300,stat:()=>fN('thirstK'),reward:['t:sumi']},
   {id:'daily14',name:'A fortnight of devotion',desc:'Clear daily challenges 14 days in a row.',goal:14,stat:()=>(META.daily&&META.daily.best)||0,reward:['k:hyo']},
   {id:'spin50',name:'Fortune\'s friend',desc:'Spin the wheel 50 times.',goal:50,stat:()=>(META.spin&&META.spin.total)||0,reward:[20]},
   {id:'waves20',name:'The tide holds',desc:'Survive 20 waves.',goal:20,stat:()=>(META.rec&&META.rec.waves)||0,reward:[30],max:true},
@@ -49,7 +52,7 @@ function bestPct(){const ks=BEST_KEYS(),b=META.best||{};let s=0;for(const k of k
 function featEvent(kind,d){
   fstate();
   switch(kind){
-    case'kill':{const e=d;if(e.practice||e.illusion||e.T.dummy)return;const k=e.key;META.best[k]=(META.best[k]||0)+1;fAdd('k_'+curW().id);if(e.boss)S.bossesThisRun=(S.bossesThisRun||0)+1;break;}
+    case'kill':{const e=d;if(e.practice||e.illusion||e.T.dummy)return;const k=e.key;META.best[k]=(META.best[k]||0)+1;fAdd('k_'+curW().id);if(typeof btOn==='function'&&btOn())fAdd('thirstK');if(e.boss)S.bossesThisRun=(S.bossesThisRun||0)+1;break;}
     case'lord':{fAdd('lords');if(S.lordHurt===0)fAdd('nohit');if(curW().id==='bo'&&S.floor&&S.floor.realm===1)fAdd('bobamboo');break;}
     case'parry':fAdd('parry');break;
     case'tech':fAdd('tech');break;
