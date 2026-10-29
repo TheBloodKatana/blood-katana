@@ -7545,8 +7545,8 @@ function drawDemo(g,id,t,touch){
 // 12×12 bitmaps turned into crisp SVGs, so the on-screen buttons read like the game rather than like an emulator overlay.
 const BTN_PAL={k:'#0a0608',r:'#ff4a5c',d:'#b8142a',w:'#ece4d7',s:'#a8acb6',g:'#6a6270',b:'#8a5a34',y:'#e8c15a',c:'#9ad8ff',o:'#ff9a3a'};
 const BTN_ICONS={
-  heal:['.....kk.....','....krrk....','...krrrrk...','..krrrrrrk..','..krrrwrrk..','.krrrwwwrrk.','.krrrrwrrrk.','.krrrrrrrdk.','.krdrrrrddk.','..krddddk...','...kkkkkk...','............'],
-  mend:['............','.kkkkkkk....','kssswwssk...','kssssssskk..','.kkkbbkkk...','....kbbk....','....kbbk..y.','....kbbk.y.y','....kbbk..y.','...kkbbkk...','..kgggggk...','..kkkkkkk...'],
+  heal:['............','....wwww....','....wwww....','....wwww....','.wwwwwwwwww.','.wwwwwwwwww.','.wwwwwwwwww.','.wwwwwwwwww.','....wwww....','....wwww....','....wwww....','............'],
+  mend:['............','.sssssss.ss.','.sssssssss..','.sssssss....','...bb.......','...bb.......','...bb.......','...bb.......','...bb.......','...bb.......','...bb.......','............'],
   thirst:['..........k.','.........kwk','........kwsk','.......kwsk.','......kwsk..','.....kwsk...','..kk.krsk...','..kykrrk....','...kykk.....','..kbkky.....','.kbk..r.....','.kk...r.....'],
   kunai:['.....kk.....','....kwsk....','....kwsk....','...kwssk....','...kwsssk...','...kwsssk...','....kwsk....','.....kk.....','....kbbk....','....kbbk....','....kykk....','...ky.yk....'],
   shuri:['............','.....kk.....','....kwwk....','....kwwk....','..kkswwskk..','.kwwwkksssk.','.kwwwkksssk.','..kksssskk..','....kssk....','....kssk....','.....kk.....','............'],
@@ -7555,8 +7555,8 @@ const BTN_ICONS={
   take:['............','...k.k.k....','..kwkwkwk...','..kwkwkwk.k.','..kwwwwwkkwk','..kwwwwwwkwk','..kwwwwwwwk.','..kwwwwwwwk.','...kwwwwwk..','....kwwwk...','....kkkkk...','............'],
 };
 // one colour, one shade: every drawn pixel is filled with the button's text colour; outlines drop out, and a few
-// highlight pixels are cut out as negative space (the cross in the blood drop)
-const BTN_HOLES={heal:'w'};
+// pixels can be cut out as negative space through BTN_HOLES
+const BTN_HOLES={};
 const btnOn=(name,ch)=>ch!=='.'&&ch!=='k'&&!(BTN_HOLES[name]||'').includes(ch);
 function iconSvg(name){const B=BTN_ICONS[name];if(!B)return'';let r='';
   B.forEach((row,y)=>{for(let x=0;x<row.length;x++)if(btnOn(name,row[x]))r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`;});
