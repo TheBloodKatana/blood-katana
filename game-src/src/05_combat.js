@@ -97,7 +97,9 @@ function blockCheck(s,prev,cur){
   if(!CFG.trailBlocks||s.phase)return;
   const others=s.team==='p'?S.eslashes:S.slashes;
   for(const o of others){
-    if(o===s||o.phase||o.noBlock||!trailLive(o))continue;
+    // your finished cuts keep parrying for a while after they stop dealing damage: the parry window outlasts the slash
+    const grace=s.team==='e'&&o.done&&!o.blocked&&!o.erased&&o.parryT>0;
+    if(o===s||o.phase||o.noBlock||!(trailLive(o)||grace))continue;
     let pt=null;forTrail(o,(a,b)=>{pt=segX(prev,cur,a,b);return!!pt;});
     if(!pt)continue;
     if(s.team==='p'&&s.ab.pierce){breakCut(o,pt,s);continue;}
@@ -129,6 +131,7 @@ function finishCut(s){
   if(s.team==='p'){
     const end=s.pts[s.pts.length-1];
     if(s.ab.linger)s.linger=CFG.lingerTime;else s.fade=s.fadeMax=Math.max(0.05,CFG.trailLinger+S.mods.trail);
+    s.parryT=CFG.parryGrace+S.mods.trail;if(!s.ab.linger&&!s.isTap)s.fade=s.fadeMax=Math.max(s.fade,s.parryT);
     if(s.ab.fire&&!s.isWave){s.linger=Math.max(s.linger,2.0);s.fireTrail=true;if(!s.ab.linger)s.noBlock=true;sfx('fire');}
     if(s.ab.teleport&&!s.child)slideAlong(s,s.len);
     if(s.ab.burst)burstAt(end,s);
@@ -152,6 +155,7 @@ function stepCuts(gdt){
   const live=[...S.slashes,...S.eslashes].filter(s=>!s.done);const N=4;
   for(let k=0;k<N;k++)for(const s of (k%2?live.slice().reverse():live)){if(!s.done)advanceCut(s,s.speed*gdt/N);}
   for(const s of S.slashes){
+    if(s.done&&s.parryT>0)s.parryT-=gdt;
     if(!s.done||s.linger<=0)continue;
     s.linger-=gdt;
     for(const e of [...S.enemies]){

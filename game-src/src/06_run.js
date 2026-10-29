@@ -700,7 +700,7 @@ const pctBar=(v,max)=>{const p=max?Math.round(v/max*100):0;return`<span class="p
 function renderHub(){
   const trees=TREES.map(t=>`<li class="${treeOpen(t)?'':'locked'}"><span>${esc(t.name)}</span>${treeOpen(t)?pctBar(treeLv(t),treeMax(t)):'<em>pick one up to unlock</em>'}</li>`).join('');
   $('hubInner').innerHTML=`<div class="hub">
-    <div class="hub-head"><div class="big" data-toy>血刀</div><div><h2>Shrine of the Broken Blade</h2><p>Strip weapons from the dead, feed the blood orb, and climb. Shards are only safe once you finish a realm and reach the Blind Smith at the start of the next one. Die before that and they are lost. He forges them into the Blood Tree: every branch ends in a technique.</p></div></div>
+    <div class="hub-head"><div class="big" data-toy>血階</div><div><h2>Shrine of the Broken Blade</h2><p>Strip weapons from the dead, feed the blood orb, and climb. Shards are only safe once you finish a realm and reach the Blind Smith at the start of the next one. Die before that and they are lost. He forges them into the Blood Tree: every branch ends in a technique.</p></div></div>
     <div class="hub-grid">
       <div class="hub-card"><canvas id="hubBlade" width="160" height="22" data-toy></canvas>
         <div class="row"><span class="label">Mastery</span><b>${masteryPct()}%</b></div>

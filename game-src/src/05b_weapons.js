@@ -27,7 +27,8 @@ function equip(w){
   return true;
 }
 function brittleCheck(w){if(w&&S.gmx&&S.gmx.brittle&&!w.brittled){w.brittled=true;w.dur=Math.max(1,Math.ceil(w.dur/2));}}
-function dropWeapon(w,x,y){const p=freeSpot(S.room,x,y,10);addObj(S.room,{kind:'weapon',w,x:p.x,y:p.y,z:12,vz:160});}
+function dropWeapon(w,x,y){if(S.pro)return; // nothing to pick up or lose on the last night
+  const p=freeSpot(S.room,x,y,10);addObj(S.room,{kind:'weapon',w,x:p.x,y:p.y,z:12,vz:160});}
 function wear(n,s){
   const w=P.wpn;if(!w||w.dur<=0)return;if(s&&s.wid&&s.wid!==w.uid)return;
   if(w.cursed==='brittle')n*=2;if(S.gmx)n*=S.gmx.wearMul;n*=1-0.25*up(w.id,'temper');const was=w.dur;w.dur=Math.max(0,w.dur-n);
@@ -84,7 +85,7 @@ function tryDisarm(e,force){
 function throwWeapon(){
   if(!playing()||S.drink)return;const w=P.wpn;
   if(!w){text(P.x,P.y-50,'NOTHING TO THROW',C.ash);sfx('deny');return;}
-  if(w.cursed==='bound'&&w.dur>0){text(P.x,P.y-50,'IT WILL NOT LEAVE YOUR HAND',C.phase);sfx('deny');return;}
+  if(w.own||w.cursed==='bound'&&w.dur>0){text(P.x,P.y-50,'IT WILL NOT LEAVE YOUR HAND',C.phase);sfx('deny');return;}
   const tp=aimPoint(600,0.9,true),a=Math.atan2(tp.y-(P.y-12),tp.x-P.x),st={x:P.x,y:P.y-12},L=560;
   const cp=clipPts([st,rayTo({x:st.x,y:st.y},a,L,2)],['wall'],2);
   const dmg=({katana:2,yari:2,kanabo:4,kusari:2,musket:2,nodachi:3,tessen:2,bo:3,kama:2,naginata:3}[w.id]||2)-(w.dur<=0?1:0)+(w.perk==='keen'?1:0);

@@ -146,11 +146,7 @@ ACTS.gate=function(o){
   openChooser({eyebrow:'The gate',title:'How do you descend?',cards,cancel:'Not yet',pick:i=>{const g=cards[i].go;
     if(g==='story')storyGate();else if(g==='hell')openHellPick();else if(g==='trial')openTrials();else startMode(g);}});
 };
-function storyGate(){
-  const top=Math.min(BIOMES.length-1,META.realms||0);
-  if(top<=0){startMode('story');return;}
-  openChooser({eyebrow:'The gate',title:'Where does the descent begin?',sub:'Realms you have opened by felling their lords.',cards:BIOMES.slice(0,top+1).map((B,i)=>({kind:`Realm ${i+1} · floor ${i*FPR+1}`,name:B.name,desc:i===0?'From the very beginning.':`Start at the store floor of ${B.name}.`})),cancel:'Not yet',pick:i=>{S.gmNext={id:'story',mods:[]};startRun(i,true);}});
-}
+function storyGate(){startMode('story');}
 // ---------- winning a one-realm run, and the scoreboard ----------
 function modeScore(){
   const gm=S.gm,st=S.stats||{};if(!gm)return 0;

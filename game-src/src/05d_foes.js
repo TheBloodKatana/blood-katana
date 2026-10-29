@@ -78,7 +78,7 @@ function grabbed(s){
   text(P.x,P.y-58,'GRABBED',C.hi,true);sfx('clang');
   if(o&&S.enemies.includes(o)){o.state='recover';o.t=0.75;for(const c of o.cuts)if(!c.done){c.done=true;c.fade=c.fadeMax=0.1;}
     if(s.devour){const h=Math.max(3,Math.round(o.max*0.06));o.hp=Math.min(o.max,o.hp+h);text(o.x,o.y-62,`DEVOURS +${h}`,C.hi);sfx('mochi');}
-    if((o.T.disarm||s.disarm)&&P.wpn){const w=P.wpn;P.wpn=null;const a=Math.atan2(P.y-o.y,P.x-o.x)+rand(-0.6,0.6);dropWeapon(w,P.x+Math.cos(a)*210,P.y+Math.sin(a)*210);text(P.x,P.y-74,'STRIPPED OF YOUR WEAPON',C.hi);S.wpnBanner=null;}}
+    if((o.T.disarm||s.disarm)&&P.wpn&&!P.wpn.own){const w=P.wpn;P.wpn=null;const a=Math.atan2(P.y-o.y,P.x-o.x)+rand(-0.6,0.6);dropWeapon(w,P.x+Math.cos(a)*210,P.y+Math.sin(a)*210);text(P.x,P.y-74,'STRIPPED OF YOUR WEAPON',C.hi);S.wpnBanner=null;}}
 }
 // ---------- shields: only the front. Flank them, hook them, swap them, or slam them ----------
 function shieldBlocks(e,s){

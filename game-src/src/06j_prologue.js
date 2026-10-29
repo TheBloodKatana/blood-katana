@@ -32,9 +32,9 @@ function proFloor(){
 function startPrologue(){
   auInit();resetRunState();S.gm=null;S.gmx=null;S.modeRules=null;S.inHub=false;S.realmPick=null;
   S.floor=proFloor();
-  S.pro={i:0,moved:0,lx:0,ly:0,t:0,bossT:0,bossHits:0,fall:null,stepSpawned:-1};
-  // at the height of your power: the true blade, a deep soul, nothing can touch you
-  P.max=8;P.hp=8;P.wpn=makeWeapon('katana',{name:'Chigiri, the true blade'});P.wpn.max*=4;P.wpn.dur=P.wpn.max;
+  S.pro={i:0,moved:0,lx:0,ly:0,t:0,bossT:0,bossHits:0,fall:null,stepSpawned:-1,demoed:{}};
+  // at the height of your power: your own blade, still whole (the one he breaks at the top), a deep soul, nothing can touch you
+  P.max=8;P.hp=8;P.wpn=makeWeapon('katana',{name:'Your blade'});P.wpn.own=true;P.wpn.max*=4;P.wpn.dur=P.wpn.max;
   S.tools={kunai:6,shuri:3};S.tutSafe=true;
   enterRoom(S.floor.start,null);
   S.mode='run';S.running=true;S.paused=false;
@@ -52,6 +52,7 @@ function proRoomStart(R){
 }
 function proSpawnStep(){
   const st=proStep();if(!st||!S.room||S.room.pro!==st.room||S.pro.stepSpawned===S.pro.i)return;S.pro.stepSpawned=S.pro.i;
+  if(!S.pro.demoed[st.id]){S.pro.demoed[st.id]=true;tutDemo(st);}
   if(st.id==='heal'){P.hp=Math.max(2,P.hp-3);S.hurt=1;text(P.x,P.y-60,'AN ARROW FINDS YOU',C.hi);sfx('hurt');S.meter=Math.max(S.meter,healCost()+2);}
   if(st.id==='thirst')S.meter=orbMax();
   if(st.id==='tech')S.traceCd=0;

@@ -26,9 +26,8 @@ const ACTS={
       pick:i=>{o.used=true;const old=S.items[i],t=ITEM[old].tier,nw=randomItem(Math.max(0,t-1),Math.min(3,t+1));S.items[i]=nw;recomputeMods();S.itemBanner={name:ITEM[nw].name,desc:ITEM[nw].desc,icon:ITEM[nw].icon,t:3};sfx('learn');}});}},
     {label:'Leave',fn:closeDialog}]});},
   gate(o){
-    const top=Math.min(BIOMES.length-1,META.realms||0);
-    if(top<=0){openDialog({spr:'miko',name:'The gate',title:'the descent',text:'Past the torii the stairs go down into the first realm. A hundred floors stand between you and the man who took your blade.',choices:[{label:'Descend',fn:()=>{closeDialog();startRun(0);}},{label:'Not yet',fn:closeDialog}]});return;}
-    openChooser({eyebrow:'The gate',title:'Where does the descent begin?',sub:'Realms you have opened by felling their lords.',cards:BIOMES.slice(0,top+1).map((B,i)=>({kind:`Realm ${i+1} · floor ${i*FPR+1}`,name:B.name,desc:i===0?'From the very beginning.':`Start at the store floor of ${B.name}.`})),cancel:'Not yet',pick:i=>startRun(i)});
+    // the descent always starts at the top: no skipping to realms already opened
+    {openDialog({spr:'miko',name:'The gate',title:'the descent',text:'Past the torii the stairs go down into the first realm. A hundred floors stand between you and the man who took your blade.',choices:[{label:'Descend',fn:()=>{closeDialog();startRun(0);}},{label:'Not yet',fn:closeDialog}]});return;}
   },
   armorer(o){
     // the rack: copies of blades pried from the dead (30 shards), and five weapons only the shrine forges
@@ -89,7 +88,7 @@ const TUT=[
 ];
 function startTutorial(){
   S.tut={i:0,moved:0,lx:P.x,ly:P.y,done:false,t:0};S.tutSafe=true;sfx('learn');
-  S.banner={name:'TRAINING',title:'The straw man has all day',t:2.2};
+  S.banner={name:'TRAINING',title:'The straw man has all day',t:2.2};tutDemo(TUT[0]);
 }
 function endTutorial(skipped){
   if(!S.tut)return;S.tut=null;S.tutSafe=false;META.tut=1;saveMeta();
@@ -103,6 +102,7 @@ function tutEvent(ev){
 function tutNext(){
   const t=S.tut;t.i++;sfx('learn');text(P.x,P.y-60,'✓',C.spirit,true);
   if(t.i>=TUT.length){endTutorial(false);return;}
+  tutDemo(TUT[t.i]);
   if(TUT[t.i].id==='parry')spawnSparring();
   if(TUT[t.i].id==='tech'){for(const e of [...S.enemies])if(e.practice){e.hp=0;kill(e,null,true);}S.traceCd=0;}
 }

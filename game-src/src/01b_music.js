@@ -1,7 +1,7 @@
 // ================= the soundtrack: engine and songs, in their own scope =================
 const {createEngine,compileSong,SONGS}=(()=>{
 // ================= the soundtrack engine (also used by the concept soundboard) =================
-// ================= Blood Katana music engine =================
+// ================= Bloody Descent music engine =================
 // Every sound is synthesised in WebAudio: plucked strings by Karplus-Strong, breath and drums from shaped noise.
 // Songs are written as patterns (see songs.js) and compiled to an event list that loops from a chosen section.
 const NOTE_IX={c:0,'c#':1,db:1,d:2,'d#':3,eb:3,e:4,f:5,'f#':6,gb:6,g:7,'g#':8,ab:8,a:9,'a#':10,bb:10,b:11};
@@ -207,7 +207,7 @@ function createEngine(ctx,dest){
 function renderSchedule(E,song,T,only){E.load(song);E.fight=true;let off=0,i=0;const c=E.c;
   while(true){if(i>=c.events.length){i=c.loopIdx;off+=c.loopLen;}const ev=c.events[i];const at=0.05+ev.t+off;if(at>T)break;if(!only||only===ev.tr)E.voice(ev,at);i++;}}
 
-// ================= Blood Katana: the songs =================
+// ================= Bloody Descent: the songs =================
 // Patterns: one token per step (or per r steps when written [r,'...']). '-' holds, '.' rests, 'a4+e5' is a chord.
 // Suffixes: ! accent, , soft, ^ bend or scoop, ~ deep vibrato, < grace from below. Drum lanes: X accent, x hit, o soft, r roll.
 // layer:'fight' tracks only play while foes are in the room.
@@ -221,7 +221,7 @@ const KOTO_D='d3 a3 d4 eb4 a4 eb4 d4 a3',KOTO_BB='bb2 d3 g3 bb3 d4 bb3 g3 d3',KO
 
 const SONGS=[
 // ----------------------------------------------------------------- 1
-{id:'title',title:'Blood Katana',jp:'血刀',where:'Title screen',bpm:66,spb:4,bar:16,key:'D miyako-bushi',scale:'d eb g a bb',amb:'wind',
+{id:'title',title:'Bloody Descent',jp:'血階',where:'Title screen',bpm:66,spb:4,bar:16,key:'D miyako-bushi',scale:'d eb g a bb',amb:'wind',
  mood:'The leitmotif. A lone shakuhachi over koto, the great drum answering each phrase. Slow, proud, a little sad.',
  inst:{sh:{i:'shaku',v:0.42,pan:0.08,rev:0.55,dly:0.12},ko:{i:'koto',v:0.3,pan:-0.25,rev:0.35},hi:{i:'koto',v:0.2,pan:0.35,rev:0.5,dly:0.2},sm:{i:'shami',v:0.16,pan:-0.1,rev:0.3,mono:true},
    sho:{i:'sho',v:0.07,rev:0.7},bi:{i:'biwa',v:0.28,pan:-0.05,rev:0.4,bend:2},od:{i:'odaiko',v:0.55,rev:0.45},rin:{i:'rin',v:0.3,rev:0.75}},

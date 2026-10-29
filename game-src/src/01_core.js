@@ -45,7 +45,7 @@ const DEF={
   slideSpeed:1700,slideMax:300,ricoBonus:220,ricoMax:3,
   enemyHpMul:1,enemySpeed:150,eSlashMul:1,telegraph:0.6,eCooldown:1.1,recover:0.55,bossHpMul:1,roomEnemyMul:1,
   aiReaction:0.12,dodgeChance:0.45,parryChance:0.35,feintChance:0.25,aiChaos:0.5,poiseHits:3,
-  timeScale:1,slowmo:0.3,parrySlow:0.25,parrySlowTime:0.6,trailLinger:0.2,camLead:0.15,darkness:1,
+  timeScale:1,slowmo:0.3,parrySlow:0.25,parrySlowTime:0.6,trailLinger:0.2,parryGrace:0.45,camLead:0.15,darkness:1,
   hitPauseMul:1,hitShake:1,sfxVol:0.7,musicVol:0.5,startFloor:1,shardMul:1,stagesPerBiome:2,
   trailBlocks:true,parrySlowOn:true,hitPause:true,cutRecovery:true,poise:true,aiReadSpam:true,tapNoParry:false,abilityCds:true,tapAbilities:false,
   sound:true,music:true,dev:false,vibe:true,flashes:true,tsize:1,topac:0.8,lighting:true,ambient:true,corpses:true,cursor:true,minimap:true,

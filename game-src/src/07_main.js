@@ -7,7 +7,7 @@ function moveVec(){
   if(keys.has('w')||keys.has('arrowup'))y--;if(keys.has('s')||keys.has('arrowdown'))y++;
   x+=joy.x;y+=joy.y;const m=Math.hypot(x,y);if(m>1){x/=m;y/=m;}return{x,y};
 }
-const playing=()=>S.mode==='run'&&S.running&&!S.choosing&&!S.dialog&&S.dead<=0;
+const playing=()=>S.mode==='run'&&S.running&&!S.choosing&&!S.dialog&&!S.demo&&S.dead<=0;
 function dash(){
   if(!playing()||S.slide||S.held||P.dashCd>0||P.dashT>0)return;
   const m=moveVec();let d;
@@ -23,6 +23,7 @@ addEventListener('keydown',e=>{
   if(k==='m'){toggleSound();return;}
   if(k==='`'&&devOn()){e.preventDefault();if($('dbgOv').hidden)openDebug();else $('dbgOv').hidden=true;return;}
   if(!$('menuOv').hidden||!$('helpOv').hidden||!$('dbgOv').hidden){if(k==='escape'||(k==='p'&&S.paused)){e.preventDefault();handleBack();}return;}
+  if(S.demo){e.preventDefault();if(!e.repeat&&(k===' '||k==='enter'||k==='e'))demoClose();return;}
   if(S.dialog){
     if(dlgMini()){if(k===' '||k==='enter'||k==='e'){e.preventDefault();if(!e.repeat)dlgPress();}return;}
     if(S.dialog.typing){if([' ','enter','e','1','2','3','4'].includes(k)){e.preventDefault();skipType();}return;}
@@ -93,6 +94,7 @@ document.addEventListener('pointerup',toyUp);document.addEventListener('pointerc
 // hover ticks on menu buttons
 document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('.btn,.perk,.ftab,.dlg-choices button,.chip');if(b&&b!==document._hov&&e.pointerType==='mouse'){document._hov=b;if(!b.disabled)sfx('blip',1200);}});
 $('tDash').addEventListener('pointerdown',e=>{e.preventDefault();dash();});
+$('demoOk').addEventListener('click',e=>{e.preventDefault();demoClose();});
 $('tTrace').addEventListener('pointerdown',e=>{e.preventDefault();armTrace();});
 for(const [id,fn] of [['tHeal',()=>drinkBlood()],['tMend',()=>mendWeapon()],['tUlt',()=>bloodthirst()],['tKunai',()=>throwTool('kunai')],['tShuri',()=>throwTool('shuri')],['tThrow',()=>throwWeapon()],['tUse',()=>useKey()]])$(id).addEventListener('pointerdown',e=>{e.preventDefault();fn();});
 $('tPause').addEventListener('pointerdown',e=>{e.preventDefault();if(S.paused)resume();else pause();});
@@ -310,7 +312,7 @@ function drawPlayer(){
   if(S.touchUI){flush();const bx=Math.round(LX(P.x))-7,by=Math.round(LY(P.y+P.r*0.6))+3;if(S.cdTap>0&&S.cdTapMax>0){lx.fillStyle='#000';lx.fillRect(bx-1,by-1,16,3);lx.fillStyle=C.bone;lx.fillRect(bx,by,Math.round(14*S.cdTap/S.cdTapMax),1);}if(S.cdCut>0&&S.cdCutMax>0){lx.fillStyle='#000';lx.fillRect(bx-1,by+2,16,3);lx.fillStyle=C.hi;lx.fillRect(bx,by+3,Math.round(14*S.cdCut/S.cdCutMax),1);}}
 }
 // the weapon in hand. Everything is captured, joined into solid lines and outlined in black; skins only change colours.
-function bloodGrow(P2,k0,n,g,jf){const m=Math.round(n*g);for(let i=0;i<m;i++){const k=k0+i,q=P2(k,jf?jf(k):0);pset(q.x,q.y,tsGrow(i));}if(m>0){const q=P2(k0+m,jf?jf(k0+m):0);pset(q.x,q.y,tsGlint());}return k0+m;}
+function bloodGrow(P2,k0,n,g,jf){const m=Math.round(n*g);for(let i=0;i<m;i++){const k=k0+i,q=P2(k,jf?jf(k):0);pset(q.x,q.y,tsGrow(i));tsLick(P2,k,i);}if(m>0){const q=P2(k0+m,jf?jf(k0+m):0);pset(q.x,q.y,tsGlint());}return k0+m;}
 function drawHeld(h,a,id,broken,blood,tired,cursed,opt){
   const c=Math.cos(a),s=Math.sin(a),P2=(k,j)=>({x:h.x+c*k-s*(j||0),y:h.y+s*k+c*(j||0)}),seg=(k0,k1,col,th,j)=>{const A=P2(k0,j),B=P2(k1,j);pline(A.x,A.y,B.x,B.y,col,1,th);};
   const pk=(k,j,col)=>{const q=P2(k,j);pset(q.x,q.y,col);},bend=(k0,j0,k1,j1,col)=>{const A=P2(k0,j0),B=P2(k1,j1);pline(A.x,A.y,B.x,B.y,col);};
@@ -318,7 +320,7 @@ function drawHeld(h,a,id,broken,blood,tired,cursed,opt){
   const up=opt&&opt.face?-opt.face:-S.face,g=opt&&opt.g!=null?opt.g:blood&&S.bt?Math.min(1,(S.bt.max-S.bt.t)/0.3):0;
   capBegin();
   switch(id){
-    case'reserve':seg(-3,-1,SK.h);pset(h.x,h.y,SK.t);seg(1,5,steel);tip=6;if(blood){for(let k=6;k<22;k++)pk(k,0,tsGrow(k));tip=22;}break;
+    case'reserve':seg(-3,-1,SK.h);pset(h.x,h.y,SK.t);seg(1,5,steel);tip=6;if(blood){for(let k=6;k<22;k++){pk(k,0,tsGrow(k));tsLick(P2,k,k);}tip=22;}break;
     case'katana':seg(-4,-1,SK.h);pset(h.x,h.y,SK.t);pk(0,1,SK.t);pk(0,-1,SK.t);if(broken){seg(1,7,steel);pk(8,1,steel);tip=8;}
       else{const fl=SK.flick&&Math.floor(S.gt*14)%3===0;seg(1,14,fl?C.white:steel);if(SK.hm&&!tired)for(let k=4;k<14;k+=4)pk(k,0,SK.hm);pk(15,0,SK.tip);tip=15;}break;
     case'yari':seg(-8,broken?10:16,'#8a5a2e');if(broken){pset(P2(11,1).x,P2(11,1).y,'#c8925a');tip=11;}else{seg(16,21,steel);pset(P2(17,1).x,P2(17,1).y,'#c23a2a');pset(P2(22).x,P2(22).y,C.white);tip=22;}break;
@@ -707,7 +709,7 @@ function draw(){
   drawFoeAir();flush();
   drawShots();flush();
   for(const s of S.eslashes){if(s.guard)drawCut(s,C.white,C.steel,5);else if(s.col){drawCut(s,s.core||C.white,s.col,(s.hr||8)*0.75);if(s.kind==='bolt'&&!s.done){const h=head(s);for(let i=0;i<3;i++)pset(LX(h.x)+rand(-4,4),LY(h.y)+rand(-4,4),'#ffe066');}}else if(s.phase)drawCut(s,'#efe6ff',C.phase,6);else if(s.kind==='wind')drawCut(s,C.white,C.wind,6);else if(s.kind==='fire')drawCut(s,'#d8f6ff',C.water,7);else if(s.kind==='neck')drawCut(s,PAL.pale[0],'#2a1a1a',4);else if(s.kind==='chain')drawCut(s,C.steel,'#3a3a42',2);else if(s.kind==='smoke')drawCut(s,'#d8d0d8',C.smoke,9);else if(s.kind==='shove')drawCut(s,'#e8f8ff','#6aa84f',11);else if(s.kind==='tongue')drawCut(s,'#ffb0c0','#e0607a',5);else drawCut(s,'#fff6e0',C.curse,(s.hr||8)*0.75);}
-  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(8,s.hr*0.9));}else if(s.ult){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(10,s.hr*0.9));}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
+  for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(8,s.hr*0.9));if(!s.done||s.linger>0)tsCutFx(s);}else if(s.ult){const tc=tsCut();drawCut(s,tc[0],tc[1],Math.max(10,s.hr*0.9));}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
   for(const m of S.marks){const x=LX(m.x),y=LY(m.y),L=m.ult?16:11;pline(x-m.c*L,y-m.s*L,x+m.c*L,y+m.s*L,m.life>0.06?C.white:C.hi,1,m.ult?2:1);}
   for(const b of S.bolts){let x=LX(b.a.x),y=LY(b.a.y);const tx=LX(b.b.x),ty=LY(b.b.y);for(let i=1;i<=6;i++){const nx=x+(tx-x)/(7-i)+(i<6?rand(-4,4):0),ny=y+(ty-y)/(7-i)+(i<6?rand(-4,4):0);pline(x,y,nx,ny,i%2?'#e8f0ff':'#9ab8ff');x=nx;y=ny;}}
   drawOrbs();drawAuras();
@@ -837,7 +839,7 @@ function frame(now){
   if(window.__bkLive!==LIVE){try{AU.ctx&&AU.ctx.close();}catch(_){}return;}
   try{
     const dt=clamp(((now||performance.now())-last)/1000,0,0.05);last=now||performance.now();S.frameN++;
-    if(S.mode==='run'&&S.running&&!S.choosing&&!S.dialog)update(dt);
+    if(S.mode==='run'&&S.running&&!S.choosing&&!S.dialog&&!S.demo)update(dt);
     else{if(S.dialog)miniTick(dt);if(S.trans&&S.mode==='run')updateTrans(dt);updateCam(0.016);if(!S.paused&&!S.choosing&&!S.dialog){S.gt+=dt;updateAmbient(dt);updateParts(dt);if(S.room)updateCorpses(dt);}}
     musicTick();draw();updateHUD();
   }catch(err){showErr(err);try{lx.setTransform(1,0,0,1,0,0);lx.globalAlpha=1;lx.globalCompositeOperation='source-over';BUF=new Map();}catch(_){}}
@@ -849,9 +851,9 @@ async function start(){
   await loadPlayer();if(!PL.ready)playerFallback();await loadChars();try{applyLook();}catch(_){}
   buildDebug();syncSnd();
   S.floor=genFloor(1);enterRoom(S.floor.start,null);
-  showTitle();
+  showTitle();studioSplash();
   requestAnimationFrame(frame);
 }
-window.__bk={TR,tr,LANG,ELEMS,elemProc,hermitOffer,placeHermitRoom,MUS,songFor,startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
+window.__bk={TR,tr,LANG,tutDemo,demoClose,drawDemo,TUT,studioSplash,ELEMS,elemProc,hermitOffer,placeHermitRoom,MUS,songFor,startPrologue,proEvent,proFall,PRO_STEPS,claimGift,giftState,pvLook,genFloorX:genFloor,modeFloorX:modeFloor,hurtPlayer,buzz,dailyCfg,startMode,modeScore,flName,totalFloors,cosGrant,cosEquip,cosOwned,COS,rollSpin,spinState,applyLook,featEvent,featCheck,FEATS,SHRINE_NPCS,MENU_ACTS,onDeath,reviveRun,ARM,bestPct,MODIFIERS,openTrials,openHellPick,startSpar,storyGate,ACTS,nextFloor,interact,skipType,dlgChoose,chooserPick,closeForge,closeDialog,neighbor,dash,throwTool,drinkBlood,roomsLeft,showSummary,ITEM,startTutorial,tutEvent,endTutorial,continueRun,saveRun,loadRunData,clearRun,menuOpen,menuClose,handleBack,playEnding,pause,resume,showTitle,enterHub,glyphPts,SHAPE_PTS,startWind,launchStrike,updateFoes,glyphBreak,traceSegs,segTech,updateTrace,aiSkill,BOSSES,TYPES,enterRoom,startRun,shieldBlocks,BIOMESX:BIOMES,S,P,CFG:()=>CFG,DUELS,makeWeapon,equip,wear,throwWeapon,throwTool,mendWeapon,bloodthirst,openForge,closeForge,openTree,closeTree,buyTreeNode,treeLayout,nodeState,TV,TREES,WEAPONS,SKILLS,readShape,shapeStats,castTech,makeCut,tryCounter,startHook,beginTrace,endTrace,addTracePt,armTrace,knownTech,curW,bankShards,META2:()=>META,genObstacles,reachableOK,SMPR:()=>[SMP_READY,Object.keys(SMP).length],drinkBlood,startDuel,makeDuel,startSumo,startParade,startTengu,startTag,dlgPress,dlgMini,liarPuzzle,META:()=>META,update,releaseSwipe,spawnEnemy,startWind,showSummary,startRun,nextFloor,offerPerk,takePerk,giveItem,interact,goRoom,enterRoom,ENC,ENCOUNTERS,TYPES,BOSSES,ITEMS,SPR,dlgChoose,qdPress,showHub};
 try{window.claude?.hot?.snapshot?.(()=>({}));}catch(_){}
 window.claude?.hot?.ready?window.claude.hot.ready(()=>start()):start();

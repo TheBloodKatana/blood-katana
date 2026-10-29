@@ -1,4 +1,4 @@
-# Builds Blood Katana for Android on every push and on demand.
+# Builds Bloody Descent: 100 Floors for Android on every push and on demand.
 # A debug APK is always produced. If the signing secrets are set, a signed release APK and an AAB (for Google Play) are produced too.
 name: Android build
 

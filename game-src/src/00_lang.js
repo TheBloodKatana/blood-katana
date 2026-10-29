@@ -27,7 +27,7 @@ function trCore(t){
   let r=TR.exact.get(n);if(r!=null)return r;
   const up=/[A-Z]/.test(n)&&n===n.toUpperCase();
   r=TR.lower.get(n.toLowerCase());if(r!=null)return up?trUp(r):r;
-  for(const p of TR.pats){const m=p.re.exec(t);if(!m||m.slice(1).some(x=>x&&x.includes(' · ')))continue;
+  for(const p of TR.pats){const m=p.re.exec(t);if(!m||p.len<30&&m.slice(1).some(x=>x&&x.includes(' · ')))continue;
     const parts=[];p.order.forEach((ix,gi)=>parts[ix]=m[gi+1]);
     let o=p.v.replace(/\{(\d)\}/g,(_,i)=>{const s=parts[+i];return s==null?'':trPart(s);});
     return up?trUp(o):o;}
@@ -38,7 +38,9 @@ function trSplit(t,n){
   const q=/^"([\s\S]+)"$/.exec(n);if(q&&!q[1].includes('"')){const r=trCore(q[1]);if(r!=null)return (LANG==='ja'||LANG==='zh'?'「':LANG==='fr'?'« ':LANG==='ru'?'«':'"')+r+(LANG==='ja'||LANG==='zh'?'」':LANG==='fr'?' »':LANG==='ru'?'»':'"');}
   if(n.includes(' · ')){let hit=false;const o=n.split(' · ').map(x=>{const r=trPart(x);if(r!==x)hit=true;return r;});if(hit)return o.join(' · ');}
   const ss=n.split(/(?<=[.!?…"”])\s+(?=["“A-Z0-9])/);
-  if(ss.length>1){const o=[];for(const x of ss){const r=/[A-Za-z]/.test(x)?trCore(x):x;if(r==null)return null;o.push(r);}return o.join(CJK?'':' ');}
+  // split at a sentence boundary into two pieces that each translate (either piece may itself be a pattern)
+  if(ss.length>1&&ss.length<=8)for(let j=ss.length-1;j>=1;j--){const A=ss.slice(0,j).join(' '),B=ss.slice(j).join(' ');
+    const ra=/[A-Za-z]/.test(A)?trCore(A):A;if(ra==null)continue;const rb=/[A-Za-z]/.test(B)?trCore(B):B;if(rb==null)continue;return ra+(CJK?'':' ')+rb;}
   const ws=n.split(' ');
   if(ws.length>1&&ws.length<=4&&ws.every(w=>!/[A-Za-z]/.test(w)||/^[A-ZĀĒĪŌŪ]/.test(w))){const o=[];
     for(const w of ws){if(!/[A-Za-z]/.test(w)){o.push(w);continue;}const r=TR.exact.get(w)??TR.lower.get(w.toLowerCase());if(r==null)return null;o.push(w===w.toUpperCase()&&w.length>1?trUp(r):r);}

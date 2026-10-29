@@ -1,4 +1,6 @@
-# Blood Katana for Android
+# Bloody Descent: 100 Floors for Android
+
+A game by OneManArmy. (The repository and the save data keep the old internal name, blood-katana, so existing saves and the Play package id are unaffected.)
 
 This folder is the Android app: the game (`www/index.html`) inside a Capacitor shell.
 The game itself runs offline and keeps saves on the phone. It uses the internet only for optional rewarded ads (Google AdMob) and Google Play Billing. Permissions: internet (ads and billing) and vibration (optional haptics).

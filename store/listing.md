@@ -1,7 +1,9 @@
 # Google Play store listing
 
+Developer name shown on Play: **OneManArmy**.
+
 ## English
-**App name** (30 max): Blood Katana
+**App name** (30 max): Bloody Descent: 100 Floors
 
 **Short description** (80 max):
 Cut your way out of a hundred hells with a broken blade. A samurai roguelite.
@@ -9,7 +11,7 @@ Cut your way out of a hundred hells with a broken blade. A samurai roguelite.
 **Full description**:
 Your blade was broken. Your name was stolen. Between you and the man who did it stand a hundred floors of hell.
 
-Blood Katana is a fast samurai roguelite where every cut is drawn by your own hand. Tap to slash, swipe to cut, hold to draw, and trace shapes in the air to unleash techniques while time slows around you.
+Bloody Descent: 100 Floors is a fast samurai roguelite where every cut is drawn by your own hand. Tap to slash, swipe to cut, hold to draw, and trace shapes in the air to unleash techniques while time slows around you.
 
 • Ten realms, a hundred floors: moonlit dojos, haunted bamboo, drowned temples, the oni hells, the river of the dead, frozen wastes, the realm of hungry ghosts, the Ashura battlefield, the tengu peaks and the Usurper's castle.
 • Forty lords and wardens, each with moves of their own. Dodge tidal waves, crossing judgement beams, bone hands, thunderclouds and shadow clones.
@@ -24,7 +26,7 @@ Blood Katana is a fast samurai roguelite where every cut is drawn by your own ha
 • Plays offline. Ads only when you choose to watch one. Optional purchases are cosmetic.
 
 ## Português (Brasil)
-**Nome**: Blood Katana
+**Nome**: Bloody Descent: 100 Floors
 
 **Descrição curta**:
 Abra caminho por cem infernos com uma lâmina quebrada. Um roguelite samurai.
@@ -32,7 +34,7 @@ Abra caminho por cem infernos com uma lâmina quebrada. Um roguelite samurai.
 **Descrição completa**:
 Sua lâmina foi quebrada. Seu nome foi roubado. Entre você e o homem que fez isso existem cem andares de inferno.
 
-Blood Katana é um roguelite samurai rápido em que cada corte é desenhado pela sua própria mão. Toque para golpear, deslize para cortar, segure para sacar e desenhe formas no ar para liberar técnicas enquanto o tempo desacelera.
+Bloody Descent: 100 Floors é um roguelite samurai rápido em que cada corte é desenhado pela sua própria mão. Toque para golpear, deslize para cortar, segure para sacar e desenhe formas no ar para liberar técnicas enquanto o tempo desacelera.
 
 • Dez reinos, cem andares: dojôs ao luar, bambuzais assombrados, templos afogados, os infernos dos oni, o rio dos mortos, terras congeladas, o reino dos fantasmas famintos, o campo de batalha de Ashura, os picos dos tengu e o castelo do Usurpador.
 • Quarenta senhores e guardiões, cada um com golpes próprios. Desvie de ondas gigantes, raios de julgamento, mãos de osso, nuvens de trovão e clones de sombra.
@@ -47,7 +49,7 @@ Blood Katana é um roguelite samurai rápido em que cada corte é desenhado pela
 • Funciona offline. Anúncios só quando você escolhe assistir. Compras opcionais são cosméticas.
 
 ## Español
-**Nombre**: Blood Katana
+**Nombre**: Bloody Descent: 100 Floors
 
 **Descripción breve**:
 Ábrete paso por cien infiernos con una hoja rota. Un roguelite samurái.
@@ -55,7 +57,7 @@ Blood Katana é um roguelite samurai rápido em que cada corte é desenhado pela
 **Descripción completa**:
 Tu hoja fue rota. Tu nombre, robado. Entre tú y el hombre que lo hizo hay cien pisos de infierno.
 
-Blood Katana es un roguelite samurái veloz en el que cada corte lo dibuja tu propia mano. Toca para golpear, desliza para cortar, mantén para desenvainar y traza formas en el aire para desatar técnicas mientras el tiempo se ralentiza.
+Bloody Descent: 100 Floors es un roguelite samurái veloz en el que cada corte lo dibuja tu propia mano. Toca para golpear, desliza para cortar, mantén para desenvainar y traza formas en el aire para desatar técnicas mientras el tiempo se ralentiza.
 
 • Diez reinos, cien pisos: dojos a la luz de la luna, bambú embrujado, templos ahogados, los infiernos oni, el río de los muertos, tierras heladas, el reino de los fantasmas hambrientos, el campo de batalla de Ashura, los picos tengu y el castillo del Usurpador.
 • Cuarenta señores y guardianes, cada uno con movimientos propios. Esquiva olas gigantes, rayos del juicio, manos de hueso, nubes de tormenta y clones de sombra.
@@ -70,7 +72,7 @@ Blood Katana es un roguelite samurái veloz en el que cada corte lo dibuja tu pr
 • Funciona sin conexión. Anuncios solo cuando eliges verlos. Las compras opcionales son cosméticas.
 
 ## 日本語
-**アプリ名**: Blood Katana
+**アプリ名**: Bloody Descent: 100 Floors
 
 **簡単な説明**:
 折れた刃一本で、百の地獄を斬り抜けろ。侍ローグライト。
@@ -78,7 +80,7 @@ Blood Katana es un roguelite samurái veloz en el que cada corte lo dibuja tu pr
 **詳しい説明**:
 刃は折られ、名は奪われた。それをやった男とあなたの間には、百の地獄の階が立ちはだかる。
 
-Blood Katanaは、すべての斬撃を自分の手で描くスピーディーな侍ローグライト。タップで斬り、なぞって断ち、長押しで抜刀し、宙に形を描けば時がゆっくり流れる中で技が放たれる。
+Bloody Descent: 100 Floorsは、すべての斬撃を自分の手で描くスピーディーな侍ローグライト。タップで斬り、なぞって断ち、長押しで抜刀し、宙に形を描けば時がゆっくり流れる中で技が放たれる。
 
 • 十の界、百の階：月下の道場、囁く竹林、水没した寺、鬼の地獄、三途の川、紅蓮の氷原、餓鬼界、修羅の戦場、天狗の峰、そして簒奪者の城。
 • 四十の主と獄卒、それぞれに固有の技。大波、交差する裁きの光、骨の手、雷雲、影分身をかわせ。
@@ -93,7 +95,7 @@ Blood Katanaは、すべての斬撃を自分の手で描くスピーディー�
 • オフラインで遊べる。広告は自分で選んだ時だけ。課金要素は見た目のみ。
 
 ## Français
-**Nom**: Blood Katana
+**Nom**: Bloody Descent: 100 Floors
 
 **Description courte**:
 Tranchez à travers cent enfers avec une lame brisée. Un roguelite samouraï.
@@ -101,7 +103,7 @@ Tranchez à travers cent enfers avec une lame brisée. Un roguelite samouraï.
 **Description complète**:
 Votre lame a été brisée. Votre nom a été volé. Entre vous et l'homme qui a fait ça se dressent cent étages d'enfer.
 
-Blood Katana est un roguelite samouraï nerveux où chaque coupe est tracée de votre propre main. Touchez pour frapper, glissez pour trancher, maintenez pour dégainer, et tracez des formes dans l'air pour déchaîner des techniques pendant que le temps ralentit.
+Bloody Descent: 100 Floors est un roguelite samouraï nerveux où chaque coupe est tracée de votre propre main. Touchez pour frapper, glissez pour trancher, maintenez pour dégainer, et tracez des formes dans l'air pour déchaîner des techniques pendant que le temps ralentit.
 
 • Dix royaumes, cent étages : dojos au clair de lune, bambous hantés, temples engloutis, les enfers des oni, la rivière des morts, des étendues gelées, le royaume des fantômes affamés, le champ de bataille d'Ashura, les pics des tengu et le château de l'usurpateur.
 • Quarante seigneurs et gardiens, chacun avec ses propres coups. Esquivez raz-de-marée, rayons du jugement croisés, mains d'os, nuages d'orage et clones d'ombre.
@@ -116,7 +118,7 @@ Blood Katana est un roguelite samouraï nerveux où chaque coupe est tracée de 
 • Jouable hors ligne. Des pubs uniquement si vous choisissez d'en regarder. Les achats optionnels sont purement cosmétiques.
 
 ## Русский
-**Название**: Blood Katana
+**Название**: Bloody Descent: 100 Floors
 
 **Краткое описание**:
 Прорубитесь сквозь сто преисподних со сломанным клинком. Самурайский рогалик.
@@ -124,7 +126,7 @@ Blood Katana est un roguelite samouraï nerveux où chaque coupe est tracée de 
 **Полное описание**:
 Ваш клинок сломан. Ваше имя украдено. Между вами и тем, кто это сделал, — сто этажей ада.
 
-Blood Katana — динамичный самурайский рогалик, где каждый разрез вы рисуете своей рукой. Нажмите, чтобы ударить, проведите, чтобы разрубить, удерживайте, чтобы выхватить клинок, и рисуйте фигуры в воздухе, чтобы обрушивать техники, пока время замедляется.
+Bloody Descent: 100 Floors — динамичный самурайский рогалик, где каждый разрез вы рисуете своей рукой. Нажмите, чтобы ударить, проведите, чтобы разрубить, удерживайте, чтобы выхватить клинок, и рисуйте фигуры в воздухе, чтобы обрушивать техники, пока время замедляется.
 
 • Десять царств, сто этажей: додзё в лунном свете, бамбуковая роща с призраками, затонувшие храмы, ад они, река мёртвых, ледяные пустоши, царство голодных духов, поле битвы Асуры, пики тэнгу и замок узурпатора.
 • Сорок владык и стражей, у каждого свои приёмы. Уклоняйтесь от цунами, скрещённых лучей суда, костяных рук, грозовых туч и теневых клонов.
@@ -139,7 +141,7 @@ Blood Katana — динамичный самурайский рогалик, г�
 • Играйте без интернета. Реклама — только если вы сами решите её посмотреть. Необязательные покупки — только косметика.
 
 ## 简体中文
-**应用名称**: Blood Katana
+**应用名称**: Bloody Descent: 100 Floors
 
 **简短说明**:
 手持断刀，杀出百重地狱。武士肉鸽动作游戏。
@@ -147,7 +149,7 @@ Blood Katana — динамичный самурайский рогалик, г�
 **完整说明**:
 你的刀被折断，你的名字被夺走。在你和那个人之间，横亘着一百层地狱。
 
-Blood Katana 是一款节奏明快的武士肉鸽游戏，每一斩都由你亲手画出。轻触挥斩，划动劈砍，长按拔刀，在空中描画图形即可在时间放缓之际施展技。
+Bloody Descent: 100 Floors 是一款节奏明快的武士肉鸽游戏，每一斩都由你亲手画出。轻触挥斩，划动劈砍，长按拔刀，在空中描画图形即可在时间放缓之际施展技。
 
 • 十个界，一百层：月下道场、闹鬼竹林、沉没古寺、鬼之地狱、冥河三途川、冰封荒原、饿鬼界、修罗战场、天狗峰，以及篡位者之城。
 • 四十位领主与狱卒，各有独门招式。闪避巨浪、交错的审判光束、白骨之手、雷云和影分身。
@@ -205,4 +207,4 @@ Data is encrypted in transit. Users can't request deletion from you (you hold no
 
 Google only shows a game in screenshot-based recommendations if it has **at least three 16:9 landscape screenshots of 1920×1080 or larger** that show real gameplay. All six here qualify. Upload them in numbered order: gameplay first, the title screen last.
 
-**Feature graphic alt text** (140 max): A lone samurai stands under a blood moon beside a torii gate, with the title Blood Katana.
+**Feature graphic alt text** (140 max): A lone samurai stands under a blood moon beside a torii gate, with the title Bloody Descent: 100 Floors.
