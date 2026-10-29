@@ -36,7 +36,7 @@ function traceReady(quiet){
   if(!playing()||S.drink||S.leap||S.held)return false;const W=curW();
   if(S.inkLock>0){if(!quiet){text(P.x,P.y-52,'BRUSH BLOTTED',C.phase);sfx('deny');}return false;}
   if(S.glyph)return true; // a lord is painting: you may always answer, techniques or not
-  if(!knownTech(W.id).length){if(!quiet){text(P.x,P.y-56,`NO TECHNIQUES FOR THE ${W.name.toUpperCase()} YET`,C.ash);text(P.x,P.y-44,'THE BLIND SMITH CAN TEACH THEM',C.curse);sfx('deny');}return false;}
+  if(!knownTech(techW()).length){if(!quiet){text(P.x,P.y-56,`NO TECHNIQUES FOR THE ${W.name.toUpperCase()} YET`,C.ash);text(P.x,P.y-44,'THE BLIND SMITH CAN TEACH THEM',C.curse);sfx('deny');}return false;}
   if(wBroken()){if(!quiet){text(P.x,P.y-50,'TOO BROKEN FOR TECHNIQUE · MEND IT',C.ash);sfx('deny');}return false;}
   if(S.traceCd>0){if(!quiet){text(P.x,P.y-50,`TRACE · ${S.traceCd.toFixed(1)}s`,C.ash);sfx('deny');}return false;}
   return true;
@@ -50,13 +50,13 @@ function addTracePt(p){const tr=S.trace;if(!tr)return;if(dist(p,tr.pts[tr.pts.le
 // ink chains: hold the brush still for a breath and the stroke splits; every piece is read as its own shape
 const maxLinks=()=>capOn('brush','third')?2:1;
 function traceSegs(tr){const out=[];let a=0;for(const s of tr.splits||[]){out.push(tr.pts.slice(a,s+1));a=s;}out.push(tr.pts.slice(a));return out;}
-function segTech(pts){const sh=pts.length>=3?readShape(pts):null;return{shape:sh,sk:sh?knownTech(curW().id).find(s=>s.shape===sh):null};}
+function segTech(pts){const sh=pts.length>=3?readShape(pts):null;return{shape:sh,sk:sh?knownTech(techW()).find(s=>s.shape===sh):null};}
 const traceFailCd=()=>CFG.noTechCd||S.inHub?0:up('brush','tfail')?1:2.5;
 function endTrace(){
   const tr=S.trace;if(!tr)return;S.trace=null;
   const segs=traceSegs(tr).filter(p=>p.length>=3),reads=segs.map(segTech),shapes=reads.map(r=>r.shape);
   if(S.glyph&&shapes.includes(S.glyph.shape)){glyphBreak(S.glyph);S.ink={pts:tr.pts,t:0.7,max:0.7,col:C.hi};return;}
-  const locked=S.traceCd>0||wBroken()||!knownTech(curW().id).length,picks=[],used=new Set();
+  const locked=S.traceCd>0||wBroken()||!knownTech(techW()).length,picks=[],used=new Set();
   if(!locked)reads.forEach((r,i)=>{if(r.sk&&!used.has(r.sk.id)){used.add(r.sk.id);picks.push({sk:r.sk,p:segs[i]});}});
   if(!picks.length){const sh=shapes.find(Boolean);S.ink={pts:tr.pts,t:0.5,max:0.5,col:C.ash};if(!locked)S.traceCd=S.traceCdMax=traceFailCd();
     text(P.x,P.y-56,S.glyph?(sh?`${SHAPES[sh].toUpperCase()} · NOT THE GLYPH`:'THE SHAPE FADES'):sh?`${SHAPES[sh].toUpperCase()} · NO TECHNIQUE`:'THE SHAPE FADES',C.ash);sfx('deny');return;}

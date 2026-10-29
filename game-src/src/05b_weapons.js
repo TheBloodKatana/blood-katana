@@ -1,6 +1,8 @@
 // ================= weapons in hand, the blood orb, tools, pattern skills =================
 let WUID=1;
 const curW=()=>WEAPONS[P.wpn?P.wpn.id:'reserve'];
+// whose techniques you can trace: your own blade (whole, in the prologue) uses the broken katana's tree
+const techW=()=>P.wpn&&P.wpn.own?'reserve':curW().id;
 const wBroken=()=>!!(P.wpn&&P.wpn.dur<=0);
 const wUp=(n,id)=>up(id||curW().id,n);
 const brokenLen=id=>0.6+0.1*up(id,'brk'),brokenCd=id=>1.35-0.1*up(id,'brk'),brokenTrick=id=>up(id,'brk')>=2&&id!=='musket';

@@ -480,7 +480,7 @@ function drawCompactHud(){
   ptext(`${escapePct()}%`,LW-8,LH-6,C.ash,8,'right');
 }
 function drawAbilityChips(){
-  if(S.mode!=='run')return;const ab=abilitiesFor(false),ks=Object.keys(ABCD).filter(k=>ab[k]);const W=curW(),tech=knownTech(W.id),hasT=tech.length>0;
+  if(S.mode!=='run')return;const ab=abilitiesFor(false),ks=Object.keys(ABCD).filter(k=>ab[k]);const W=curW(),tech=knownTech(techW()),hasT=tech.length>0;
   if(hasT){const yy=S.touchUI?S.mapBottom+12:LH-6,cd=S.traceCd||0,mx=S.traceCdMax||1,rd=cd<=0&&!wBroken(),w=Math.max(46,tech.length*12+20);lx.fillStyle='rgba(6,4,5,0.8)';lx.fillRect(3,yy-12,w,14);flush();
     ptext('技',9,yy-2,rd?C.hi:'#6a3a42',8);tech.forEach((sk,i)=>{shapeGlyph(sk.shape,16+i*12,yy-10,rd?KCOL[sk.kind]:'#4a3a42');});flush();
     lx.fillStyle=rd?C.hi:'#3a1a22';lx.fillRect(4,yy+1,w-2,1);if(!rd&&cd>0){lx.fillStyle=C.blood;lx.fillRect(4,yy+1,Math.round((w-2)*(1-cd/mx)),1);}
@@ -494,7 +494,7 @@ function drawTrace(){
   const tr=S.trace,armed=S.traceArm&&!tr;
   if(S.ink){const k=S.ink.t/S.ink.max,p=S.ink.pts;for(let i=1;i<p.length;i++)pline(LX(p[i-1].x),LY(p[i-1].y),LX(p[i].x),LY(p[i].y),S.ink.col,k,2);}
   if(!tr&&!armed)return;
-  const W=curW(),tech=knownTech(W.id),g=S.glyph&&S.enemies.includes(S.glyph.e)?S.glyph:null;
+  const W=curW(),tech=knownTech(techW()),g=S.glyph&&S.enemies.includes(S.glyph.e)?S.glyph:null;
   const segs=tr?traceSegs(tr):[],reads=segs.map(segTech),cur=reads[reads.length-1]||{},match=cur.sk||null,gHit=g&&reads.some(r=>r.shape===g.shape);
   flush();lx.fillStyle='rgba(10,2,5,0.42)';lx.fillRect(0,0,LW,LH);{const pu=0.5+0.5*Math.sin(S.gt*30);lx.fillStyle=`rgba(184,20,42,${0.25+0.2*pu})`;lx.fillRect(0,0,LW,2);lx.fillRect(0,LH-2,LW,2);lx.fillRect(0,0,2,LH);lx.fillRect(LW-2,0,2,LH);}
   {const px=LX(P.x),py=LY(P.y-14);for(let i=0;i<20;i++){const an=i/20*Math.PI*2+S.gt;pset(px+Math.cos(an)*16,py+Math.sin(an)*14,C.blood,0.5);}}
@@ -766,7 +766,7 @@ function updateHUD(){
   setT('meterHint',S.drink?'Drinking…':btOn()?(S.bt.strike?'Bloodthirst: your next strike':`Bloodthirst ${S.bt.t.toFixed(1)}s`):`Q heal ${healCost()} · F mend ${mendCost()} · R thirst ${btCost()}`);
   setW('tapFill',Math.round((S.cdTapMax>0?1-S.cdTap/S.cdTapMax:1)*100)+'%');setT('tapVal',S.cdTap>0?S.cdTap.toFixed(1)+'s':'Ready');
   setW('cutFill',Math.round((S.cdCutMax>0?1-S.cdCut/S.cdCutMax:1)*100)+'%');setT('cutVal',S.cdCut>0?S.cdCut.toFixed(1)+'s':'Ready');
-  {const tc=S.traceCd||0,kn=S.mode==='run'?knownTech(curW().id).length:0;setW('trFill',Math.round((tc>0?1-tc/(S.traceCdMax||1):1)*100)+'%');setT('trVal',S.mode!=='run'?'–':!kn?'None':tc>0?tc.toFixed(1)+'s':`Ready · ${kn}`);
+  {const tc=S.traceCd||0,kn=S.mode==='run'?knownTech(techW()).length:0;setW('trFill',Math.round((tc>0?1-tc/(S.traceCdMax||1):1)*100)+'%');setT('trVal',S.mode!=='run'?'–':!kn?'None':tc>0?tc.toFixed(1)+'s':`Ready · ${kn}`);
    const v=(tc>0?1-tc/(S.traceCdMax||1):1).toFixed(2);if(hc.tcd!==v){hc.tcd=v;$('tTrace').style.setProperty('--cd',v);}$('tTrace').classList.toggle('off',!kn||wBroken());$('tTrace').classList.toggle('armed',!!(S.traceArm||S.trace));}
   $('tHeal').classList.toggle('off',S.meter<healCost()||P.hp>=P.max);$('tMend').classList.toggle('off',!P.wpn||S.meter<mendCost()||P.wpn.dur>=P.wpn.max);$('tUlt').classList.toggle('ready',S.meter>=btCost()&&!btOn());
   setT('tKunai',`Kunai ${S.tools?S.tools.kunai:0}`);setT('tShuri',`Shuri ${S.tools?S.tools.shuri:0}`);$('tThrow').classList.toggle('off',!P.wpn);
