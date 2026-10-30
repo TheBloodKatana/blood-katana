@@ -53,7 +53,7 @@ function armCard(it){
     <canvas data-pv="${it.key}" width="${pw}" height="${ph}" style="width:${pw*(it.type==='o'?2.5:2)}px;height:${ph*(it.type==='o'?2.5:2)}px"></canvas>
     <span class="sh-nm">${esc(it.name)}</span><span class="sh-r">${it.r}</span><span class="sh-how">${esc(itemHow(it))}</span></button>`;
 }
-const SUPPLIES={ramen:{name:'Ramen ticket',desc:'+1 soul for your next run.',cost:40,icon:'ramen'},charm:{name:'Revive charm',desc:'Rise once when you fall. Used up automatically.',cost:90,icon:'charm'}};
+const SUPPLIES={ramen:{name:'Ramen ticket',desc:'+1 soul for your next run.',cost:40,icon:'ramen'},charm:{name:'Revive charm',desc:'Rise once when you fall. You choose when to burn it.',cost:90,icon:'charm'}};
 function wEqKey(w){const st=cosState();return st.eq.w[w]&&cosOwned(st.eq.w[w])?st.eq.w[w]:'w:'+w+':'+COS_WSKINS[w][0].id;}
 // what the stage shows for the current tab and selection
 function armKeys(){
@@ -227,23 +227,26 @@ const MENU_ACTS={
   testok(){const p=ARM.purchase;ARM.purchase=null;menuBack();if(p)p.onOk();},
   testno(){ARM.purchase=null;menuBack();},
   revivead(){menuClose();rewardedAd('revive',()=>reviveRun('RISEN'));},
+  revivecharm(){if(!((META.charm||0)>0)||S.charmUsed)return;menuClose();META.charm--;S.charmUsed=true;saveMeta();reviveRun('THE CHARM BURNS',true);},
   reviveno(){menuClose();showSummary(false);},
   restore(){restorePurchases(false);sfx('click');},
   armory(){ARM.tab='o';ARM.spin=null;ARM.sel=null;menuOpen('armory');},
 };
 // ---------- falling, and rising again ----------
-function reviveRun(why){
-  S.dead=0;S.reviveUsed=true;P.hp=P.max;P.inv=2.5;S.running=true;S.mode='run';S.paused=false;
+function reviveRun(why,charm){
+  S.dead=0;if(!charm)S.reviveUsed=true;P.hp=P.max;P.inv=2.5;S.running=true;S.mode='run';S.paused=false;
   S.eslashes=[];S.shots=[];S.tmarks=[];for(const e of S.enemies){if(e.state==='wind'||e.state==='strike'){e.state='strafe';e.cuts=[];}e.cd=Math.max(e.cd,1.2);}
   if(S.stats)S.stats.killer='';burst(P.x,P.y-14,40,C.hi,320,0.9,3);text(P.x,P.y-64,why,C.hi,true);sfx('learn');S.flash=0.15;S.slowT=Math.max(S.slowT,1);last=performance.now();
 }
 function onDeath(){
   if(S.pro){proFallen();return;}
   if(S.freeRevive){S.freeRevive=false;reviveRun('SECOND WIND');return;}
-  if((META.charm||0)>0&&!S.charmUsed&&!(S.modeRules&&S.modeRules.noRevive)){META.charm--;S.charmUsed=true;saveMeta();reviveRun('THE CHARM BURNS');return;}
-  if(!S.reviveUsed&&!S.inHub&&!(S.modeRules&&S.modeRules.noRevive)){S.running=false;MENU.stack=[];
-    menuShow(`<div class="mv-head"><div class="mv-kanji">魂</div><div class="mv-title">Your soul scatters</div></div><div class="mv-body"><p class="mv-note">Once per run you can gather it back and rise with a full soul.</p></div>
-      <div class="mv-list"><button class="btn" type="button" data-m="revivead">Watch an ad to rise again</button><button class="btn ghost" type="button" data-m="reviveno">Let it end</button></div>`,'revive');return;}
+  // a fall is never spent for you: choose to burn a charm, watch an ad, or let the run end
+  const noRev=!!(S.modeRules&&S.modeRules.noRevive)||S.inHub,charm=(META.charm||0)>0&&!S.charmUsed&&!noRev,ad=!S.reviveUsed&&!noRev;
+  if(charm||ad){S.running=false;MENU.stack=[];
+    const opts=(charm?`<button class="btn" type="button" data-m="revivecharm">${esc(tr('Burn a revive charm ({0} left)').replace('{0}',META.charm))}</button>`:'')+(ad?`<button class="btn${charm?' ghost':''}" type="button" data-m="revivead">Watch an ad to rise again</button>`:'');
+    menuShow(`<div class="mv-head"><div class="mv-kanji">魂</div><div class="mv-title">Your soul scatters</div></div><div class="mv-body"><p class="mv-note">Rise again with a full soul, or let the run end here.</p></div>
+      <div class="mv-list">${opts}<button class="btn ghost" type="button" data-m="reviveno">Let it end</button></div>`,'revive');return;}
   showSummary(false);
 }
 

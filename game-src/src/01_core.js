@@ -1,6 +1,7 @@
 // ================= core: constants, settings, helpers, audio, pixel plotting =================
-const VH=600,PX=2,LH=VH/PX,WALL=40,WP=WALL/PX,DW=46;
-// the view is always 600 tall; its width follows the screen so the game fills phones edge to edge
+// the camera sits closer on phones (480 world units tall) than on computers (540)
+const VH=(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?480:540,PX=2,LH=VH/PX,WALL=40,WP=WALL/PX,DW=46;
+// the view height is fixed per device; its width follows the screen so the game fills phones edge to edge
 const viewW=()=>{const a=Math.min(2.4,Math.max(1.5,(innerWidth||900)/Math.max(1,innerHeight||600)));return Math.round(VH*a/4)*4;};
 let VW=viewW(),LW=VW/PX;
 const $=id=>document.getElementById(id);
