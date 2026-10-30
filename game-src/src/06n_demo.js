@@ -135,6 +135,7 @@ function demoScene(id,t,touch){
       if(on)thirstAura(thirstSkin(),t,LX(hx),LY(y)-8,Math.min(1,(t-0.6)/0.3));if(t>0.6&&t<1.3)thirstAct(thirstSkin(),(t-0.6)/0.7,LX(hx),LY(y)-8,t);
       tdHero(hx,y,{blood:on,grow:g2,frame:t>1.4&&t<1.6?(t<1.46?3:t<1.52?4:5):0});
       if(t>1.4)tdCut(tdLine(210,60,330,215),sl+Math.max(0,t-1.65)*1.4,{blood:true});break;}
+    default:if(typeof THREAT_SCENE!=='undefined'&&THREAT_SCENE[id])THREAT_SCENE[id](t,y);
   }
 }
 // the HUD bits a lesson points at, drawn like the real ones (souls, the blood bar)
@@ -158,5 +159,6 @@ function demoOverlay(id,t,touch){
       else{const arm=t>0.3&&t<1.85;dMouse(176,80,arm?'r':'');if(t>0.45&&t<1.9)dCursor(cx,cy,true);if(arm)dtext('HOLD',184,76,'#ff4a5c',6);}break;}
     case'heal':{const k=seg(t,0.75,1.35);tdHud(3+Math.round(k*2),1-k*0.45,false);if(touch){const down=t>0.55&&t<0.8;dBtn(178,80,'HEAL',down,11);dHand(180,82,down);}else dKey(150,80,'Q',t>0.55&&t<0.8);break;}
     case'thirst':{const on=t>0.6,g2=seg(t,0.6,1.0);tdHud(5,on?1-g2*0.9:1,!on&&Math.floor(t*8)%2);if(touch){const down=t>0.4&&t<0.65;dBtn(178,80,'THIRST',down,12);dHand(180,82,down);}else dKey(150,80,'R',t>0.4&&t<0.65);break;}
+    default:if(typeof THREAT_OVER!=='undefined'&&THREAT_OVER[id])THREAT_OVER[id](t,touch);
   }
 }

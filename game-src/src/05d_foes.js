@@ -106,7 +106,7 @@ function wardHit(e,s){burst(e.x,e.y-20,10,'#1a0a10',220,0.35,2);burst(e.x,e.y-20
 function glyphBegin(e){
   const sh=pick(e.T.glyphs),dur=Math.max(1.7,2.7-0.08*realmN())*(e.enraged?0.88:1);
   if(e.T.final&&e.enraged&&!e.combo){e.combo=1;e.comboPat='glyph';}
-  e.glyphShape=sh;e.wind=e.t=dur;e.feintAt=null;e.later=glyphUnleash;S.glyph={e,shape:sh,t:0,dur};
+  e.glyphShape=sh;e.wind=e.t=dur;e.feintAt=null;e.later=glyphUnleash;S.glyph={e,shape:sh,t:0,dur};threatQueue('glyph',0);
   text(e.x,e.y-84,'A GLYPH',C.hi,true);sfx('paper');sfx('gong');
 }
 function glyphUnleash(e){

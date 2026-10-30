@@ -417,7 +417,7 @@ function spawnEnemy(key,opt){
     duelist:!!opt.duel,famHits:new Map(),ifr:0,stunImm:0,smoke:false,smokeT:rand(1.5,2.5),readT:0,desp:false};
   if(T.hide&&!opt.noHide)e.wantHide=true;
   if(e.boss&&S.gmx&&S.gmx.enraged)e.enraged=true;
-  S.enemies.push(e);return e;
+  S.enemies.push(e);threatSpawned(e);return e;
 }
 function plan(e){
   const ch=CFG.aiChaos,T=e.T;

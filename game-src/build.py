@@ -2,7 +2,7 @@ import pathlib,base64,subprocess,json,re,io,tempfile
 # Joins the game's modules into one HTML file and copies it into the Android app (www/index.html).
 # Run from anywhere: python3 game-src/build.py   (pyftsubset from fonttools is optional; it shrinks the Japanese font)
 HERE=pathlib.Path(__file__).resolve().parent;S=HERE/'src';A=HERE/'fonts';TMP=pathlib.Path(tempfile.gettempdir())
-ORDER=['00_lang.js','01_core.js','01b_music.js','02_data.js','02b_content.js','02c_cosmetics.js','03_sprites.js','03b_sprites.js','04_world.js','05_combat.js','05b_weapons.js','05c_skills.js','05d_foes.js','05e_bosses.js','06_run.js','06c_hub.js','06b_tree.js','06d_app.js','06e_shop.js','06h_preview.js','06i_gift.js','06j_prologue.js','06k_thirst.js','06l_elements.js','06f_modes.js','06g_feats.js','06m_splash.js','06n_demo.js','06p_hudguide.js','06o_icons.js','07_main.js']
+ORDER=['00_lang.js','01_core.js','01b_music.js','02_data.js','02b_content.js','02c_cosmetics.js','03_sprites.js','03b_sprites.js','04_world.js','05_combat.js','05b_weapons.js','05c_skills.js','05d_foes.js','05e_bosses.js','06_run.js','06c_hub.js','06b_tree.js','06d_app.js','06e_shop.js','06h_preview.js','06i_gift.js','06j_prologue.js','06k_thirst.js','06l_elements.js','06f_modes.js','06g_feats.js','06m_splash.js','06n_demo.js','06p_hudguide.js','06q_threats.js','06o_icons.js','07_main.js']
 js='\n'.join((S/f).read_text() for f in ORDER if (S/f).exists())
 js=js.replace("'__PLAYER_B64__'","'"+(S/'player_sheet.b64').read_text().strip()+"'")
 js=js.replace('__CHAR_B64__',(S/'char_sheets.json').read_text().strip())
