@@ -39,7 +39,7 @@ function wear(n,s){
 }
 // ---------- the blood orb ----------
 const orbMax=()=>100+20*up('orb','cap');
-const healCost=()=>Math.round(40*S.mods.drinkCost)-5*up('orb','heal');
+const healCost=()=>Math.round((40*S.mods.drinkCost-5*up('orb','heal'))*(S.gmx&&S.gmx.healMul||1));
 const mendCost=()=>50-6*up('orb','mend');
 function btCost(){const W=curW();return Math.round(W.bt.cost*(1-0.1*wUp('btc'))*(P.wpn&&P.wpn.perk==='light'?0.8:1));}
 function btTime(){const W=curW();return(W.bt.time||0)+up('orb','btime')+1.5*wUp('btp')+(W.id==='reserve'?up('reserve','rthirst'):0)+(P.wpn&&P.wpn.perk==='thirst'?2:0);}

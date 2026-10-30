@@ -29,7 +29,16 @@ const MODIFIERS=[
   {id:'novice',name:'Novice blessing',kind:'gift',mult:0.7,desc:'+2 max soul.'},
   {id:'second',name:'Second wind',kind:'gift',mult:0.75,desc:'One free revive.'},
   {id:'lucky',name:'Lucky',kind:'gift',mult:0.8,desc:'Better treasure and more mon.'}];
-const MOD_BY={};MODIFIERS.forEach(m=>MOD_BY[m.id]=m);
+// curses only the Hell Levels use, so the daily and weekly pools stay as they are
+const HELL_MODS=[
+  {id:'frail',name:'Frail',kind:'pain',mult:1.2,desc:'One soul fewer.'},
+  {id:'dull',name:'Dull steel',kind:'pain',mult:1.1,desc:'Weapons wear out half again as fast.'},
+  {id:'shortparry',name:'Narrow eye',kind:'pain',mult:1.2,desc:'Your parry window is 40% shorter.'},
+  {id:'thirsty',name:'Thin blood',kind:'pain',mult:1.15,desc:'Healing costs a quarter more of the orb.'},
+  {id:'dimmed',name:'Dimmed',kind:'pain',mult:1.1,desc:'Near total darkness.'},
+  {id:'fuse2',name:'Shorter fuse',kind:'pain',mult:1.2,desc:'Foes wind up another 15% faster.'},
+  {id:'frailer',name:'Frailer',kind:'pain',mult:1.2,desc:'Another soul fewer.'}];
+const MOD_BY={};MODIFIERS.concat(HELL_MODS).forEach(m=>MOD_BY[m.id]=m);
 function computeGmx(mods){
   const x={hpMul:1,bossHpMul:1,eliteAll:false,enemyN:1,coinMul:1,shardMul:1,wearMul:1,noHeal:false,noDrops:false,noShops:false,brush:false,speed:1,dark:false,tide:false,fog:false,bounty:false,enraged:false,ippon:false,vampire:false,berserk:false,teleMul:1,maxAdd:0,moveMul:1,dashMul:1,noslow:false,second:false,lucky:false,brittle:false};
   for(const id of mods||[])switch(id){
@@ -41,7 +50,9 @@ function computeGmx(mods){
     case'bounty':x.bounty=true;break;case'tide':x.tide=true;break;case'fog':x.fog=true;break;case'brittle':x.brittle=true;break;
     case'stingy':x.coinMul*=0.5;break;case'iron':x.hpMul*=2;x.bossHpMul*=1.6;break;case'noslow':x.noslow=true;break;
     case'novice':x.maxAdd+=2;break;case'second':x.second=true;break;case'lucky':x.lucky=true;x.coinMul*=1.5;break;
-    case'hellhp':x.hpMul*=1.06;x.bossHpMul*=1.06;break;}
+    case'hellhp':x.hpMul*=1.06;x.bossHpMul*=1.06;break;
+    case'frail':case'frailer':x.maxAdd-=1;break;case'dull':x.wearMul*=1.5;break;case'shortparry':x.parryMul=(x.parryMul||1)*0.6;break;
+    case'thirsty':x.healMul=(x.healMul||1)*1.25;break;case'dimmed':x.dark=true;break;case'fuse2':x.teleMul*=0.85;break;}
   return x;
 }
 const modMult=mods=>(mods||[]).reduce((a,id)=>a*(MOD_BY[id]?MOD_BY[id].mult:1.06),1);
@@ -116,7 +127,8 @@ function infiniteTwist(){
 }
 const totalFloorsBase=()=>BIOMES.length*FPR;
 // ---------- hell levels ----------
-const HELL_ORDER=['fuse','elite','horde','enraged','stingy','brittle','bounty','noslow','fog','tide','iron','hellhp','hellhp','hellhp','hellhp','hellhp','hellhp','hellhp','hellhp','hellhp'];
+// every level keeps the curses below it and adds the next one
+const HELL_ORDER=['fuse','elite','horde','enraged','stingy','brittle','bounty','noslow','fog','frail','dull','tide','shortparry','thirsty','iron','dimmed','fuse2','frailer','hellhp','hellhp'];
 const hellMods=L=>HELL_ORDER.slice(0,Math.max(1,Math.min(20,L)));
 function openHellPick(){
   const top=Math.min(20,(META.hell||0)+1);

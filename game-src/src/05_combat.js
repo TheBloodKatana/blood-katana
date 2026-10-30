@@ -66,7 +66,7 @@ function forTrail(s,fn){const end=s.d;for(let i=1;i<s.pts.length;i++){if(s.cum[i
 function trailLive(o){return(!o.done||o.linger>0)&&o.d>=1;}
 
 // how long a finished cut keeps parrying: generous while you learn, then something you grow on the Blood Tree
-function parryGrace(){if(S.pro||S.tut)return CFG.parryGraceTut;return CFG.parryGrace+0.04*up('body','parry')+(capOn('body','trueparry')?0.1:0)+S.mods.trail;}
+function parryGrace(){if(S.pro||S.tut)return CFG.parryGraceTut;return(CFG.parryGrace+0.04*up('body','parry')+(capOn('body','trueparry')?0.1:0)+S.mods.trail)*(S.gmx&&S.gmx.parryMul||1);}
 function breakCut(s,pt,by){
   s.d=clamp(s.d-dist(pt,head(s)),0,s.len);s.blocked=true;s.blockAt=pt;s.done=true;s.linger=0;s.fade=s.fadeMax=0.35;
   if(s.team==='e'){

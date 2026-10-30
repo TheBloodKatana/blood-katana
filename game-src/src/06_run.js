@@ -732,7 +732,7 @@ function showSummary(win,afterEnding){
   const st=S.stats||{},m=Math.floor((st.time||0)/60),sc=Math.floor((st.time||0)%60);
   $('ovBig').textContent=win?'刀成':'魂散';
   const mh=modeSummary(win),gmid=S.gm&&S.gm.id;
-  $('ovText').textContent=win&&gmid&&gmid!=='story'&&gmid!=='hell'?`${MODE_NAMES[gmid]} cleared.`:win?'The blade is whole, and the hundred hells are behind you. For now.':(st.killer?`Your soul scatters on level ${flName()}, cut down by ${/^[AEIOUĀĒĪŌŪ]/i.test(st.killer)?'an':'a'} ${st.killer}.`:`Your soul scatters on level ${flName()}.`);
+  $('ovText').textContent=win&&gmid&&gmid!=='story'&&gmid!=='hell'?`${MODE_NAMES[gmid]} cleared.`:win&&gmid==='hell'?`Hell Level ${S.gm.level||1} escaped. Level ${Math.min(20,(S.gm.level||1)+1)} waits at the gate.`:win?'The blade is whole, and the hundred hells are behind you. For now. The Hell Levels now wait at the gate.':(st.killer?`Your soul scatters on level ${flName()}, cut down by ${/^[AEIOUĀĒĪŌŪ]/i.test(st.killer)?'an':'a'} ${st.killer}.`:`Your soul scatters on level ${flName()}.`);
   const names=S.items.map(id=>ITEM[id].name).concat(Object.keys(S.owned).map(id=>PERKS.find(p=>p.id===id).name));
   const cell=(l,v,c)=>`<div><span>${l}</span><b${c?` class="${c}"`:''}>${v}</b></div>`;
   $('ovStats').innerHTML=cell(win?'Shards banked':'Carried shards lost',win?`+${S.shardsRun}`:`${S.lostShards}`,'shard')+cell('Banked (safe)',META.shards)+cell('Level',flName())+cell('Foes cut',st.kills||0)+cell('Bosses',st.bosses||0)+cell('Best combo',st.bestCombo||0)+cell('Time',`${m}:${String(sc).padStart(2,'0')}`)+`<div class="wide"><span>Carried</span><b>${esc(names.join(', ')||'Nothing but the blade')}</b></div>`+mh;
