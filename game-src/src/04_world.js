@@ -92,42 +92,79 @@ function reachableOK(R){
   return n>=free*0.92;
 }
 // pre-rendered art for walls and crates, per realm style
+// Obstacles are drawn as blocks seen from above and in front: the top (the footprint, lit) sits raised above the floor,
+// and a front face of height `rise` drops down to where the block meets the ground. The face darkens towards its foot.
+const OBS_RISE={plank:18,brick:18,lava:18,rock:16,ice:18,stump:13,bamboo:26,palisade:22,screen:20};
+function obsShadeFace(g,x,y,w,h,k){for(let i=0;i<h;i++){const a=(k||0.42)*Math.pow(i/Math.max(1,h-1),1.3);if(a<=0.01)continue;g.fillStyle=`rgba(0,0,0,${a.toFixed(3)})`;g.fillRect(x,y+i,w,1);}}
 function paintObstacle(o){
-  const A=curBiome().art,st=A.wall,w=Math.round(o.w/PX),h=Math.round(o.h/PX),rise=o.type==='crate'?4:{bamboo:16,palisade:14,screen:14}[st]||10,s=SPC(w+2,h+rise+2),{R,P}=s,X=1,Y=1;
+  const A=curBiome().art,st=A.wall,w=Math.round(o.w/PX),h=Math.round(o.h/PX),rise=o.type==='crate'?10:OBS_RISE[st]||18,s=SPC(w+2,h+rise+2),{R,P,g}=s,X=1,Y=1,FY=Y+h;
+  const cap=(c,hi,lo)=>{R(X,Y,w,h,c);R(X,Y,w,1,hi);R(X,Y+h-1,w,1,lo||shade(c,0.85));};
   if(o.type==='crate'){
     const pal=A.crate;
-    R(X,Y+rise,w,h,pal[1]);R(X,Y,w,h,pal[0]);R(X,Y,w,1,pal[2]);R(X,Y,1,h,pal[2]);for(let i=0;i<Math.max(w,h);i++){P(X+Math.round(i*w/Math.max(w,h)),Y+Math.round(i*h/Math.max(w,h)),pal[1]);P(X+w-1-Math.round(i*w/Math.max(w,h)),Y+Math.round(i*h/Math.max(w,h)),pal[1]);}
-    R(X,Y+h,w,rise,pal[1]);R(X,Y+h,w,1,'#000');for(let x=X+2;x<X+w;x+=4)R(x,Y+h+1,1,rise-1,shade(pal[1],0.8));
+    cap(pal[0],pal[2]||shade(pal[0],1.3),pal[1]);for(let i=0;i<Math.max(w,h);i++){P(X+Math.round(i*w/Math.max(w,h)),Y+Math.round(i*h/Math.max(w,h)),pal[1]);P(X+w-1-Math.round(i*w/Math.max(w,h)),Y+Math.round(i*h/Math.max(w,h)),pal[1]);}
+    R(X,FY,w,rise,pal[1]);R(X,FY,w,1,shade(pal[1],0.6));for(let x=X+2;x<X+w;x+=5)R(x,FY+1,1,rise-1,shade(pal[1],0.75));R(X,FY+3,w,1,shade(pal[1],1.15));R(X,FY+rise-3,w,1,shade(pal[1],1.15));
+    obsShadeFace(g,X,FY,w,rise,0.35);
   }else if(st==='bamboo'){
-    R(X,Y+rise,w,h,'#1a2412');for(let x=X;x<X+w;x+=3){const c=pick([['#5a8a3a','#3a6a2a','#7aaa4a'],['#4a7a32','#2e5a22','#6a9a42']]),top=Y+ri(0,4);R(x,top,3,h+rise-top+Y,c[0]);R(x,top,1,h+rise-top+Y,c[1]);R(x+2,top,1,h+rise-top+Y,c[2]);for(let y=top+ri(3,7);y<Y+h+rise;y+=ri(7,10))R(x,y,3,1,'#2a4a1a');P(x+1,top-1,'#7aaa4a');P(x+2,top-2,'#5a8a3a');}
+    // a clump of stalks: leafy tops over the footprint, stalks running down the face
+    R(X,Y+2,w,h+rise-2,'#141c0e');
+    for(let x=X;x<X+w;x+=3){const c=pick([['#5a8a3a','#3a6a2a','#7aaa4a'],['#4a7a32','#2e5a22','#6a9a42']]),top=Y+ri(0,Math.max(1,h-2));R(x,top,3,FY+rise-top,c[0]);R(x,top,1,FY+rise-top,c[1]);R(x+2,top,1,FY+rise-top,c[2]);for(let y=top+ri(3,7);y<FY+rise;y+=ri(6,9))R(x,y,3,1,'#2a4a1a');P(x+1,top-1,'#7aaa4a');}
+    for(let i=0;i<w*h/5;i++){const x=X+ri(0,w-1),y=Y+ri(0,Math.max(0,h-1));P(x,y,pick(['#7aba5a','#5a9a3a','#8aca6a','#4a7a32']));}
+    obsShadeFace(g,X,FY,w,rise,0.5);
   }else if(st==='palisade'){
-    const pal=A.wpal;R(X,Y+rise,w,h,pal[1]);for(let x=X;x<X+w;x+=4){const top=Y+ri(0,3);R(x,top+2,4,h+rise-top,pal[0]);R(x,top+2,1,h+rise-top,pal[3]);R(x+3,top+2,1,h+rise-top,pal[2]);P(x+1,top,pal[2]);P(x+2,top,pal[2]);P(x+1,top+1,pal[0]);P(x+2,top+1,pal[0]);}
-    R(X,Y+rise+3,w,2,'#2a1a10');R(X,Y+rise+h-5,w,2,'#2a1a10');
+    const pal=A.wpal;R(X,FY,w,rise,pal[1]);
+    for(let x=X;x<X+w;x+=4){const tip=Y+ri(0,2);R(x,tip+2,4,FY+rise-tip-2,pal[0]);R(x,tip+2,1,FY+rise-tip-2,pal[3]);R(x+3,tip+2,1,FY+rise-tip-2,pal[2]);P(x+1,tip,pal[2]);P(x+2,tip,pal[2]);P(x+1,tip+1,pal[0]);P(x+2,tip+1,pal[0]);for(let y=tip+3;y<FY;y+=3)P(x+1+((y>>1)%2),y,shade(pal[0],1.2));}
+    R(X,FY+3,w,2,'#2a1a10');R(X,FY+rise-6,w,2,'#2a1a10');obsShadeFace(g,X,FY,w,rise,0.45);
   }else if(st==='screen'){
-    const pal=A.wpal;R(X,Y,w,rise,pal[1]);R(X,Y+rise,w,h,pal[0]);R(X,Y,w,1,pal[2]);R(X+2,Y+rise+2,w-4,h-4,pal[3]);for(let x=X+2;x<X+w-2;x+=6)R(x,Y+rise+2,1,h-4,'#c8bca0');for(let y=Y+rise+2;y<Y+rise+h-2;y+=6)R(X+2,y,w-4,1,'#c8bca0');
-    R(X,Y+rise,w,1,pal[2]);R(X,Y+rise+h-1,w,1,pal[2]);R(X,Y+rise,1,h,pal[2]);R(X+w-1,Y+rise,1,h,pal[2]);for(let x=X+1;x<X+w;x+=8)R(x,Y+2,4,rise-4,shade(pal[1],1.4));
+    // a lacquered shōji screen: dark rail on top, paper panes on the face
+    const pal=A.wpal;cap(pal[0],shade(pal[2],0.8),pal[1]);for(let x=X+3;x<X+w;x+=8)R(x,Y+1,3,h-2,shade(pal[0],1.5));
+    R(X,FY,w,rise,pal[0]);R(X+2,FY+2,w-4,rise-4,pal[3]);for(let x=X+2;x<X+w-2;x+=6)R(x,FY+2,1,rise-4,'#c8bca0');for(let y=FY+2;y<FY+rise-2;y+=6)R(X+2,y,w-4,1,'#c8bca0');
+    R(X,FY,w,1,pal[2]);R(X,FY+rise-1,w,1,pal[1]);obsShadeFace(g,X,FY,w,rise,0.3);
   }else if(st==='ice'){
-    const pal=A.wpal;R(X,Y,w,rise,pal[2]);R(X,Y+rise,w,h,pal[0]);R(X,Y+rise,2,h,pal[1]);R(X,Y,w,1,'#ffffff');
-    for(let k=0;k<Math.max(2,w/10);k++){let x=X+ri(2,w-3),y=Y+rise+ri(0,2);for(let i=0;i<h;i+=1){P(x,y,pal[1]);y++;x+=ri(-1,1);if(y>=Y+rise+h-1)break;}}
-    for(let i=0;i<w*h/30;i++)P(X+ri(0,w-1),Y+ri(0,rise+h-1),'#f4fbff');for(let x=X;x<X+w;x+=3)P(x,Y+rise+h-1+((x/3)%2),pal[1]);
+    const pal=A.wpal;cap(pal[2],'#ffffff',pal[0]);for(let i=0;i<w*h/12;i++)P(X+ri(0,w-1),Y+ri(1,Math.max(1,h-2)),pick(['#f4fbff','#c8e0f0']));
+    R(X,FY,w,rise,pal[0]);R(X,FY,2,rise,pal[1]);R(X+w-2,FY,2,rise,shade(pal[0],1.12));
+    for(let k=0;k<Math.max(2,w/8);k++){let x=X+ri(2,w-3),y=FY+ri(0,2);for(let i=0;i<rise;i++){P(x,y,pal[1]);y++;x+=ri(-1,1);if(y>=FY+rise-1)break;}}
+    for(let x=X+3;x<X+w-2;x+=ri(5,9))R(x,FY+1,1,ri(3,rise-3),'#e8f4fc');obsShadeFace(g,X,FY,w,rise,0.35);
   }else if(st==='stump'){
-    const pal=A.wpal;R(X,Y+rise,w,h,pal[0]);R(X,Y,w,rise,pal[2]);for(let y=Y+rise;y<Y+rise+h;y+=3)for(let x=X+((y/3)%2?2:0);x<X+w;x+=5)R(x,y,3,1,pal[1]);
-    for(let k=0;k<Math.max(1,w/14);k++){const x=X+ri(1,w-2);for(let i=0;i<5;i++)P(x+ri(-1,1),Y+rise+h+i-2,pal[1]);}for(let i=0;i<w/6;i++)P(X+ri(0,w-1),Y+ri(0,rise-1),pal[3]);
+    const pal=A.wpal;cap(pal[2],shade(pal[2],1.2),pal[0]);for(let r=1;r<Math.min(w,h)/2;r+=2){for(let a=0;a<24;a++){const t=a/24*Math.PI*2;P(X+w/2+Math.cos(t)*Math.min(r*w/h,w/2-1),Y+h/2+Math.sin(t)*r,pal[0]);}}
+    R(X,FY,w,rise,pal[0]);for(let y=FY;y<FY+rise;y+=3)for(let x=X+((y/3)%2?2:0);x<X+w;x+=5)R(x,y,3,1,pal[1]);
+    for(let k=0;k<Math.max(1,w/14);k++){const x=X+ri(1,w-2);for(let i=0;i<5;i++)P(x+ri(-1,1),FY+rise+i-4,pal[1]);}obsShadeFace(g,X,FY,w,rise,0.45);
   }else if(st==='rock'){
-    const pal=A.wpal;R(X,Y,w,rise,pal[2]);R(X,Y+rise,w,h,pal[0]);R(X,Y,w,1,shade(pal[2],1.2));
-    for(let i=0;i<w*h/9;i++)P(X+ri(0,w-1),Y+rise+ri(0,h-1),pick([pal[1],pal[3],pal[0],pal[2]]));for(let i=0;i<w*rise/8;i++)P(X+ri(0,w-1),Y+ri(0,rise-1),pick([pal[0],shade(pal[2],1.15)]));
-    if(curBiome().key==='peaks')for(let i=0;i<w/5;i++)P(X+ri(0,w-1),Y+ri(0,2),'#5a7a3a');else for(let i=0;i<w/4;i++)P(X+ri(0,w-1),Y+rise+h-1-ri(0,2),'#2a4a4a');
+    const pal=A.wpal;cap(pal[2],shade(pal[2],1.2),pal[0]);for(let i=0;i<w*h/7;i++)P(X+ri(0,w-1),Y+ri(1,Math.max(1,h-2)),pick([pal[0],shade(pal[2],1.12),pal[2]]));
+    if(curBiome().key==='peaks')for(let i=0;i<w/2;i++)P(X+ri(0,w-1),Y+ri(0,Math.min(3,h-1)),pick(['#e8f4fc','#d8ecf8']));
+    R(X,FY,w,rise,pal[0]);for(let i=0;i<w*rise/6;i++)P(X+ri(0,w-1),FY+ri(0,rise-1),pick([pal[1],pal[3],pal[0],pal[2]]));
+    for(let k=0;k<Math.max(1,w/9);k++){const x=X+ri(1,w-2);let y=FY+ri(1,4);for(let i=0;i<rise/2;i++){P(x+((i>>1)%2),y,pal[3]);y++;}}
+    if(curBiome().key!=='peaks')for(let i=0;i<w/3;i++)P(X+ri(0,w-1),FY+rise-1-ri(0,3),'#2a4a4a');obsShadeFace(g,X,FY,w,rise,0.45);
   }else{
     const pal=A.wpal;
-    R(X,Y,w,rise,pal[2]);R(X,Y+rise,w,h,pal[0]);R(X,Y,w,1,shade(pal[2],1.2));
-    if(st==='plank'){for(let x=X+3;x<X+w;x+=6)R(x,Y+rise,1,h,pal[3]);R(X,Y+rise,w,2,pal[1]);R(X,Y+rise+h-3,w,3,pal[3]);for(let x=X+1;x<X+w;x+=8)R(x,Y+1,5,rise-2,shade(pal[2],0.9));}
-    else if(st==='brick'){for(let y=Y+rise;y<Y+rise+h;y+=6){R(X,y,w,1,pal[3]);for(let x=X+((y/6)%2?3:0);x<X+w;x+=8)R(x,y,1,6,pal[3]);}for(let i=0;i<w*h/40;i++)P(X+ri(0,w-1),Y+ri(0,rise+h-1),Math.random()<0.5?'#3e5a3a':pal[1]);}
-    else{for(let i=0;i<w*h/10;i++)P(X+ri(0,w-1),Y+rise+ri(0,h-1),pick([pal[1],pal[3],pal[2]]));for(let k=0;k<Math.max(1,w/12);k++){let x=X+ri(2,w-3),y=Y+rise+ri(1,3);for(let i=0;i<h;i+=1){P(x,y,i%3?'#a8321a':'#ff6a2a');y++;x+=ri(-1,1);if(y>=Y+rise+h)break;}}}
+    if(st==='plank'){
+      cap(pal[2],shade(pal[2],1.2),pal[0]);for(let y=Y+2;y<FY-1;y+=4)R(X+1,y,w-2,1,shade(pal[2],0.85));for(let x=X+5;x<X+w;x+=11)P(x,Y+2+((x>>1)%3),pal[3]);
+      R(X,FY,w,rise,pal[0]);for(let x=X+3;x<X+w;x+=6)R(x,FY,1,rise,pal[3]);R(X,FY,w,2,pal[1]);R(X,FY+rise-3,w,3,pal[3]);for(let x=X+1;x<X+w;x+=6)P(x+2,FY+4,shade(pal[0],1.25));
+    }else if(st==='brick'){
+      cap(pal[2],shade(pal[2],1.18),pal[0]);for(let y=Y+1;y<FY-1;y+=5)R(X+1,y,w-2,1,shade(pal[2],0.9));for(let x=X+((Y)%2?3:6);x<X+w;x+=9)R(x,Y+1,1,h-2,shade(pal[2],0.9));
+      R(X,FY,w,rise,pal[0]);for(let y=FY;y<FY+rise;y+=5){R(X,y,w,1,pal[3]);for(let x=X+(((y-FY)/5)%2?4:0);x<X+w;x+=8)R(x,y,1,5,pal[3]);R(X,y+1,w,1,shade(pal[0],1.12));}
+      for(let i=0;i<w*rise/45;i++)P(X+ri(0,w-1),FY+ri(0,rise-1),Math.random()<0.6?'#3e5a3a':pal[1]);
+    }else{
+      // hell: black rock with lava running down the face
+      cap(pal[2],shade(pal[2],1.3),pal[0]);for(let i=0;i<w*h/8;i++)P(X+ri(0,w-1),Y+ri(1,Math.max(1,h-2)),pick([pal[1],pal[3],pal[0]]));for(let i=0;i<w/6;i++)P(X+ri(0,w-1),Y+ri(1,Math.max(1,h-2)),'#ff6a2a');
+      R(X,FY,w,rise,pal[0]);for(let i=0;i<w*rise/8;i++)P(X+ri(0,w-1),FY+ri(0,rise-1),pick([pal[1],pal[3],pal[2]]));
+      for(let k=0;k<Math.max(1,w/10);k++){let x=X+ri(2,w-3),y=FY+ri(0,2);for(let i=0;i<rise;i++){P(x,y,i%3?'#a8321a':'#ff6a2a');y++;x+=ri(-1,1);if(y>=FY+rise)break;}}
+    }
+    obsShadeFace(g,X,FY,w,rise,0.45);R(X,FY,w,1,'rgba(0,0,0,0.55)');
   }
-  if(o.type!=='crate')R(X,Y+rise+h-1,w,1,'#000');
+  // a bevel that sells the height: lit top edge, lit front lip, a dark line where the face starts, the face a step darker
+  if(st!=='bamboo'&&st!=='palisade'||o.type==='crate'){R(X,Y,w,1,'rgba(255,255,255,0.28)');R(X,Y,1,h,'rgba(255,255,255,0.12)');R(X,FY-1,w,1,'rgba(255,255,255,0.2)');R(X,FY,w,rise,'rgba(0,0,0,0.16)');R(X,FY,w,1,'rgba(0,0,0,0.55)');R(X+w-1,FY,1,rise,'rgba(0,0,0,0.2)');}
+  R(X,FY+rise-1,w,1,'#000');
   outlineCanvas(s.c);o.img=s.c;o.rise=rise;
 }
+// the shadow a block casts on the floor: a soft band under its foot and a thinner one down its right side
+function drawObstacleShadow(o,x,y){const w=o.img.width-2,foot=y+o.img.height-1,k=o.type==='crate'?0.7:1,n=o.type==='crate'?5:9;
+  for(let i=0;i<n;i++){lx.fillStyle=`rgba(0,0,0,${(0.55*k*Math.pow(1-i/n,1.3)).toFixed(3)})`;lx.fillRect(x+2+Math.round(i*0.6),foot+i,w,1);}
+  for(let i=0;i<4;i++){lx.fillStyle=`rgba(0,0,0,${(0.4*k*(1-i/4)).toFixed(3)})`;lx.fillRect(x+w+1+i,y+o.rise+2+i,1,o.img.height-o.rise-2);}}
+
 function paintHole(R,o,F){
+  paintHoleFlat(R,o,F);holeDepth(o,F);
+}
+function paintHoleFlat(R,o,F){
   const A=curBiome().art,st=A.hole,pal=A.hpal,x=Math.round(o.x/PX),y=Math.round(o.y/PX),w=Math.round(o.w/PX),h=Math.round(o.h/PX);
   F(x-1,y-1,w+2,h+2,pal[2]);F(x,y,w,h,pal[0]);
   if(st==='lava'){for(let i=0;i<w*h/6;i++)F(x+ri(0,w-1),y+ri(0,h-1),1,1,pick(['#ffb04a','#c8321a','#ff7a2a','#8a1a0a']));R.lights.push({kind:'lava',x:o.x+o.w/2,y:o.y+o.h/2,r:Math.max(o.w,o.h)*0.9,col:'255,90,30',ph:Math.random()*9});}
@@ -139,6 +176,22 @@ function paintHole(R,o,F){
   else if(st==='pond'){F(x,y,w,2,pal[1]);for(let i=0;i<w*h/60;i++)F(x+ri(1,w-3),y+ri(3,h-2),ri(2,4),1,pal[1]);for(let i=0;i<Math.max(1,w*h/400);i++){const lx=x+ri(3,w-6),ly=y+ri(4,h-4);F(lx,ly,4,2,'#4a8a3a');F(lx+1,ly,1,1,'#ff9aa8');}if(w>14){const kx=x+ri(3,w-8),ky=y+ri(4,h-4);F(kx,ky,4,1,'#ff8a3a');F(kx+1,ky+1,2,1,'#ffffff');}}
   else{F(x,y,w,2,pal[1]);for(let i=0;i<w*h/50;i++)F(x+ri(1,w-3),y+ri(3,h-2),ri(2,4),1,pal[1]);if(curBiome().key==='bamboo'&&w>12){const lx=x+ri(3,w-6),ly=y+ri(4,h-4);F(lx,ly,4,2,'#4a8a3a');F(lx+1,ly,1,1,'#7aba5a');}
     if(curBiome().key==='river'){for(let i=0;i<w*h/120;i++){const lx=x+ri(2,w-5),ly=y+ri(3,h-3);F(lx,ly,3,1,'#5a9aa0');}if(Math.random()<0.5)R.lights.push({kind:'lava',x:o.x+o.w/2,y:o.y+o.h/2,r:Math.max(o.w,o.h)*0.6,col:'90,200,180',ph:Math.random()*9});}}
+}
+// A hole has a far bank: its inner wall drops away from you into shadow. The near rim catches the light.
+function holeDepth(o,F){
+  const A=curBiome().art,st=A.hole,wp=A.wpal||['#3a3a3a','#242424','#5a5a5a','#161616'],x=Math.round(o.x/PX),y=Math.round(o.y/PX),w=Math.round(o.w/PX),h=Math.round(o.h/PX);
+  const liquid=['water','lava','pond','ice','sky'].includes(st),d=Math.max(3,Math.min(liquid?5:9,Math.round(h/3)));
+  if(st==='sky'){for(let i=0;i<Math.min(10,h);i++)F(x,y+i,w,1,`rgba(255,255,255,${(0.25*(1-i/10)).toFixed(3)})`);}
+  else{
+    // the bank: a strip of the realm's wall, lit at its lip, falling into dark
+    F(x,y,w,d,shade(wp[0],liquid?0.8:0.6));for(let k=0;k<w;k+=ri(3,6))F(x+k,y+ri(1,d-1),1,1,shade(wp[1],0.8));
+    F(x,y,w,1,shade(wp[2],0.9));for(let i=0;i<d;i++)F(x,y+i,w,1,`rgba(0,0,0,${(0.15+0.55*i/d).toFixed(3)})`);
+    // the shadow the bank throws on what's below it
+    for(let i=0;i<6;i++)F(x,y+d+i,w,1,`rgba(0,0,0,${(0.45*(1-i/6)).toFixed(3)})`);
+    if(!liquid){for(let i=0;i<h-d;i++)F(x,y+d+i,w,1,`rgba(0,0,0,${(0.12+0.2*i/Math.max(1,h-d)).toFixed(3)})`);}
+  }
+  F(x,y+d,1,h-d,'rgba(0,0,0,0.35)');F(x+w-1,y+d,1,h-d,'rgba(0,0,0,0.25)');
+  F(x-1,y+h,w+2,1,'rgba(255,255,255,0.14)');F(x,y+h-1,w,1,'rgba(0,0,0,0.4)');
 }
 
 // ---------- floors ----------
@@ -218,6 +271,7 @@ function buildRoom(R){
     if(d==='w'){F(0,FH/2-dh/2-2,WP,dh+4,frame);F(0,FH/2-dh/2,WP,dh,'#060405');}
     if(d==='e'){F(FW-WP,FH/2-dh/2-2,WP,dh+4,frame);F(FW-WP,FH/2-dh/2,WP,dh,'#060405');}
   }
+  roomDepth(g,FW,FH);paintTopWall(R,g,FW,FH,A);
   // room-type floor marks
   if(R.type==='treasure'){const cx=FW/2,cy=FH/2;g.strokeStyle='rgba(232,193,90,0.25)';g.lineWidth=1;for(const r of [26,34])for(let a=0;a<64;a++){const t=a/64*Math.PI*2;if(a%2)F(cx+Math.cos(t)*r,cy+Math.sin(t)*r*0.6,1,1,'rgba(232,193,90,0.35)');}}
   if(R.type==='boss'||R.type==='mini'){const cx=FW/2,cy=FH/2,rr=R.type==='mini'?0.7:1;for(let a=0;a<140;a++){const t=a/140*Math.PI*2;F(cx+Math.cos(t)*90*rr,cy+Math.sin(t)*60*rr,1,1,'rgba(184,20,42,0.45)');if(a%3===0)F(cx+Math.cos(t)*70*rr,cy+Math.sin(t)*46*rr,1,1,'rgba(184,20,42,0.3)');}}
@@ -226,6 +280,53 @@ function buildRoom(R){
     for(let x=x0+10;x<x0+w;x+=22){F(x,y0+1,1,3,'#ece4d7');F(x+1,y0+3,1,2,'#ece4d7');}F(FW/2-1,FH/2-20,2,8,'rgba(236,228,215,0.25)');F(FW/2-1,FH/2+12,2,8,'rgba(236,228,215,0.25)');}
   if(R.type==='shop'){for(const [x,y] of [[-120,20],[-40,20],[40,20],[120,20]]){const X=FW/2+x/PX,Y=FH/2+y/PX;F(X-14,Y-6,28,14,'#4a141c');F(X-14,Y-6,28,1,'#6a2a30');F(X-14,Y+7,28,1,'#2a0a10');}}
   R.built=true;
+}
+// Depth for the room's own walls, on top of each realm's painting: the far (north) wall reads as a face that darkens
+// towards the floor with a lit lip on top; the floor gathers shadow along every wall; the near (south) wall shows its
+// lit top and the dark outer face below it.
+function roomDepth(g,FW,FH){
+  const row=(x,y,w,h,a,c)=>{if(a<=0.005)return;g.fillStyle=c?`rgba(${c},${a.toFixed(3)})`:`rgba(0,0,0,${a.toFixed(3)})`;g.fillRect(x,y,w,h);};
+  // north wall: lit cap, face shading, a lip line where cap meets face
+  for(let y=0;y<WP;y++)row(0,y,FW,1,0.22+0.28*Math.pow(y/(WP-1),1.3));
+  // floor shadow under the far wall, and along the side walls
+  for(let i=0;i<12;i++)row(WP,WP+i,FW-2*WP,1,0.55*Math.pow(1-i/12,1.6));
+  for(let i=0;i<7;i++){const a=0.38*Math.pow(1-i/7,1.5);row(WP+i,WP,1,FH-2*WP,a);row(FW-WP-1-i,WP,1,FH-2*WP,a);}
+  for(let i=0;i<4;i++)row(WP,FH-WP-1-i,FW-2*WP,1,0.22*(1-i/4));
+  // side walls: a lit inner edge on the cap, darker towards the outside
+  row(WP-1,WP-1,1,FH-2*WP+2,0.16,'255,255,255');row(FW-WP,WP-1,1,FH-2*WP+2,0.16,'255,255,255');
+  for(let i=0;i<WP-2;i++){const a=0.3*(1-i/(WP-2));row(i,WP,1,FH-2*WP,a);row(FW-1-i,WP,1,FH-2*WP,a);}
+  // near wall: lit top, then its outer face falling away into shadow
+  row(WP-1,FH-WP,FW-2*WP+2,1,0.22,'255,255,255');for(let y=1;y<6;y++)row(0,FH-WP+y,FW,1,0.06,'255,255,255');
+  row(0,FH-WP+6,FW,1,0.45);for(let y=7;y<WP;y++)row(0,FH-WP+y,FW,1,0.3+0.35*(y-7)/(WP-7));
+}
+// The upper part of the far wall, above the room's top edge, in each realm's own material: a lit cap, then a face
+// that runs down into the wall band painted on the floor canvas. The side walls' tops continue up at the corners.
+function paintTopWall(R,fg,FW,FH,A){
+  const EH=Math.round(WALL_EXT/PX),c=mk(FW,EH),g=c.getContext('2d'),F=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
+  const st=R.type==='hub'?'plank':A.wall,p=(A.wpal||['#3a3a3a','#242424','#5a5a5a','#161616']).slice(),p0=A.wpal||['#3a3a3a','#242424','#5a5a5a','#161616'];
+  let side='#1a1418';try{const d=fg.getImageData(3,Math.round(FH/2),1,1).data;side=`rgb(${d[0]},${d[1]},${d[2]})`;}catch(_){}
+  F(0,0,FW,EH,p[1]);let capped=true;
+  if(st==='plank'){for(let x=0;x<FW;x+=6){F(x,0,6,EH,pick([p[0],shade(p[0],0.92),shade(p[0],1.06)]));F(x,0,1,EH,p[3]);}F(0,4,FW,3,p[1]);F(0,EH-5,FW,2,p[1]);for(let x=3;x<FW;x+=12)F(x,5,1,1,shade(p[2],1.2));}
+  else if(st==='brick'){for(let y=3,r=0;y<EH;y+=5,r++){F(0,y,FW,1,p[3]);for(let x=(r%2)*5;x<FW;x+=10){F(x,y+1,9,4,pick([p[0],shade(p[0],0.94),shade(p[0],1.05)]));F(x,y+1,9,1,shade(p[0],1.15));}}for(let i=0;i<FW/7;i++)F(ri(0,FW),ri(4,EH),1,1,'#3e5a3a');}
+  else if(st==='lava'){for(let i=0;i<FW*EH/5;i++)F(ri(0,FW),ri(0,EH),ri(1,3),1,pick([p[0],p[1],p[3],p[2]]));for(let k=0;k<FW/40;k++){let x=ri(0,FW),y=ri(3,6);for(let i=0;i<EH;i++){F(x,y,1,1,i%3?'#a8321a':'#ff6a2a');y++;x+=ri(-1,1);if(y>=EH)break;}}}
+  else if(st==='rock'){for(let y=3;y<EH;y+=ri(5,8))for(let x=-ri(0,8);x<FW;x+=ri(8,16)){const w=ri(7,15),h=ri(4,7);F(x,y,w,h,pick([p[0],shade(p[0],0.9),shade(p[0],1.08)]));F(x,y,w,1,shade(p[2],0.95));F(x,y+h-1,w,1,p[3]);}
+    for(let i=0;i<FW/4;i++)F(ri(0,FW),ri(EH-6,EH),1,ri(1,3),curBiome().key==='peaks'?'#5a7a3a':'#2a4a4a');}
+  else if(st==='ice'){for(let y=3,r=0;y<EH;y+=7,r++)for(let x=(r%2)*8;x<FW;x+=16){F(x,y,15,6,pick([p[0],p[2],shade(p[0],1.08)]));F(x,y,15,1,'#f4fbff');F(x,y+6,15,1,p[1]);}}
+  else if(st==='stump'){for(let i=0;i<FW*EH/4;i++)F(ri(0,FW),ri(0,EH),ri(1,3),1,pick([p[0],p[1],shade(p[0],1.1)]));for(let k=0;k<FW/30;k++){let x=ri(0,FW),y=3;for(let i=0;i<EH;i++){F(x,y,1,1,p[3]);y++;x+=pick([-1,0,1]);}}}
+  else if(st==='bamboo'){capped=false;F(0,0,FW,EH,'#0e140a');for(let x=0;x<FW;x+=ri(3,5)){const c2=pick([['#5a8a3a','#3a6a2a','#7aaa4a'],['#4a7a32','#2e5a22','#6a9a42']]);F(x,0,3,EH,c2[0]);F(x,0,1,EH,c2[1]);F(x+2,0,1,EH,c2[2]);for(let y=ri(2,8);y<EH;y+=ri(8,12))F(x,y,3,1,'#2a4a1a');}for(let i=0;i<FW*2;i++)F(ri(0,FW),ri(0,8),ri(1,3),1,pick(['#3a6a2a','#2a4a1a','#5a8a3a','#16220e']));}
+  else if(st==='palisade'){capped=false;F(0,0,FW,EH,'#0a0604');for(let x=0;x<FW;x+=4){const tip=ri(0,3);F(x,tip+2,4,EH,p[0]);F(x,tip+2,1,EH,p[3]);F(x+3,tip+2,1,EH,p[2]);F(x+1,tip,2,2,p[2]);}F(0,8,FW,2,'#2a1a10');F(0,EH-6,FW,2,'#2a1a10');}
+  else if(st==='screen'){F(0,0,FW,EH,shade(p[3],0.55));for(let x=0;x<FW;x+=32){F(x,0,3,EH,p[0]);F(x,0,1,EH,shade(p[2],0.7));}F(0,4,FW,3,p[0]);F(0,EH-4,FW,2,p[0]);for(let i=0;i<FW/9;i++)F(ri(0,FW),ri(8,EH-5),1,1,shade(p[3],0.5));}
+  if(curBiome().key==='peaks'&&R.type!=='hub'){capped=false;for(let y=0;y<EH;y++){const k=y/EH;F(0,y,FW,1,k<0.5?'#c8e0f4':'#a8c8e8');}for(let i=0;i<FW/14;i++){const x=ri(-10,FW),y=ri(2,EH-6),w=ri(10,26);F(x,y,w,3,'#f4fbff');F(x+3,y-2,w-8,2,'#f4fbff');F(x,y+3,w,1,'#c8dcec');}}
+  if(st==='lava')p[2]=shade(p[2],1.5);
+  if(capped){F(0,0,FW,3,shade(p[2],1.05));F(0,0,FW,1,shade(p[2],1.3));F(0,3,FW,1,'rgba(0,0,0,0.6)');}
+  // shading: the face darkens a little as it drops towards the floor band
+  if(capped)for(let y=4;y<EH;y++){g.fillStyle=`rgba(0,0,0,${(0.22*(y-4)/(EH-4)).toFixed(3)})`;g.fillRect(0,y,FW,1);}
+  // door openings run up into the wall, under a lintel
+  const dh=Math.round(DW*2/PX);if(R.doors&&R.doors.n){const x0=Math.round(FW/2-dh/2);F(x0-3,6,dh+6,EH-6,A.frame||'#3a2a1c');F(x0,9,dh,EH-9,'#060405');F(x0-3,6,dh+6,2,shade(A.frame||'#3a2a1c',1.4));F(x0-3,8,1,EH-8,shade(A.frame||'#3a2a1c',1.3));}
+  // the side walls' tops at the corners
+  F(0,0,WP,EH,side);F(FW-WP,0,WP,EH,side);F(WP-1,0,1,EH,'rgba(255,255,255,0.16)');F(FW-WP,0,1,EH,'rgba(255,255,255,0.16)');
+  for(let i=0;i<4;i++){g.fillStyle=`rgba(0,0,0,${(0.35*(1-i/4)).toFixed(3)})`;g.fillRect(WP+i,4,1,EH-4);g.fillRect(FW-WP-1-i,4,1,EH-4);}
+  R.topCv=c;
 }
 function wallLights(R,kind,col,r){
   const FW=R.w,FH=R.h,lights=[];

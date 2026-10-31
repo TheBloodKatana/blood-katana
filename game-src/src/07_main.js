@@ -138,9 +138,10 @@ function updateCam(dt){
   let tx=P.x,ty=P.y-14;if(!S.swipe&&S.mode==='run'){tx+=(S.aim.x-P.x)*CFG.camLead;ty+=(S.aim.y-P.y)*CFG.camLead;}
   const k=Math.min(1,dt*(S.slide?14:7));S.cam.x+=(tx-S.cam.x)*k;S.cam.y+=(ty-S.cam.y)*k;
   const cc=(v,W,V)=>W<=V?W/2:clamp(v,V/2,W-V/2);
-  S.cam.x=cc(S.cam.x,R.w,VW);S.cam.y=cc(S.cam.y,R.h,VH);
+  const ccy=v=>cc(v+WALL_EXT,R.h+WALL_EXT,VH)-WALL_EXT;
+  S.cam.x=cc(S.cam.x,R.w,VW);S.cam.y=ccy(S.cam.y);
   const kx=RM||!CFG.shake?0:S.kick.x,ky=RM||!CFG.shake?0:S.kick.y;
-  S.X0=Math.round((cc(S.cam.x+kx,R.w,VW)-VW/2)/PX)*PX;S.Y0=Math.round((cc(S.cam.y+ky,R.h,VH)-VH/2)/PX)*PX;
+  S.X0=Math.round((cc(S.cam.x+kx,R.w,VW)-VW/2)/PX)*PX;S.Y0=Math.round((ccy(S.cam.y+ky)-VH/2)/PX)*PX;
 }
 
 // ---------- update ----------
@@ -555,7 +556,8 @@ function drawAuras(){
   for(const hk of S.hooks){const e=hk.e;if(!S.enemies.includes(e))continue;const a={x:LX(S.tipW.x),y:LY(S.tipW.y)},b={x:LX(e.x),y:LY(e.y-14)},n=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/2);for(let i=0;i<=n;i++){const t=i/n;pset(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t+Math.sin(t*Math.PI)*2,i%2?'#8a8a92':C.steel);}}
   if(S.railAim){const k=1-S.railAim.t/0.35,a=S.railAim.a,x=LX(P.x),y=LY(P.y-12);for(let d=6;d<700;d+=3)pset(x+Math.cos(a)*d,y+Math.sin(a)*d,Math.floor(S.gt*30)%2?C.hi:C.white,0.3+0.6*k);}
 }
-function drawObstacle(o){flush();const x=Math.round(LX(o.x))-1,y=Math.round(LY(o.y))-1-o.rise;if(x>LW||y>LH||x+o.img.width<0||y+o.img.height<0)return;
+function drawObstacle(o){flush();const x=Math.round(LX(o.x))-1,y=Math.round(LY(o.y))-1-o.rise;if(x>LW||y>LH+8||x+o.img.width<-4||y+o.img.height<0)return;
+  drawObstacleShadow(o,x,y);
   if(o.flash>0){o.flash-=0.1;lx.drawImage(tinted(o.img,'#ffffff'),x,y);}else lx.drawImage(o.img,x,y);}
 function updateHazards(gdt){
   const R=S.room;if(!R.haz||!R.haz.length)return;
@@ -701,6 +703,8 @@ function drawTitle(){
   for(let y=0;y<LH;y+=2){lx.fillStyle='rgba(0,0,0,0.06)';lx.fillRect(0,y,LW,1);}
   ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.drawImage(low,0,0);
 }
+// a room canvas at the camera; when the camera looks above the room's top edge, only the part that exists is drawn
+function drawRoomLayer(cv,fx,fy){const sy=Math.max(0,fy),dy=sy-fy,h=Math.min(LH-dy,cv.height-sy);if(h>0)lx.drawImage(cv,fx,sy,LW,h,0,dy,LW,h);}
 function draw(){
   if(S.mode==='title'){drawTitle();return;}
   const R=S.room;if(!R)return;
@@ -708,7 +712,7 @@ function draw(){
   lx.setTransform(1,0,0,1,0,0);lx.globalAlpha=1;lx.globalCompositeOperation='source-over';lx.fillStyle='#060405';lx.fillRect(0,0,LW,LH);
   lx.setTransform(1,0,0,1,sh,sh2);
   const fx=S.X0/PX,fy=S.Y0/PX;
-  lx.drawImage(R.floorCv,fx,fy,LW,LH,0,0,LW,LH);lx.drawImage(R.decalCv,fx,fy,LW,LH,0,0,LW,LH);
+  drawRoomLayer(R.floorCv,fx,fy);drawRoomLayer(R.decalCv,fx,fy);if(fy<0&&R.topCv)lx.drawImage(R.topCv,-fx,-fy-R.topCv.height);
   if(R.onsen){const cx=LX(R.onsen.x),cy=LY(R.onsen.y);for(let y=-14;y<=14;y++){const w=Math.round(46*Math.sqrt(1-(y*y)/(15*15)));lx.fillStyle=Math.abs(y)>11||Math.abs(w)>43?'#4a4e56':y<-6?'#3a7ab8':'#2a5a98';lx.fillRect(cx-w,cy+y,w*2,1);}
     for(let i=0;i<3;i++){const t=(S.gt*0.6+i/3)%1;pset(cx-20+i*20+Math.sin(S.gt+i)*3,cy-10-t*24,'#e8eef8',1-t);}}
   if(R.ring){const cx=LX(R.ring.x),cy=LY(R.ring.y),rr=R.ring.r/PX;pcircle(cx,cy,rr+1,'#5a4a2a');pcircle(cx,cy,rr,'#c8a868');pcircle(cx,cy,rr-1,'#e8d0a0',0.5);pline(cx-14,cy-4,cx-14,cy+4,C.bone,0.7);pline(cx+14,cy-4,cx+14,cy+4,C.bone,0.7);flush();}
