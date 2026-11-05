@@ -78,7 +78,7 @@ const MENUS={
         <div class="set-sec"><h3>Screen</h3>${T('shake','Screen shake')}${T('flashes','Screen flashes','White flashes on big hits and parries')}${T('lighting','Lighting','Turn off on slow phones')}${T('ambient','Ambient particles')}${T('corpses','Bodies cut in two')}${T('minimap','Minimap')}${S.touchUI?'':T('cursor','Pixel cursor')}
           ${R('darkness','Darkness',0.4,1.4,0.05)}</div>
         <div class="set-sec"><h3>Feel</h3>${T('hitPause','Hit pause','The freeze-frame when a cut lands')}${T('parrySlowOn','Parry slows time')}${T('slowmoOn','Slow motion while swiping','Easier aiming, slower fights')}</div>
-        ${S.touchUI?`<div class="set-sec"><h3>Touch</h3>${T('vibe','Vibration','A buzz when you are hit or parry')}${seg('tsize','Button size',[[0.85,'S'],[1,'M'],[1.18,'L']])}${seg('topac','Button opacity',[[0.55,'Faint'],[0.8,'Half'],[1,'Solid']])}</div>`:''}
+        ${S.touchUI?`<div class="set-sec"><h3>Touch</h3>${T('vibe','Vibration','A buzz when you are hit or parry')}${seg('tsize','Button size',[[0.85,'S'],[1,'M'],[1.18,'L']])}${seg('topac','Button opacity',[[0.55,'Faint'],[0.8,'Half'],[1,'Solid']])}<div class="set-row"><span>Button layout<small>Move and size each button, and the thumbstick zone</small></span><button type="button" class="tgl" data-m="layout">Edit</button></div></div>`:''}
         ${devOn()?`<div class="set-sec"><h3>Developer</h3><div class="set-row"><span>Debug bench</span><button type="button" class="tgl" data-m="debug">Open</button></div>
           <div class="set-row"><span>Developer tools<small>Tap the version on the title five times to show this again</small></span><button type="button" class="tgl on" data-t="dev">On</button></div></div>`:''}
         ${CHEATS_BUILD||devOn()?cheatSection(T):''}
@@ -118,6 +118,7 @@ $('menuOv').addEventListener('click',e=>{
   else if(m==='settings')menuOpen('settings');
   else if(m==='credits')menuOpen('credits');
   else if(m==='how'){openHelp();}
+  else if(m==='layout'){openLayoutEditor();}
   else if(m==='debug'){openDebug();}
   else if(m==='quit'){menuClose();S.paused=false;showTitle();}
   else if(m==='skiptut'){endTutorial(true);menuBack();}
@@ -130,7 +131,7 @@ $('menuOv').addEventListener('click',e=>{
 $('menuOv').addEventListener('input',e=>{const r=e.target.closest('[data-r]');if(!r)return;CFG[r.dataset.r]=parseFloat(r.value);save();applySettings();});
 function applySettings(){
   auInit();auVol();syncSnd();
-  const R=document.documentElement;R.style.setProperty('--tsz',CFG.tsize||1);R.style.setProperty('--top',CFG.topac||0.8);
+  const R=document.documentElement;R.style.setProperty('--tsz',CFG.tsize||1);R.style.setProperty('--top',CFG.topac||0.8);try{applyTouchLayout();}catch(_){}
   cv.classList.toggle('nocur',CFG.cursor&&S.mouseSeen);
   try{syncDebug();}catch(_){}
 }

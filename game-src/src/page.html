@@ -313,7 +313,7 @@ canvas.nocur{cursor:none!important}
 .tctl{position:absolute;inset:0;pointer-events:none;z-index:4;display:none}
 .touchui .tctl{display:block}
 .joyzone{position:absolute;left:0;bottom:0;width:40%;height:68%;pointer-events:auto;touch-action:none;z-index:1}
-.joy{scale:var(--tsz,1);position:absolute;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:clamp(96px,24vmin,140px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(236,228,215,.18);background:rgba(25,21,26,.3);pointer-events:none;opacity:.45;transition:opacity .15s;z-index:2}
+.joy{scale:calc(var(--tsz,1) * var(--jsz,1));position:absolute;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:clamp(96px,24vmin,140px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(236,228,215,.18);background:rgba(25,21,26,.3);pointer-events:none;opacity:.45;transition:opacity .15s;z-index:2}
 .joy.on{opacity:.9;transition:none}
 .knob{position:absolute;left:50%;top:50%;width:42%;height:42%;transform:translate(-50%,-50%);border-radius:50%;background:var(--spirit);opacity:.75;pointer-events:none}
 .tbtns{transform:scale(var(--tsz,1));transform-origin:right bottom;opacity:var(--top,.8);position:absolute;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(3,auto);grid-template-areas:"heal mend ult" "kunai shuri throw" "use trace dash";gap:7px;align-items:center;justify-items:center;pointer-events:auto}
@@ -478,6 +478,20 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
 .hcard h5{margin:0;font-family:'Tiny5',var(--f-mono);font-size:13px;letter-spacing:.1em;color:var(--blood-hi);text-transform:uppercase;font-weight:400}
 .hcard p{margin:0;font-family:'DotGothic16',var(--f-body);font-size:12.5px;line-height:1.45;color:var(--bone)}
 @media (max-height:460px){.hgrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px}.hcard p{font-size:11.5px}}
+.layed{position:absolute;inset:0;z-index:70;pointer-events:none;background:rgba(6,4,5,.35)}
+.layedit .tctl{display:block!important;z-index:69}.layedit .tbtn[hidden]{display:flex!important;opacity:.5}.layedit .joy{opacity:1!important;visibility:visible!important}
+.layedit .tbtn,.layedit .tsmall{outline:1px dashed rgba(236,228,215,.35);outline-offset:2px}
+.tbtn.tl-sel,.tsmall.tl-sel{outline:2px solid var(--curse)!important;outline-offset:3px}
+.tl-zone{position:absolute;border:2px dashed var(--spirit);background:rgba(147,220,202,.08)}
+.tl-zone span{position:absolute;left:6px;top:4px;font-family:'Tiny5',var(--f-mono);font-size:10px;color:var(--spirit)}
+.tl-zone i{position:absolute;right:-9px;top:-9px;width:16px;height:16px;background:var(--spirit);border:2px solid #000}
+.lefty .tl-zone i{right:auto;left:-9px}
+.tl-bar{position:absolute;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);pointer-events:auto;background:rgba(18,12,16,.95);border:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;gap:6px;max-width:min(94vw,720px)}
+.tl-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;font-family:'Tiny5',var(--f-mono);font-size:11px;color:var(--bone)}
+.tl-row b{font-weight:400;color:var(--curse);text-align:center}.tl-v{min-width:3.2em;text-align:center}
+.tl-row .chip.on{border-color:var(--curse);color:var(--curse)}
+.lefty .tbtns{right:auto;left:calc(10px + env(safe-area-inset-left,0px));transform-origin:left bottom}
+.lefty .joyzone{left:auto;right:0}.lefty .joy{left:auto;right:calc(18px + env(safe-area-inset-right,0px))}
 </style>
 
 <div class="stage" id="stage">
@@ -498,6 +512,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
       </div>
       <button class="tsmall" id="tPause" type="button" aria-label="Pause">❚❚</button>
     </div>
+    <div class="layed" id="layEd" hidden><div class="tl-zone" id="layZone"><span></span><i></i></div><div class="tl-bar" id="layBar"></div></div>
     <div class="demoov" id="demoOv" hidden><div class="demo-box"><div class="demo-k" id="demoK"></div><div class="mv-tabs demo-tabs" id="demoTabs" hidden></div><div class="demo-title" id="demoTitle"></div><canvas id="demoCv" width="200" height="112"></canvas><p class="demo-txt" id="demoTxt"></p><button class="btn" id="demoOk" type="button" disabled>Got it</button></div></div>
     <div class="studio" id="studio" hidden data-notr><canvas id="studioCv" width="320" height="180"></canvas></div>
     <div class="title" id="title" hidden>
