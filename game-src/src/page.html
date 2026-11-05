@@ -246,8 +246,8 @@ canvas.nocur{cursor:none!important}
 /* the Blood Tree */
 .forgeov{padding:0;background:#070405;overflow:hidden}
 .forgeov .ov-inner{margin:0;width:100%;height:100%;display:block;gap:0}
-.tree-ui{position:relative;width:100%;height:100%;min-height:320px;overflow:hidden;text-align:left;user-select:none;-webkit-user-select:none}
-#trCv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.tree-ui{position:relative;width:100%;height:100%;min-height:240px;overflow:hidden;text-align:left;user-select:none;-webkit-user-select:none}
+#trCv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;image-rendering:pixelated;image-rendering:crisp-edges;background:#050304}
 #trCv.grabbing{cursor:grabbing}#trCv.pointing{cursor:pointer}
 .tr-top{position:absolute;left:10px;right:10px;top:8px;display:flex;gap:10px;align-items:center;pointer-events:none}
 .tr-top>*{pointer-events:auto}
@@ -471,6 +471,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
 /* big screens: the menus and cards were drawn for phones; scale them up so they don't float tiny in the middle */
 @media (min-width:1300px) and (min-height:740px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.2}}
 @media (min-width:1700px) and (min-height:950px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.45}}
+@media (max-height:340px){.tr-zoom{flex-direction:row;bottom:6px;right:6px}.tr-zoom .chip{width:30px;height:30px}}
 </style>
 
 <div class="stage" id="stage">
