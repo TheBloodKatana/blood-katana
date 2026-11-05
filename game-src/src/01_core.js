@@ -399,4 +399,5 @@ function pline(x0,y0,x1,y1,col,a,th){
 }
 function pcircle(cx,cy,r,col,a){cx=Math.round(cx);cy=Math.round(cy);r=Math.round(r);let x=r,y=0,e=1-r;while(x>=y){for(const [px,py] of [[x,y],[y,x],[-y,x],[-x,y],[-x,-y],[-y,-x],[y,-x],[x,-y]])pset(cx+px,cy+py,col,a);y++;if(e<0)e+=2*y+1;else{x--;e+=2*(y-x)+1;}}}
 function pdisc(cx,cy,r,col,a){cx=Math.round(cx);cy=Math.round(cy);for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)if(x*x+y*y<=r*r+r*0.8)pset(cx+x,cy+y,col,a);}
-function ptext(str,x,y,col,size,align){lx.font=`${size||8}px ${PFONT}`;lx.textAlign=align||'center';lx.textBaseline='alphabetic';lx.fillStyle=C.out;lx.fillText(str,Math.round(x)+1,Math.round(y)+1);lx.fillStyle=col;lx.fillText(str,Math.round(x),Math.round(y));}
+// pixel text lands on whole pixels: centred and right-aligned text is placed by its measured width, or glyphs of even width blur
+function ptext(str,x,y,col,size,align){lx.font=`${size||8}px ${PFONT}`;lx.textBaseline='alphabetic';align=align||'center';let X=Math.round(x);if(align!=='left'){const w=lx.measureText(str).width;X=Math.round(align==='center'?x-w/2:x-w);}lx.textAlign='left';lx.fillStyle=C.out;lx.fillText(str,X+1,Math.round(y)+1);lx.fillStyle=col;lx.fillText(str,X,Math.round(y));}

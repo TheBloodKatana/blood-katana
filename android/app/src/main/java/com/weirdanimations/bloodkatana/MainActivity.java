@@ -13,6 +13,9 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // ignore the phone's font-size setting inside the game: the layout is pixel art and is sized for the screen,
+        // and a large system font made cards like the tutorial overflow the screen so their buttons couldn't be reached
+        if (getBridge() != null && getBridge().getWebView() != null) getBridge().getWebView().getSettings().setTextZoom(100);
         hideSystemBars();
     }
 
