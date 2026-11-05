@@ -45,9 +45,9 @@ function splashFrame(now){
   const ta=clamp((t-1.85)/0.4,0,1);
   if(ta>0){g.globalAlpha=fade*ta;g.textAlign='center';g.textBaseline='alphabetic';
     g.font="12px DotGothic16, sans-serif";g.fillStyle='#ff4a5c';g.fillText('一騎当千',W/2,44);
-    g.font="16px Silkscreen, monospace";const name='ONEMANARMY',sp=3;let w=0;for(const ch of name)w+=g.measureText(ch).width+sp;w-=sp;let x=W/2-w/2;
+    g.font="16px Tiny5, monospace";const name='ONEMANARMY',sp=3;let w=0;for(const ch of name)w+=g.measureText(ch).width+sp;w-=sp;let x=W/2-w/2;
     g.textAlign='left';for(const ch of name){g.fillStyle='#000';g.fillText(ch,x+1,159);g.fillStyle='#ece4d7';g.fillText(ch,x,158);x+=g.measureText(ch).width+sp;}
-    g.font="8px Silkscreen, monospace";g.textAlign='center';g.fillStyle='#968b97';g.globalAlpha=fade*ta*0.8;g.fillText('PRESENTS',W/2,171);}
+    g.font="8px Tiny5, monospace";g.textAlign='center';g.fillStyle='#968b97';g.globalAlpha=fade*ta*0.8;g.fillText('PRESENTS',W/2,171);}
   g.globalAlpha=1;
   if(t>3.35){splashEnd();return;}
   requestAnimationFrame(splashFrame);

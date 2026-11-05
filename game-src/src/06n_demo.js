@@ -28,7 +28,7 @@ const dline=(x0,y0,x1,y1,c,a,th)=>{const n=Math.max(1,Math.ceil(Math.hypot(x1-x0
 const dring=(x,y,r,c,k,a)=>{const n=Math.max(8,Math.round(r*6));for(let i=0;i<n*(k==null?1:k);i++){const an=-Math.PI/2+i/n*Math.PI*2;dr(x+Math.cos(an)*r,y+Math.sin(an)*r,1,1,c,a);}};
 const ease=u=>u<0?0:u>1?1:u*u*(3-2*u);
 const seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
-function dtext(s,x,y,c,size,align){const g=DM.g;g.font=`${size||8}px Silkscreen, monospace`;g.textAlign=align||'center';g.textBaseline='alphabetic';g.fillStyle='#000';g.fillText(s,x+1,y+1);g.fillStyle=c;g.fillText(s,x,y);}
+function dtext(s,x,y,c,size,align){const g=DM.g;g.font=`${size||8}px Tiny5, monospace`;g.textAlign=align||'center';g.textBaseline='alphabetic';g.fillStyle='#000';g.fillText(s,x+1,y+1);g.fillStyle=c;g.fillText(s,x,y);}
 // a pixel hand, finger pointing up-left; the fingertip is (x,y)
 const HAND=['..o.....','.o#o....','.o#o....','.o#ooo..','.o#o#ooo','oo#o#o#o','o#######o','o#######o','.o#####o.','.o#####o.','..o###o..','..ooooo..'];
 function dHand(x,y,press){const g=DM.g;g.save();g.translate(Math.round(x),Math.round(y));g.scale(2,2);x=0;y=0;const ox=Math.round(x)-2,oy=Math.round(y)+(press?1:0);HAND.forEach((row,j)=>{for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='o')dr(ox+i,oy+j,1,1,'#000');else if(ch==='#')dr(ox+i,oy+j,1,1,press?'#d8c8b0':'#f4ece0');}});

@@ -884,7 +884,7 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 async function start(){
-  try{document.fonts&&document.fonts.load('8px Silkscreen');document.fonts.load('16px Silkscreen');}catch(_){}
+  try{document.fonts&&document.fonts.load('8px Tiny5');document.fonts.load('16px Tiny5');}catch(_){}
   loadCfg();loadMeta();applySettings();buildSprites();buildProps();buildProps2();
   await loadPlayer();if(!PL.ready)playerFallback();await loadChars();try{applyLook();}catch(_){}
   buildButtonIcons();buildDebug();syncSnd();

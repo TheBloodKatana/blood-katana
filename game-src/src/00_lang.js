@@ -61,7 +61,8 @@ if(LANG!=='en'){
   const big=LANG==='ru'?1.25:1.5,CJKF=LANG==='zh'?"'Noto Sans SC','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',sans-serif":"DotGothic16,'Noto Sans JP','Noto Sans CJK JP',sans-serif";
   const withFont=(g,s,fn)=>{if(!/[^\u0000-ɏ]/.test(s)){return fn();}const f=g.font,m=/^(.*?)(\d+(?:\.\d+)?)px\s+(.*)$/.exec(f);if(!m)return fn();
     // the Latin pixel face is tiny and has no glyphs for these scripts: swap it and size up; faces that already cover them keep their size
-    const pix=/silkscreen/i.test(m[3]),sz=pix?Math.round(+m[2]*big):+m[2];
+    // Tiny5 has Cyrillic of its own, so Russian keeps it; Chinese and Japanese swap to a face that has their glyphs
+    const pix=/tiny5/i.test(m[3]);if(pix&&LANG==='ru')return fn();const sz=pix?Math.round(+m[2]*big):+m[2];
     if(!pix&&LANG!=='zh')return fn();
     g.font=`${m[1]}${sz}px ${LANG==='ru'?'DotGothic16, '+m[3]:CJKF}`;try{return fn();}finally{g.font=f;}};
   P.fillText=function(s,x,y,w){const t=tr(String(s));return withFont(this,t,()=>w==null?fT.call(this,t,x,y):fT.call(this,t,x,y,w));};

@@ -10,7 +10,7 @@ const $=id=>document.getElementById(id);
 const C={ink:'#110e12',bone:'#ece4d7',ash:'#968b97',blood:'#b8142a',hi:'#ff4a5c',spirit:'#93dcca',steel:'#c4ccd2',curse:'#d9a648',phase:'#b48cff',line:'#2e2731',out:'#000000',white:'#ffffff',dark:'#1a1220',
   mon:'#e8c15a',shard:'#ff3355',water:'#6ec8ff',fox:'#ff9a3c',web:'#e8e8f2',ice:'#bfe8ff',fire:'#ff7a2a',wind:'#bfe6b0',poison:'#9ad05a',duel:'#ff8a3a',smoke:'#8a8090'};
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const PFONT='Silkscreen, monospace';
+const PFONT='Tiny5, monospace';
 
 // ---------- abilities (debug table: always-on for normal cuts / blood strike) ----------
 const ABILS=[

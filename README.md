@@ -1,4 +1,4 @@
-# Bloody Descent: 100 Floors for Android
+# Blood Descent: 100 Floors for Android
 
 A game by OneManArmy. (The repository and the save data keep the old internal name, blood-katana, so existing saves and the Play package id are unaffected.)
 

@@ -23,13 +23,15 @@ def face(fam,path,weight=400,rng=None):
   return f"@font-face{{font-family:'{fam}';font-style:normal;font-weight:{weight};font-display:block;src:url(data:font/woff2;base64,{b64(path)}) format('woff2');{r}}}\n"
 LAT='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'
 EXT='U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF'
-css=face('Silkscreen',A/'silkscreen-latin-400-normal.woff2',400,LAT)+face('Silkscreen',A/'silkscreen-latin-ext-400-normal.woff2',400,EXT)
+CYR='U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'
+CYRX='U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F'
+GRK='U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF'
+css=face('Tiny5',A/'tiny5-latin-400-normal.woff2',400,LAT)+face('Tiny5',A/'tiny5-latin-ext-400-normal.woff2',400,EXT)+face('Tiny5',A/'tiny5-cyrillic-400-normal.woff2',400,CYR)+face('Tiny5',A/'tiny5-cyrillic-ext-400-normal.woff2',400,CYRX)+face('Tiny5',A/'tiny5-greek-400-normal.woff2',400,GRK)
 css+=face('DotGothic16',A/'dotgothic16-latin-400-normal.woff2',400,LAT)+face('DotGothic16',A/'dotgothic16-latin-ext-400-normal.woff2',400,EXT)
 if sub.exists():css+=face('DotGothic16',sub,400)
-CYR='U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'
-css+=face('DotGothic16',A/'dotgothic16-cyrillic-400-normal.woff2',400,CYR)+face('JetBrains Mono',A/'jetbrains-mono-cyrillic-400-normal.woff2',400,CYR)
-css+=face('JetBrains Mono',A/'jetbrains-mono-latin-400-normal.woff2',400)+face('JetBrains Mono',A/'jetbrains-mono-latin-500-normal.woff2',500)
+css+=face('DotGothic16',A/'dotgothic16-cyrillic-400-normal.woff2',400,CYR)
 page=page.replace('/*__FONTS__*/',css)
+page=page.replace('__LOGO_B64__','data:image/webp;base64,'+b64(HERE/'logo'/'logo.webp'))
 assert '/*__SCRIPT__*/' in page
 out=page.replace('/*__SCRIPT__*/',js)
 (HERE/'blood-katana.html').write_text(out)

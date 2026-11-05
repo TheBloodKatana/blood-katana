@@ -91,7 +91,7 @@ const MENUS={
         <div class="mv-kanji">血階</div>
         <div><h4>A game by</h4><p data-notr>OneManArmy</p></div>
         <div><h4>Design, art direction and the hero's sprite</h4><p data-notr>Weird Animations</p></div>
-        <div><h4>Fonts</h4><p>Silkscreen · DotGothic16 · JetBrains Mono</p><small>Used under the SIL Open Font License 1.1</small></div>
+        <div><h4>Fonts</h4><p>Tiny5 · DotGothic16</p><small>Used under the SIL Open Font License 1.1</small></div>
         <div><h4>Thanks</h4><p>Everyone who died on level 1-1 so the rest of you didn't have to.</p></div>
         <small>Version ${VERSION}</small>
       </div>`,'credits');
