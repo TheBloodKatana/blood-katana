@@ -34,13 +34,25 @@ function dropWeapon(w,x,y){if(S.pro)return; // nothing to pick up or lose on the
 function wear(n,s){
   const w=P.wpn;if(!w||w.dur<=0)return;if(s&&s.wid&&s.wid!==w.uid)return;
   if(w.cursed==='brittle')n*=2;if(S.gmx)n*=S.gmx.wearMul;n*=1-0.25*up(w.id,'temper');const was=w.dur;w.dur=Math.max(0,w.dur-n);
-  if(was>0&&w.dur<=0){featEvent('break');text(P.x,P.y-60,`${WEAPONS[w.id].name.toUpperCase()} BROKEN`,C.ash,true);sfx('gbreak');burst(P.x+S.face*10,P.y-16,18,C.steel,260,0.5,2);S.bt=S.bt&&S.bt.id===w.id?null:S.bt;S.shake+=4;}
+  if(was>0&&w.dur<=0){featEvent('break');text(P.x,P.y-60,`${WEAPONS[w.id].name.toUpperCase()} BROKEN`,C.ash,true);if(!w.own&&!capOn('orb','unshatter'))text(P.x,P.y-74,'MEND IT, OR IT MAY SHATTER',C.hi);sfx('gbreak');burst(P.x+S.face*10,P.y-16,18,C.steel,260,0.5,2);S.bt=S.bt&&S.bt.id===w.id?null:S.bt;S.shake+=4;}
   else if(was>w.max*0.2&&w.dur<=w.max*0.2){text(P.x,P.y-56,'CRACKING',C.ash);sfx('click');}
+}
+// A broken weapon can still be swung, but every swing risks it: one in ten and it shatters for good. Nothing mends it.
+const SHATTER_P=0.1;
+function shatterRoll(){
+  const w=P.wpn;if(!w||w.dur>0||w.own||S.pro||S.tut||S.inHub||capOn('orb','unshatter'))return false;
+  if(Math.random()>=SHATTER_P)return false;
+  P.wpn=null;S.bt=S.bt&&S.bt.id===w.id?null:S.bt;S.reload=0;featEvent('break');
+  text(P.x,P.y-62,`${WEAPONS[w.id].name.toUpperCase()} SHATTERED`,C.hi,true);sfx('gbreak');sfx('clang');S.shake+=8;S.flash=Math.max(S.flash||0,0.08);
+  for(let i=0;i<26;i++){const a=Math.random()*Math.PI*2,v=rand(120,380);S.parts.push({x:P.x+S.face*12,y:P.y-18,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,life:rand(0.4,0.9),max:0.9,size:i%3?1:2,col:i%4?C.steel:C.white});}
+  return true;
 }
 // ---------- the blood orb ----------
 const orbMax=()=>100+20*up('orb','cap');
 const healCost=()=>Math.round((40*S.mods.drinkCost-5*up('orb','heal'))*(S.gmx&&S.gmx.healMul||1));
 const mendCost=()=>50-6*up('orb','mend');
+// how much of the blade one mend restores: 40%, and 15% more for each level of Patient hands
+const mendShare=()=>Math.min(1,0.4+0.15*up('orb','mendamt'));
 function btCost(){const W=curW();return Math.round(W.bt.cost*(1-0.1*wUp('btc'))*(P.wpn&&P.wpn.perk==='light'?0.8:1));}
 function btTime(){const W=curW();return(W.bt.time||0)+up('orb','btime')+1.5*wUp('btp')+(W.id==='reserve'?up('reserve','rthirst'):0)+(P.wpn&&P.wpn.perk==='thirst'?2:0);}
 function orbSpend(v){S.meter=Math.max(0,S.meter-v);S.full=false;}
@@ -55,7 +67,7 @@ function mendWeapon(){
   if(!w){text(P.x,P.y-50,'YOUR OWN BLADE IS PAST MENDING',C.ash);sfx('deny');return;}
   if(w.dur>=w.max){text(P.x,P.y-50,'NOTHING TO MEND',C.ash);sfx('deny');return;}
   const c=mendCost();if(S.meter<c-0.01){text(P.x,P.y-50,`MEND NEEDS ${c} BLOOD`,C.ash);sfx('deny');return;}
-  orbSpend(c);w.dur=w.max;text(P.x,P.y-50,'MENDED',C.hi);sfx('draw');burst(P.x+S.face*10,P.y-16,16,C.hi,180,0.5,2);S.bladeFlash=1;
+  orbSpend(c);const pct=mendShare();w.dur=Math.min(w.max,w.dur+Math.max(1,Math.round(w.max*pct)));text(P.x,P.y-50,pct>=1?'MENDED':`MENDED ${Math.round(pct*100)}%`,C.hi);sfx('draw');burst(P.x+S.face*10,P.y-16,16,C.hi,180,0.5,2);S.bladeFlash=1;
 }
 function bloodthirst(){
   if(!playing())return;const W=curW(),c=btCost();
@@ -125,7 +137,7 @@ function gunTap(target,o={}){
   const st={x:P.x+Math.cos(a)*14,y:P.y-12+Math.sin(a)*14};
   for(let i=0;i<14;i++)S.parts.push({x:st.x+Math.cos(a)*8,y:st.y+Math.sin(a)*8,vx:Math.cos(a+rand(-0.5,0.5))*rand(40,160),vy:Math.sin(a+rand(-0.5,0.5))*rand(40,160)-20,life:rand(0.4,0.9),max:0.9,size:2,col:Math.random()<0.3?'#ffd27a':'#8a8090'});
   if(perfect){S.perfect=false;text(P.x,P.y-60,'PERFECT SHOT',C.mon);}if(smoke){S.smokeShot=false;text(P.x,P.y-60,'FROM THE SMOKE',C.smoke);}
-  if(blood){S.bt=null;text(P.x,P.y-60,'BLOOD BULLET',C.hi,true);S.flash=0.1;}else{wear(1);startReload();}
+  if(blood){S.bt=null;text(P.x,P.y-60,'BLOOD BULLET',C.hi,true);S.flash=0.1;}else{shatterRoll();wear(1);if(P.wpn)startReload();}
   S.cdTap=S.cdTapMax=0.25;S.cdLock=CFG.cutLock;S.face=Math.cos(a)>0?1:-1;S.anim={kind:'side',t:0,dir:{x:Math.cos(a),y:Math.sin(a)}};
   return true;
 }

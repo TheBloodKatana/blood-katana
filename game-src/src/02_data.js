@@ -269,6 +269,7 @@ const TREES=[
   {id:'orb',name:'Blood orb',jp:'血',g:'血',desc:'The orb that floats beside you.',branches:[
     {name:'Vessel',nodes:[ND('cap','Deep orb','Store 20 more blood',3,20,'器')],tip:{id:'brim',name:'Brimming',desc:'Start every realm with the orb a third full.',cost:45,g:'満'}},
     {name:'Mercy',nodes:[ND('heal','Cheap healing','Healing costs 5 less',3,15,'癒'),ND('mend','Cheap mending','Mending costs 6 less',3,15,'繕')],tip:{id:'trans',name:'Transfusion',desc:'Drinking from the orb also mends half your weapon.',cost:50,g:'輸'}},
+    {name:'Smithing',nodes:[ND('mendamt','Patient hands','Mending restores 15% more of the blade',4,14,'鍛')],tip:{id:'unshatter',name:'Unbreakable Will',desc:'Broken weapons never shatter, however often you swing them.',cost:55,g:'剛'}},
     {name:'Hunger',nodes:[ND('gain','Hunger','+10% blood from kills and hits',3,18,'飢'),ND('btime','Long thirst','Bloodthirst lasts 1s longer',3,22,'長')],tip:{id:'frenzy',name:'Frenzy',desc:'Every kill during bloodthirst makes it last a second longer.',cost:60,g:'狂'}}]},
   {id:'tools',name:'Tools',jp:'具',g:'具',desc:'Kunai and shuriken, no weapon needed.',branches:[
     {name:'Kunai',nodes:[ND('kunai','Kunai belt','+1 kunai',3,12,'苦')],tip:{id:'tags',name:'Explosive Tags',desc:'Kunai burst on impact, hurting everything nearby.',cost:40,g:'爆'}},

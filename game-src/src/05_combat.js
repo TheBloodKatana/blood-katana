@@ -322,7 +322,7 @@ function hopSlam(target,a0,c){
   let d=dist(feet,P),tx=feet.x,ty=feet.y;if(d>maxR){tx=P.x+(tx-P.x)/d*maxR;ty=P.y+(ty-P.y)/d*maxR;d=maxR;}
   const ang=Math.atan2(ty-P.y,tx-P.x),hl=Math.min(110,Math.max(0,d-50));
   let land=clipPts([{x:P.x,y:P.y},rayTo({x:P.x,y:P.y},ang,hl,P.r)],['wall','crate'],P.r-1).pts.pop();land=freeSpot(S.room,land.x,land.y,P.r);
-  S.cdLock=Math.max(S.cdLock,0.32);for(const k of c.used)abUse(k);S.face=Math.cos(ang)>0?1:-1;S.anim={kind:'down',t:0,dir:{x:Math.cos(ang),y:Math.sin(ang)}};
+  S.cdLock=Math.max(S.cdLock,0.32);for(const k of c.used)abUse(k);shatterRoll();S.face=Math.cos(ang)>0?1:-1;S.anim={kind:'down',t:0,dir:{x:Math.cos(ang),y:Math.sin(ang)}};
   const slam=()=>{const L=clamp(Math.hypot(tx-P.x,ty-P.y)+12,40,W.len*1.2);launchCut({pts:bodyLine(Math.atan2(ty-P.y,tx-P.x),L,6),speed:1300,shockR:W.shock,o:{famCap:1},cdMul:1.15},Object.assign({},c,{used:[]}));};
   if(dist(land,P)>8){leapTo(land,0.2,16,slam,false);sfx('dash');}else slam();
 }
@@ -370,7 +370,7 @@ function launchCut(mv,c){
   if(quake)S.bt=null;
   if(blood&&W.id==='yari'&&!isTap&&!fin)for(const o of [-0.22,0.22])spawnChild(bodyLine(c.dirA+o,W.len*1.4),main);
   if(mv.child2)S.pending.push({t:0.08,fn:()=>{const R=(mv.child2R||175);spawnChild(arcPts(c.dirA,R,2.9,-1),main,{blood:true});}});
-  S.slashes.push(main);S.cutCount++;for(const k of used)abUse(k);
+  S.slashes.push(main);S.cutCount++;for(const k of used)abUse(k);shatterRoll();
   if(mv.step)stepSlide(mv.step.a,mv.step.L);
   if(mv.name)text(P.x,P.y-50,mv.name,blood||scy?C.hi:C.bone);
   sfx(isTap?'tap':'slash',isTap?fin:speed);if(mv.kind==='chain'){sfx('chain');sfx('eswing');}S.hint.cut=true;if(S.stats)S.stats.cuts++;
