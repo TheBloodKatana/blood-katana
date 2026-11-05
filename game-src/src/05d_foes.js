@@ -220,7 +220,7 @@ function drawFoeAir(){
     if(e.T.erase&&e.eraseT!==undefined&&e.eraseT<0.7){const k=1-e.eraseT/0.7,y=LY(e.y-14);for(let i=0;i<10;i++){const an=S.gt*6+i/10*Math.PI*2,r=(1-k)*24+4;pdisc(x+Math.cos(an)*r,y+Math.sin(an)*r*0.8,1,'#1a1024',0.8);}}
     if(e.state==='eat'&&Math.floor(S.gt*6)%2)ptext('喰',x,top-4,C.blood,8);
     if(e.cstance>0){const y=LY(e.y-14),r=e.r/PX+6;for(let i=0;i<24;i++){const an=i/24*Math.PI*2+S.gt*3;if(i%3)pset(x+Math.cos(an)*r,y+Math.sin(an)*r*0.85,C.steel,0.9);}if(Math.floor(S.gt*6)%2)ptext('構',x,top-6,C.steel,8);}
-    if(e.state==='wind'&&(e.pat==='grab'||e.pat==='devour')&&Math.floor(S.gt*10)%2)ptext('掴',x,top-6,GRABC,8);
+    if(e.state==='wind'&&(e.pat==='grab'||e.pat==='devour')&&Math.floor(S.gt*10)%2)ptext('掴',x,top-6,cvdc(GRABC),8);
     if(e.state==='wind'&&['rain','ring','spikes','breath','summon','clones','sixarm'].includes(e.pat)){const k=1-Math.max(0,e.t)/e.wind,y=LY(e.y-14),col=e.pat==='rain'?(RAINK[(e.T.rain||{}).kind]||RAINK.blade).col:e.pat==='ring'?ringCol():C.curse;pcircle(x,y,(e.r/PX+16)*(1-k)+e.r/PX*0.5,col,0.4+0.5*k);}
   }
   const g=S.glyph;if(g&&S.enemies.includes(g.e)){const e=g.e,k=clamp(g.t/(g.dur*0.7),0,1),left=clamp(1-g.t/g.dur,0,1),sp=SPR[e.look],R=17,P0=SHAPE_PTS[g.shape];

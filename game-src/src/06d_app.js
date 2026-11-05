@@ -77,6 +77,7 @@ const MENUS={
         <div class="set-sec"><h3>Sound</h3>${T('sound','Sound')}${T('music','Music')}${R('sfxVol','Effects volume',0,1,0.05)}${R('musicVol','Music volume',0,1,0.05)}</div>
         <div class="set-sec"><h3>Screen</h3>${T('shake','Screen shake')}${T('flashes','Screen flashes','White flashes on big hits and parries')}${T('lighting','Lighting','Turn off on slow phones')}${T('ambient','Ambient particles')}${T('corpses','Bodies cut in two')}${T('minimap','Minimap')}${S.touchUI?'':T('cursor','Pixel cursor')}
           ${R('darkness','Darkness',0.4,1.4,0.05)}</div>
+        <div class="set-sec"><h3>Accessibility</h3>${T('cvd','Colour-blind safe','Spirit cuts turn blue and grabs white, so foe attacks never depend on red or green')}${T('bigtext','Bigger text','Menus, cards and dialog a size up')}${T('calm','Reduce motion','No wobbling menus, no camera lead')}${T('assist','Assist mode','Foes wind up 30% slower and parries are easier. For a gentler climb')}</div>
         <div class="set-sec"><h3>Feel</h3>${T('hitPause','Hit pause','The freeze-frame when a cut lands')}${T('parrySlowOn','Parry slows time')}${T('slowmoOn','Slow motion while swiping','Easier aiming, slower fights')}</div>
         ${S.touchUI?`<div class="set-sec"><h3>Touch</h3>${T('vibe','Vibration','A buzz when you are hit or parry')}${seg('tsize','Button size',[[0.85,'S'],[1,'M'],[1.18,'L']])}${seg('topac','Button opacity',[[0.55,'Faint'],[0.8,'Half'],[1,'Solid']])}<div class="set-row"><span>Button layout<small>Move and size each button, and the thumbstick zone</small></span><button type="button" class="tgl" data-m="layout">Edit</button></div></div>`:''}
         ${devOn()?`<div class="set-sec"><h3>Developer</h3><div class="set-row"><span>Debug bench</span><button type="button" class="tgl" data-m="debug">Open</button></div>
@@ -132,7 +133,7 @@ $('menuOv').addEventListener('input',e=>{const r=e.target.closest('[data-r]');if
 function applySettings(){
   auInit();auVol();syncSnd();
   const R=document.documentElement;R.style.setProperty('--tsz',CFG.tsize||1);R.style.setProperty('--top',CFG.topac||0.8);try{applyTouchLayout();}catch(_){}
-  cv.classList.toggle('nocur',CFG.cursor&&S.mouseSeen);
+  cv.classList.toggle('nocur',CFG.cursor&&S.mouseSeen);R.classList.toggle('bigtext',!!CFG.bigtext);R.classList.toggle('calm',!!CFG.calm);try{crispAll();}catch(_){}try{if(S.mode==='run'&&typeof recomputeMods==='function')recomputeMods();}catch(_){}
   try{syncDebug();}catch(_){}
 }
 // help and debug overlays

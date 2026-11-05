@@ -469,8 +469,11 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
 @media (max-height:460px){.overlay .big{font-size:min(9vw,15vh)}.ov-inner{gap:6px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px 14px;width:min(100%,620px)}.stats div{padding-top:3px}.stats b{font-size:14px}.stats span{font-size:9.5px}
   #overlay .ov-btns{position:sticky;bottom:0;padding:6px 0 2px;background:linear-gradient(transparent,rgba(6,4,5,.92) 30%)}}
 /* big screens: the menus and cards were drawn for phones; scale them up so they don't float tiny in the middle */
-@media (min-width:1300px) and (min-height:740px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.2}}
-@media (min-width:1700px) and (min-height:950px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.45}}
+.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:calc(var(--uiz,1) * var(--tz,1))}
+@media (min-width:1300px) and (min-height:740px){:root{--uiz:1.2}}
+@media (min-width:1700px) and (min-height:950px){:root{--uiz:1.45}}
+:root.bigtext{--tz:1.25}
+.calm .t-btn,.calm .perk,.calm .hub-card,.calm .ftab,.calm .dlg-choices button,.calm .ov-btns .btn,.calm .hub-go .btn,.calm .fnode,.calm .t-kanji,.calm .meter.full .fill{animation:none!important}
 @media (max-height:340px){.tr-zoom{flex-direction:row;bottom:6px;right:6px}.tr-zoom .chip{width:30px;height:30px}}
 .hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .hcard{background:var(--panel);border:1px solid var(--line);padding:8px;display:flex;flex-direction:column;gap:5px}

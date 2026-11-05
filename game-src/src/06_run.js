@@ -15,6 +15,7 @@ function recomputeMods(){
   S.mods.dashCdMul*=Math.pow(0.9,up('body','dash'));S.mods.discount*=Math.pow(0.92,up('body','haggle'));
   for(const id of S.items){const it=ITEM[id];if(!it)continue;if(it.apply)it.apply(S.mods);if(it.ab)for(const k of it.ab)S.perkAb[k]=true;}
   for(const id in S.owned){const p=PERKS.find(x=>x.id===id);if(!p)continue;if(p.apply)p.apply(S.mods);if(p.ab)for(const k of p.ab)S.perkAb[k]=true;}
+  if(CFG.assist)S.mods.teleMul*=1.3;
   if(S.gmx){S.mods.moveMul*=S.gmx.moveMul;S.mods.dashCdMul*=S.gmx.dashMul;S.mods.teleMul*=S.gmx.teleMul;}
   P.max=Math.max(1,CFG.maxHp+up('body','soul')+S.mods.maxHp+(S.runMax||0)+(S.gmx?S.gmx.maxAdd:0));if(S.gmx&&S.gmx.ippon)P.max=1;
   if(before&&P.max>before)P.hp+=P.max-before;P.hp=Math.min(P.hp,P.max);

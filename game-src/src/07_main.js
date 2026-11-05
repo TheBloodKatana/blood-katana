@@ -135,7 +135,7 @@ function updateCam(dt){
   if(!Number.isFinite(S.cam.x)||!Number.isFinite(S.cam.y)){S.cam.x=P.x;S.cam.y=P.y;}
   if(!Number.isFinite(S.ts))S.ts=1;if(!(S.hitstop<2))S.hitstop=0;
   const R=S.room;if(!R)return;
-  let tx=P.x,ty=P.y-14;if(!S.swipe&&S.mode==='run'){tx+=(S.aim.x-P.x)*CFG.camLead;ty+=(S.aim.y-P.y)*CFG.camLead;}
+  let tx=P.x,ty=P.y-14;if(!S.swipe&&S.mode==='run'&&!CFG.calm){tx+=(S.aim.x-P.x)*CFG.camLead;ty+=(S.aim.y-P.y)*CFG.camLead;}
   const k=Math.min(1,dt*(S.slide?14:7));S.cam.x+=(tx-S.cam.x)*k;S.cam.y+=(ty-S.cam.y)*k;
   const cc=(v,W,V)=>W<=V?W/2:clamp(v,V/2,W-V/2);
   const ccy=v=>cc(v+WALL_EXT,R.h+WALL_EXT,VH)-WALL_EXT;
@@ -423,13 +423,16 @@ function drawEnemy(e){
   if(e.state==='stun'){for(let i=0;i<3;i++){const t=S.gt*5+i*2.1;pset(LX(e.x)+Math.cos(t)*5,top-6+Math.sin(t),C.spirit);}}
   if(e.bleedT>0&&Math.floor(S.gt*6)%2)pset(LX(e.x)+2,top+6,C.blood);
 }
+// colour-blind safe: spirit cuts turn blue, grabs white, ordinary cuts a brighter yellow (the blue/yellow axis survives every common colour blindness)
+const CVD_MAP={'#b48cff':'#3a9cff','#e0306a':'#f4f4f4','#d9a648':'#ffd23a'};
+const cvdc=c=>CFG.cvd&&CVD_MAP[c]||c;
 function drawTelegraph(e){
   if(e.state!=='wind')return;
   const k=1-Math.max(0,e.t)/e.wind,a=0.35+0.6*k,sp=SPR[e.look];
   for(const s of e.cuts){
     if(s.kind==='neck')continue;
     // the whole path as a dashed line with a dark edge, and a solid bar filling along it like a fuse: when it reaches the end, the cut comes
-    const col=s.tcol||(s.phase?C.phase:C.curse),fill=k*s.len,dash=s.delay?10:6;
+    const col=cvdc(s.tcol||(s.phase?C.phase:C.curse)),fill=k*s.len,dash=s.grab&&CFG.cvd?3:s.delay?10:6;
     for(let d=0;d<s.len;d+=PX){const p=posAt(s,d),x=LX(p.x),y=LY(p.y),on=d<=fill;
       if(on){pset(x+1,y+1,'#000',0.7);pset(x,y,col,1);pset(x,y-1,col,0.85);}
       else if(d%dash<dash*0.6){pset(x+1,y+1,'#000',0.5);pset(x,y,col,0.25+0.45*k);}}
@@ -746,7 +749,7 @@ function draw(){
   for(const e of S.enemies)drawTelegraph(e);
   drawFoeAir();flush();
   drawShots();flush();
-  for(const s of S.eslashes){if(s.guard)drawCut(s,C.white,C.steel,5);else if(s.col){drawCut(s,s.core||C.white,s.col,(s.hr||8)*0.75);if(s.kind==='bolt'&&!s.done){const h=head(s);for(let i=0;i<3;i++)pset(LX(h.x)+rand(-4,4),LY(h.y)+rand(-4,4),'#ffe066');}}else if(s.phase)drawCut(s,'#efe6ff',C.phase,6);else if(s.kind==='wind')drawCut(s,C.white,C.wind,6);else if(s.kind==='fire')drawCut(s,'#d8f6ff',C.water,7);else if(s.kind==='neck')drawCut(s,PAL.pale[0],'#2a1a1a',4);else if(s.kind==='chain')drawCut(s,C.steel,'#3a3a42',2);else if(s.kind==='smoke')drawCut(s,'#d8d0d8',C.smoke,9);else if(s.kind==='shove')drawCut(s,'#e8f8ff','#6aa84f',11);else if(s.kind==='tongue')drawCut(s,'#ffb0c0','#e0607a',5);else drawCut(s,'#fff6e0',C.curse,(s.hr||8)*0.75);}
+  for(const s of S.eslashes){if(s.guard)drawCut(s,C.white,C.steel,5);else if(s.col){drawCut(s,s.core||C.white,cvdc(s.col),(s.hr||8)*0.75);if(s.kind==='bolt'&&!s.done){const h=head(s);for(let i=0;i<3;i++)pset(LX(h.x)+rand(-4,4),LY(h.y)+rand(-4,4),'#ffe066');}}else if(s.phase)drawCut(s,'#efe6ff',cvdc(C.phase),6);else if(s.kind==='wind')drawCut(s,C.white,C.wind,6);else if(s.kind==='fire')drawCut(s,'#d8f6ff',C.water,7);else if(s.kind==='neck')drawCut(s,PAL.pale[0],'#2a1a1a',4);else if(s.kind==='chain')drawCut(s,C.steel,'#3a3a42',2);else if(s.kind==='smoke')drawCut(s,'#d8d0d8',C.smoke,9);else if(s.kind==='shove')drawCut(s,'#e8f8ff','#6aa84f',11);else if(s.kind==='tongue')drawCut(s,'#ffb0c0','#e0607a',5);else drawCut(s,'#fff6e0',cvdc(C.curse),(s.hr||8)*0.75);}
   for(const s of S.slashes){if(s.blocked)drawCut(s,C.bone,C.ash,5);else if(s.kind==='bullet')drawCut(s,s.blood?C.white:'#fff6e0',s.blood?C.hi:C.mon,s.blood?6:2);else if(s.kind==='thrown')drawCut(s,C.white,C.steel,4);else if(s.kind==='chain'&&!s.blood)drawCut(s,C.white,'#8a8a92',4);else if(s.blood){const tc=tsCut(),w=Math.max(8,s.hr*0.9);if(!drawSkinCut(s,w))drawCut(s,tc[0],tc[1],w);if(!s.done||s.linger>0)tsCutFx(s);}else if(s.ult){const tc=tsCut(),w=Math.max(10,s.hr*0.9);if(!drawSkinCut(s,w))drawCut(s,tc[0],tc[1],w);}else if(s.ghost)drawCut(s,'#2a1a3a',C.phase,Math.max(6,s.hr*0.8));else if(s.isWave)drawCut(s,C.white,C.wind,Math.max(6,s.hr*0.7));else if(s.fireTrail&&s.done)drawCut(s,'#d8f6ff',C.water,Math.max(6,s.hr));else{const ss=slashSet();drawCut(s,ss.core,setCol(ss.edge),Math.max(6,s.hr*(s.isTap?0.7:0.8)));}}
   for(const m of S.marks){const x=LX(m.x),y=LY(m.y),L=m.ult?16:11;pline(x-m.c*L,y-m.s*L,x+m.c*L,y+m.s*L,m.life>0.06?C.white:C.hi,1,m.ult?2:1);}
   for(const b of S.bolts){let x=LX(b.a.x),y=LY(b.a.y);const tx=LX(b.b.x),ty=LY(b.b.y);for(let i=1;i<=6;i++){const nx=x+(tx-x)/(7-i)+(i<6?rand(-4,4):0),ny=y+(ty-y)/(7-i)+(i<6?rand(-4,4):0);pline(x,y,nx,ny,i%2?'#e8f0ff':'#9ab8ff');x=nx;y=ny;}}
