@@ -472,6 +472,12 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
 @media (min-width:1300px) and (min-height:740px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.2}}
 @media (min-width:1700px) and (min-height:950px){.menuov .mv-inner,.overlay .ov-inner,.demo-box,.dlg{zoom:1.45}}
 @media (max-height:340px){.tr-zoom{flex-direction:row;bottom:6px;right:6px}.tr-zoom .chip{width:30px;height:30px}}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.hcard{background:var(--panel);border:1px solid var(--line);padding:8px;display:flex;flex-direction:column;gap:5px}
+.hcard canvas{width:100%;height:auto;aspect-ratio:200/112;image-rendering:pixelated;image-rendering:crisp-edges;border:1px solid #2a2028;background:#120c10}
+.hcard h5{margin:0;font-family:'Tiny5',var(--f-mono);font-size:13px;letter-spacing:.1em;color:var(--blood-hi);text-transform:uppercase;font-weight:400}
+.hcard p{margin:0;font-family:'DotGothic16',var(--f-body);font-size:12.5px;line-height:1.45;color:var(--bone)}
+@media (max-height:460px){.hgrid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px}.hcard p{font-size:11.5px}}
 </style>
 
 <div class="stage" id="stage">
@@ -541,19 +547,21 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
     <div class="menuov help" id="helpOv" hidden>
       <div class="mv-inner">
         <div class="mv-head"><div class="mv-title">How to play</div><button class="btn ghost mv-x" type="button" data-close="helpOv">Back</button></div>
-        <div class="mv-tabs" id="helpTabs"><button type="button" class="on" data-tab="hRun">The run</button><button type="button" data-tab="hKeys">Keyboard</button><button type="button" data-tab="hTouch">Touch</button><button type="button" data-tab="hFoes">Foes</button><button type="button" data-hud="1">Your screen</button></div>
+        <div class="mv-tabs" id="helpTabs"><button type="button" class="on" data-tab="hBasics">Basics</button><button type="button" data-tab="hRun">The climb</button><button type="button" data-tab="hThreats">Threats</button><button type="button" data-hud="1">Your screen</button><button type="button" data-tab="hKeys" class="kbd-only">Keyboard</button><button type="button" data-tab="hTouch">Touch</button></div>
         <div class="mv-body">
-          <div class="hpane" id="hRun"><ul class="rules">
-          <li>Every run starts at the <b>Shrine of the Broken Blade</b>. Spend banked shards on a bigger pouch or a deeper soul, commission a starting weapon, test techniques on the straw dummy, then walk through the gate.</li>
-          <li>Ten realms of ten floors each. Floor 1 is a <b>store</b>; on combat floors clear every room to unseal the stairs; floor 5 holds a <b>mini boss</b> and, past it, a <b>rest place</b> with a hot spring, an altar and a better merchant; floor 10 holds the realm's <b>lord</b>. Which lord and which warden you meet is random.</li>
-          <li>You carry four treasures and four boons, no doubles. A full pouch means choosing what to give up. The <b>altar</b> at the rest place trades one boon or reforges one treasure. Treasure rooms make you pick a treasure <i>or</i> a weapon.</li>
-          <li>Foes drop <b>mon</b> (spend it this run) and rarely <b>blood shards</b>. Shards are only banked at a realm's store floor or the rest place; die before that and they scatter.</li>
-          <li>The Blind Smith turns banked shards into the <b>Blood Tree</b>. Every branch ends in a technique (a circle, a V, a zigzag…) you trace with right-click. Hold still mid-trace to <b>chain</b> a second shape: both techniques fire, fused, for both recharges.</li>
-          <li>Lords paint <b>glyphs</b> in the air and are warded while they do. Trace the same shape before it's finished and their own brush cuts them. Miss it and the glyph lands on you.</li>
-          <li>Trails block cuts. <b>Purple</b> spirit cuts pass through trails; <b>pink</b> lunges are grabs that no parry or counter stance stops. Shields only face one way: flank them, hook them, or bring the kanabō. Ink monks wipe your trails and blot your brush.</li>
-          <li>Foes take turns, surround you, read your counter stances and punish whiffs, and they get sharper every realm. Hit a foe three times in a second and it breaks free; bosses <b>deflect</b> while they do.</li>
-          <li><b>Orange</b> rooms hold a duelist. Optional, dangerous, well paid. <b>Purple</b> rooms hold strangers, and some of them want to play.</li>
+          <div class="hpane" id="hBasics"><div class="hgrid" id="helpBasics"></div></div>
+          <div class="hpane" id="hRun" hidden><ul class="rules">
+          <li>Every run starts at the <b>Shrine of the Broken Blade</b>. Spend banked 血晶 with the <b>Blind Smith</b> on the Blood Tree, take a weapon from the armorer, then walk through the gate.</li>
+          <li>Ten realms of ten floors. Floor 1 is a <b>store</b>. Floor 5 holds a <b>warden</b> and, past it, a <b>rest place</b> with a hot spring, an altar and a better merchant. Floor 10 holds the realm's <b>lord</b>.</li>
+          <li>Clear every room to unseal the stairs. Open doorways glow <b>gold</b>; sealed ones glow <b>red</b>.</li>
+          <li>Foes drop <b>mon</b> (spend it this run) and sometimes <b>血晶</b>. Carried 血晶 are only banked at a store floor or the rest place; die first and they scatter.</li>
+          <li>Weapons wear down with every hit. <b>Mending</b> restores part of the blade, more with Smithing on the Blood Tree. A <b>broken</b> weapon still swings, but every swing can shatter it for good.</li>
+          <li>You carry four treasures and four boons, no doubles. A full pouch means choosing what to give up. The altar trades a boon or reforges a treasure.</li>
+          <li>When you fall you choose: burn a <b>revive charm</b>, watch an ad, or let the run end.</li>
+          <li><b>Orange</b> rooms hold duelists: optional, dangerous, well paid. <b>Purple</b> rooms hold strangers, and some of them want to play.</li>
+          <li>Escape all 100 floors to open the <b>Hell Levels</b>: twenty climbs, each with one more curse. Daily and weekly challenges, Waves, Infinite and Boss Rush open as you play.</li>
         </ul></div>
+          <div class="hpane" id="hThreats" hidden><div class="hgrid" id="helpThreats"></div></div>
           <div class="hpane" id="hKeys" hidden><dl>
           <dt><kbd>WASD</kbd></dt><dd>Move (arrows work too)</dd>
           <dt><kbd>Click</kbd></dt><dd>Quick attack with its own cooldown. Every third click is the weapon's finisher</dd>
@@ -576,13 +584,7 @@ table.odds th{color:var(--ash);font-weight:400}table.odds tr.ep td{color:#b48cff
             <li><b>Dash</b> passes through attacks. Pink lunges marked 掴 are grabs: dash through them.</li>
             <li><b>Heal</b>, <b>Mend</b> and <b>Thirst</b> spend the blood orb. <b>Kunai</b> and <b>Shuri</b> throw tools; <b>Throw</b> hurls your weapon. <b>Take</b> appears near things you can pick up or talk to.</li>
             <li>❚❚ in the corner pauses. Play sideways.</li></ul></div>
-          <div class="hpane" id="hFoes" hidden><ul class="rules">
-            <li><b>Yellow</b> lines are cuts you can block with your own trail. <b>Purple</b> cuts pass through trails. <b>Pink</b> lunges are grabs: no parry, no counter stance, dash.</li>
-            <li>Circles on the ground mean something is about to land there. Rings that spread across the floor have a gap: find it, or dash through.</li>
-            <li>Shields only face one way: get behind, hook it with the chain, swap places, or break it with the kanabō.</li>
-            <li>Ink monks wash your stances, auras and trails away and blot your brush for a few seconds. Kill them first if you rely on techniques.</li>
-            <li>Lords paint a <b>glyph</b> above their heads and can't be hurt while they paint. Trace the same shape before they finish and it breaks on them.</li>
-            <li>Every lord and warden has moves of their own. Watch the first time, punish the second.</li></ul></div>
+          
         </div>
       </div>
     </div>
